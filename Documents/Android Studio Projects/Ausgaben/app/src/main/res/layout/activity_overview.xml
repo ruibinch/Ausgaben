@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_overview"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="ruibin.ausgaben.OverviewActivity">
+
+    <Spinner
+        android:id="@+id/spn_selectMonth"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="15dp"
+        android:entries="@array/spn_selectMonth_entries" />
+
+    <TextView
+        style="@style/TextColourBlack"
+        android:id="@+id/text_totalExpenditure"
+        android:text="@string/str_totalExpenditure"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/spn_selectMonth"
+        android:layout_marginTop="30dp"
+        android:layout_centerInParent="true" />
+
+    <TextView
+        style="@style/TextColourBlack"
+        android:id="@+id/expenditure"
+        android:textSize="50sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/text_totalExpenditure"
+        android:layout_centerInParent="true" />
+
+
+    <!-- Breakdown of expenses by category -->
+
+    <LinearLayout
+        android:id="@+id/layout_categoryBreakdown_entertainment"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/expenditure"
+        android:layout_marginTop="30dp"
+        android:layout_marginStart="40dp" >
+
+        <TextView
+            android:id="@+id/text_categoryBreakdown_entertainment"
+            android:text="@string/str_entertainment"
+            android:layout_width="175dp"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/amount_categoryBreakdown_entertainment"
+            android:layout_width="75dp"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layout_categoryBreakdown_food"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/layout_categoryBreakdown_entertainment"
+        android:layout_alignStart="@id/layout_categoryBreakdown_entertainment"
+        android:layout_marginTop="8dp" >
+
+        <TextView
+            android:id="@+id/text_categoryBreakdown_food"
+            android:text="@string/str_food"
+            android:layout_width="175dp"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/amount_categoryBreakdown_food"
+            android:layout_width="75dp"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layout_categoryBreakdown_gifts"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/layout_categoryBreakdown_food"
+        android:layout_alignStart="@id/layout_categoryBreakdown_food"
+        android:layout_marginTop="8dp" >
+
+        <TextView
+            android:id="@+id/text_categoryBreakdown_gifts"
+            android:text="@string/str_gifts"
+            android:layout_width="175dp"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/amount_categoryBreakdown_gifts"
+            android:layout_width="75dp"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layout_categoryBreakdown_misc"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/layout_categoryBreakdown_gifts"
+        android:layout_alignStart="@id/layout_categoryBreakdown_gifts"
+        android:layout_marginTop="8dp" >
+
+        <TextView
+            android:id="@+id/text_categoryBreakdown_misc"
+            android:text="@string/str_misc"
+            android:layout_width="175dp"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/amount_categoryBreakdown_misc"
+            android:layout_width="75dp"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layout_categoryBreakdown_shopping"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/layout_categoryBreakdown_misc"
+        android:layout_alignStart="@id/layout_categoryBreakdown_misc"
+        android:layout_marginTop="8dp" >
+
+        <TextView
+            android:id="@+id/text_categoryBreakdown_shopping"
+            android:text="@string/str_shopping"
+            android:layout_width="175dp"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/amount_categoryBreakdown_shopping"
+            android:layout_width="75dp"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layout_categoryBreakdown_travel"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/layout_categoryBreakdown_shopping"
+        android:layout_alignStart="@id/layout_categoryBreakdown_shopping"
+        android:layout_marginTop="8dp" >
+
+        <TextView
+            android:id="@+id/text_categoryBreakdown_travel"
+            android:text="@string/str_travel"
+            android:layout_width="175dp"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/amount_categoryBreakdown_travel"
+            android:layout_width="75dp"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+
+    <Button
+        android:id="@+id/btn_viewExpensesList"
+        android:text="@string/str_viewExpensesList"
+        android:layout_width="250dp"
+        android:layout_height="80dp"
+        android:layout_below="@id/layout_categoryBreakdown_travel"
+        android:layout_marginTop="50dp"
+        android:layout_centerInParent="true"
+        android:onClick="onClickViewExpensesList" />
+
+</RelativeLayout>

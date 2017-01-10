@@ -1,0 +1,77 @@
+<resources>
+    <string name="app_name">Ausgaben</string>
+
+    <!-- COMMON -->
+
+    <string name="str_dollarSign">$</string>
+
+
+    <!-- COLOURS -->
+    <color name="darkSlateBlue">#483D8B</color>
+    <color name="midnightBlue">#191970</color>
+    <color name="darkSlateGrey">#2F4F4F</color>
+
+
+    <!-- ExpenseActivity -->
+    <string name="str_expenseName">Name</string>
+    <string name="str_expenseCategory">Category</string>
+    <string name="str_expenseDate">Date</string>
+    <string name="str_expenseDateDisplay">Select Date</string>
+    <string name="str_expenseAmt">Amount</string>
+    <string name="str_save">Save</string>
+    <string name="str_cancel">Cancel</string>
+    <string name="str_delete">Delete</string>
+
+    <string-array name="spn_expenseCategory_entries">
+        <item>Entertainment</item>
+        <item>Food</item>
+        <item>Gifts</item>
+        <item>Misc</item>
+        <item>Shopping</item>
+        <item>Travel</item>
+    </string-array>
+
+    <string name="message_save">Input saved</string>
+    <string name="message_missingAmt">Please input a valid amount</string>
+    <string name="message_missingName">Please input an item name</string>
+    <string name="message_dbCleared">Database cleared</string>
+
+    <string name="dialog_deleteConfirmation">Delete this expense?</string>
+
+    <string name="toast_expenseAdded">New expense added</string>
+    <string name="toast_expenseEdited">Expense details edited</string>
+    <string name="toast_expenseDeleted">Expense deleted</string>
+
+    <!-- MainActivity -->
+    <string name="str_overview">Overview</string>
+    <string name="str_addExpense">Add Expense</string>
+
+
+    <!-- OverviewActivity -->
+    <string-array name="spn_selectMonth_entries">
+        <item>All Months</item>
+        <item>Jan 2017</item>
+        <item>Feb 2017</item>
+        <item>Mar 2017</item>
+        <item>Apr 2017</item>
+        <item>May 2017</item>
+        <item>Jun 2017</item>
+        <item>Jul 2017</item>
+        <item>Aug 2017</item>
+    </string-array>
+
+    <string name="str_totalExpenditure">Total Expenditure</string>
+    <string name="str_viewExpensesList">View Expenses List</string>
+
+    <string name="str_entertainment">Entertainment</string>
+    <string name="str_food">Food</string>
+    <string name="str_gifts">Gifts</string>
+    <string name="str_misc">Misc</string>
+    <string name="str_shopping">Shopping</string>
+    <string name="str_travel">Travel</string>
+
+    <!-- DetailsActivity -->
+    <string name="str_showFilters">Show Filters</string>
+    <string name="str_hideFilters">Hide Filters</string>
+
+</resources>
