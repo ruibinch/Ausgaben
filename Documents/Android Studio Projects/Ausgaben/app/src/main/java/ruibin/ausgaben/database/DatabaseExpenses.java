@@ -2,14 +2,17 @@ package ruibin.ausgaben.database;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+
 
 /**
  * Created by Ruibin on 1/1/2017.
@@ -25,7 +28,10 @@ public class DatabaseExpenses {
             SQLiteHelper.COLUMN_DATE,
             SQLiteHelper.COLUMN_NAME,
             SQLiteHelper.COLUMN_CATEGORY,
-            SQLiteHelper.COLUMN_AMOUNT
+            SQLiteHelper.COLUMN_AMOUNT,
+            SQLiteHelper.COLUMN_CURRENCY,
+            SQLiteHelper.COLUMN_FOREXRATE,
+            SQLiteHelper.COLUMN_FOREXRATE_EURTOSGD
     };
 
     public DatabaseExpenses(Context context) {
@@ -34,6 +40,7 @@ public class DatabaseExpenses {
 
     public void open() throws SQLException {
         database = dbHelper.getWritableDatabase();
+        // dbHelper.onUpgrade(database, 2, 3);
     }
 
     public void close() {
@@ -45,15 +52,18 @@ public class DatabaseExpenses {
      */
 
     // Creates a new expense and adds it to the DB
-    public Expense createExpense(long date, String name, String category, BigDecimal amount) {
+    public Expense createExpense(SharedPreferences mPrefs, long date, String name, String category, BigDecimal amount, String currency) {
         // Creating the set of values to be inserted into the DB
         ContentValues values = new ContentValues();
         values.put(SQLiteHelper.COLUMN_DATE, date);
         values.put(SQLiteHelper.COLUMN_NAME, name);
         values.put(SQLiteHelper.COLUMN_CATEGORY, category);
         values.put(SQLiteHelper.COLUMN_AMOUNT, amount.toPlainString());
+        values.put(SQLiteHelper.COLUMN_CURRENCY, currency);
+        values.put(SQLiteHelper.COLUMN_FOREXRATE, getForexRate(mPrefs, currency));
+        values.put(SQLiteHelper.COLUMN_FOREXRATE_EURTOSGD, getForexRate(mPrefs, "SGD"));
 
-        // Insert the data into the DB and obtaining the ID
+        // Insert the data into the DB and obtain the ID
         long insertId = database.insert(SQLiteHelper.TABLE_EXPENSES, null, values);
 
         // Read the recently-inserted data from the DB using a Cursor
@@ -61,26 +71,33 @@ public class DatabaseExpenses {
                 null, null, null, null);
         cursor.moveToFirst();
         Expense expense = getExpenseDetails(cursor);
+        System.out.println(expense);
 
         cursor.close();
         return expense;
     }
 
     // Edits an existing expense in the DB
-    public boolean[] editExpense(long editId, long date, String name, String category, BigDecimal amount) {
+    public boolean[] editExpense(SharedPreferences mPrefs, long editId, long date, String name, String category, BigDecimal amount, String currency) {
+        // Obtain the current row_expenseslist of values in the DB
+        Cursor cursor = database.query(SQLiteHelper.TABLE_EXPENSES, allColumns, SQLiteHelper.COLUMN_ID + " = " + editId,
+                null, null, null, null);
+        cursor.moveToFirst();
+        Expense expense = getExpenseDetails(cursor);
+
         // Create the new set of values to replace the existing set in the DB
         ContentValues values = new ContentValues();
         values.put(SQLiteHelper.COLUMN_DATE, date);
         values.put(SQLiteHelper.COLUMN_NAME, name);
         values.put(SQLiteHelper.COLUMN_CATEGORY, category);
         values.put(SQLiteHelper.COLUMN_AMOUNT, amount.toPlainString());
+        values.put(SQLiteHelper.COLUMN_CURRENCY, currency);
 
-        // Obtain the current row of values in the DB
-        Cursor cursor = database.query(SQLiteHelper.TABLE_EXPENSES, allColumns, SQLiteHelper.COLUMN_ID + " = " + editId,
-                null, null, null, null);
-        cursor.moveToFirst();
-        Expense expense = getExpenseDetails(cursor);
+        // Obtain what has been edited - if there is a currency change, then change the forex rate
         boolean[] isEditsMade = compareDifferences(expense, values);
+        if (isEditsMade[4]) {
+            values.put(SQLiteHelper.COLUMN_FOREXRATE, getForexRate(mPrefs, currency));
+        }
 
         database.update(SQLiteHelper.TABLE_EXPENSES, values, SQLiteHelper.COLUMN_ID + " = " + editId, null);
 
@@ -123,7 +140,7 @@ public class DatabaseExpenses {
         return expenseList;
     }
 
-    // Obtains the total expenditure for all expenses occurring in the specified MONTH
+    /* Obtains the total expenditure for all expenses occurring in the specified MONTH
     public BigDecimal getMonthExpenditure(int month) {
         Cursor cursor = database.query(SQLiteHelper.TABLE_EXPENSES,
                 new String[] { SQLiteHelper.COLUMN_DATE, SQLiteHelper.COLUMN_AMOUNT }, // columns to return
@@ -142,24 +159,28 @@ public class DatabaseExpenses {
         monthExpenditure = monthExpenditure.setScale(2);
         return monthExpenditure;
     }
+    */
 
-    // Obtains the total expenditure for expenses of the specified CATEGORY in the specified MONTH
-    public BigDecimal getCategoryExpenditure(String category, int month){
+    // Obtains the total expenditure for expenses of the specified CATEGORY in the specified MONTH in the correct display currency
+    public BigDecimal getCategoryExpenditure(String category, int month, String displayCurrency){
         Cursor cursor = database.query(SQLiteHelper.TABLE_EXPENSES,
-                new String[] { SQLiteHelper.COLUMN_DATE, SQLiteHelper.COLUMN_CATEGORY, SQLiteHelper.COLUMN_AMOUNT }, // columns to return
+                new String[] { SQLiteHelper.COLUMN_DATE, SQLiteHelper.COLUMN_CATEGORY, SQLiteHelper.COLUMN_AMOUNT,
+                        SQLiteHelper.COLUMN_FOREXRATE, SQLiteHelper.COLUMN_FOREXRATE_EURTOSGD }, // columns to return
                 null, null, null, null, null, null);
         cursor.moveToFirst();
 
         BigDecimal categoryExpenditure = new BigDecimal(0);
         while (!cursor.isAfterLast()) {
             if (expenseWithinCategory(cursor, category) && (month == 0 || expenseWithinMonth(cursor.getLong(0), month))) {
-                BigDecimal expenditure = getExpenditureAmount(cursor.getString(2));
+                BigDecimal expenditure = getExpenditureAmount(cursor.getString(2), cursor.getDouble(3)); // expenditure value here is in euros
+                if (displayCurrency.equals("SGD"))
+                    expenditure = convertExpenditureAmountToSgd(expenditure, cursor.getDouble(4)); // convert to SGD if need be
                 categoryExpenditure = categoryExpenditure.add(expenditure);
             }
             cursor.moveToNext();
         }
 
-        categoryExpenditure = categoryExpenditure.setScale(2);
+        categoryExpenditure = categoryExpenditure.setScale(2, RoundingMode.HALF_UP);
         return categoryExpenditure;
     }
 
@@ -186,18 +207,24 @@ public class DatabaseExpenses {
 
     // Get all the details of an expense in an Expense object
     private Expense getExpenseDetails(Cursor cursor) {
-        return new Expense(cursor.getLong(0), cursor.getLong(1), cursor.getString(2),
-                cursor.getString(3), new BigDecimal(cursor.getString(4)));
+        return new Expense(cursor.getLong(0), cursor.getLong(1), cursor.getString(2), cursor.getString(3),
+                new BigDecimal(cursor.getString(4)), cursor.getString(5), cursor.getLong(6), cursor.getLong(7));
     }
 
-    // Get the expenditure amount in BigDecimal type
-    private BigDecimal getExpenditureAmount(String amount) {
-        return new BigDecimal(amount);
+    // Get the expenditure amount, converted into euros, rounded to 2 decimal places
+    private BigDecimal getExpenditureAmount(String amt, double forexRate) {
+        BigDecimal amount = new BigDecimal(amt);
+        return amount.divide(new BigDecimal(forexRate), 2, RoundingMode.HALF_UP);
+    }
+
+    // Converts the expenditure amount from EUR to SGD - for display purposes
+    private BigDecimal convertExpenditureAmountToSgd(BigDecimal amount, double forexRateEurToSgd) {
+        return amount.multiply(new BigDecimal(forexRateEurToSgd));
     }
 
     // Returns a boolean array indicating which fields were edited (date, name, category, amount)
     private boolean[] compareDifferences(Expense expense, ContentValues values) {
-        boolean[] isEditsMade = new boolean[4];
+        boolean[] isEditsMade = new boolean[5];
         if (expense.getDate() != values.getAsLong(SQLiteHelper.COLUMN_DATE))
             isEditsMade[0] = true;
         if (!expense.getName().equals(values.getAsString(SQLiteHelper.COLUMN_NAME)))
@@ -206,8 +233,54 @@ public class DatabaseExpenses {
             isEditsMade[2] = true;
         if (!expense.getAmount().setScale(2, BigDecimal.ROUND_HALF_UP).equals(new BigDecimal(values.getAsString(SQLiteHelper.COLUMN_AMOUNT))))
             isEditsMade[3] = true;
+        if (!expense.getCurrency().equals(values.getAsString(SQLiteHelper.COLUMN_CURRENCY)))
+            isEditsMade[4] = true;
 
         return isEditsMade;
+    }
+
+    // Returns the forex rate for the specified currency
+    private double getForexRate(SharedPreferences mPrefs, String currency) {
+
+        switch (currency) {
+            case "ALL" :
+                return Double.valueOf(mPrefs.getString("ALL", ""));
+            case "BAM" :
+                return Double.valueOf(mPrefs.getString("BAM", ""));
+            case "BGN" :
+                return Double.valueOf(mPrefs.getString("BGN", ""));
+            case "BYN" :
+                return Double.valueOf(mPrefs.getString("BYN", ""));
+            case "CHF" :
+                return Double.valueOf(mPrefs.getString("CHF", ""));
+            case "CZK" :
+                return Double.valueOf(mPrefs.getString("CZK", ""));
+            case "DKK" :
+                return Double.valueOf(mPrefs.getString("DKK", ""));
+            case "GBP" :
+                return Double.valueOf(mPrefs.getString("GBP", ""));
+            case "HRK" :
+                return Double.valueOf(mPrefs.getString("HTK", ""));
+            case "HUF" :
+                return Double.valueOf(mPrefs.getString("HUF", ""));
+            case "MKD" :
+                return Double.valueOf(mPrefs.getString("MKD", ""));
+            case "NOK" :
+                return Double.valueOf(mPrefs.getString("NOK", ""));
+            case "PLN" :
+                return Double.valueOf(mPrefs.getString("PLN", ""));
+            case "RON" :
+                return Double.valueOf(mPrefs.getString("RON", ""));
+            case "RSD" :
+                return Double.valueOf(mPrefs.getString("RSD", ""));
+            case "SEK" :
+                return Double.valueOf(mPrefs.getString("SEK", ""));
+            case "SGD" :
+                return Double.valueOf(mPrefs.getString("SGD", ""));
+            case "TRY" :
+                return Double.valueOf(mPrefs.getString("TRY", ""));
+        }
+        return -1;
     }
 
     /*

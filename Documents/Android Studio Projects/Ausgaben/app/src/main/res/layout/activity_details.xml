@@ -18,8 +18,8 @@
         android:onClick="onClickToggleDisplayOfFilters" />
 
     <CheckBox
-        android:id="@+id/checkbox_entertainment"
-        android:text="@string/str_entertainment"
+        android:id="@+id/checkbox_food"
+        android:text="@string/str_food"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/text_toggleFilters"
@@ -30,25 +30,25 @@
         android:onClick="onClickToggleFilters" />
 
     <CheckBox
-        android:id="@+id/checkbox_food"
-        android:text="@string/str_food"
+        android:id="@+id/checkbox_gifts"
+        android:text="@string/str_gifts"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toEndOf="@id/checkbox_entertainment"
-        android:layout_alignBaseline="@id/checkbox_entertainment"
-        android:layout_marginStart="10dp"
+        android:layout_toEndOf="@id/checkbox_food"
+        android:layout_alignBaseline="@id/checkbox_food"
+        android:layout_marginStart="50dp"
         android:checked="true"
         android:visibility="gone"
         android:onClick="onClickToggleFilters" />
 
     <CheckBox
-        android:id="@+id/checkbox_gifts"
-        android:text="@string/str_gifts"
+        android:id="@+id/checkbox_leisure"
+        android:text="@string/str_leisure"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toEndOf="@id/checkbox_entertainment"
+        android:layout_toEndOf="@id/checkbox_food"
         android:layout_alignBaseline="@id/checkbox_food"
-        android:layout_marginStart="115dp"
+        android:layout_marginStart="170dp"
         android:checked="true"
         android:visibility="gone"
         android:onClick="onClickToggleFilters" />
@@ -58,8 +58,8 @@
         android:text="@string/str_misc"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/checkbox_entertainment"
-        android:layout_alignStart="@id/checkbox_entertainment"
+        android:layout_below="@id/checkbox_food"
+        android:layout_alignStart="@id/checkbox_food"
         android:checked="true"
         android:visibility="gone"
         android:onClick="onClickToggleFilters" />
@@ -71,7 +71,7 @@
         android:layout_height="wrap_content"
         android:layout_toEndOf="@id/checkbox_misc"
         android:layout_alignBaseline="@id/checkbox_misc"
-        android:layout_alignStart="@id/checkbox_food"
+        android:layout_alignStart="@id/checkbox_gifts"
         android:checked="true"
         android:visibility="gone"
         android:onClick="onClickToggleFilters" />
@@ -83,7 +83,7 @@
         android:layout_height="wrap_content"
         android:layout_toEndOf="@id/checkbox_shopping"
         android:layout_alignBaseline="@id/checkbox_shopping"
-        android:layout_alignStart="@id/checkbox_gifts"
+        android:layout_alignStart="@id/checkbox_leisure"
         android:checked="true"
         android:visibility="gone"
         android:onClick="onClickToggleFilters" />

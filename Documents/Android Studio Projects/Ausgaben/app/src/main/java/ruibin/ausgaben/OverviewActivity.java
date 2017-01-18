@@ -7,21 +7,27 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.CompoundButton;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
+import java.math.BigDecimal;
 import java.util.Calendar;
 
 import ruibin.ausgaben.database.DatabaseExpenses;
 
-public class OverviewActivity extends Activity implements OnItemSelectedListener {
+public class OverviewActivity extends Activity {
 
     private DatabaseExpenses database;
-    private int selectedMonth; // Stores the currently selected month
+    private int displayMonth;
+    private String displayCurrency = "EUR"; // default display is EUR
 
     // XML resources
     private TextView expenditureDisplay;
-    private Spinner selectMonth;
+    private Spinner selectMonthDisplay;
+    private ToggleButton selectCurrencyDisplay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +41,8 @@ public class OverviewActivity extends Activity implements OnItemSelectedListener
         setTextViews();
 
         // Populate data
-        updateExpensesCategoriesBreakdown();
+        updateExpenseValuesDisplayed(displayCurrency); // default display currency is EUR
+        // TODO - include settings to specify forex rates
 
     }
 
@@ -50,8 +57,12 @@ public class OverviewActivity extends Activity implements OnItemSelectedListener
 
     private void initialiseWidgets() {
         expenditureDisplay = (TextView) findViewById(R.id.expenditure);
-        selectMonth = (Spinner) findViewById(R.id.spn_selectMonth);
-        selectMonth.setOnItemSelectedListener(this);
+
+        selectMonthDisplay = (Spinner) findViewById(R.id.spn_selectMonthDisplay);
+        selectMonthDisplay.setOnItemSelectedListener(selectMonthListener);
+
+        selectCurrencyDisplay = (ToggleButton) findViewById(R.id.toggle_selectCurrencyDisplay);
+        selectCurrencyDisplay.setOnCheckedChangeListener(selectCurrencyListener);
     }
 
     // Sets the default display to the current month
@@ -59,9 +70,9 @@ public class OverviewActivity extends Activity implements OnItemSelectedListener
         int displayMonth = getIntent().getIntExtra("month", -1);
         if (displayMonth == -1) {
             Calendar cal = Calendar.getInstance();
-            selectMonth.setSelection(cal.get(Calendar.MONTH) + 1);
+            selectMonthDisplay.setSelection(cal.get(Calendar.MONTH) + 1);
         } else {
-            selectMonth.setSelection(displayMonth);
+            selectMonthDisplay.setSelection(displayMonth);
         }
     }
 
@@ -81,23 +92,36 @@ public class OverviewActivity extends Activity implements OnItemSelectedListener
         startActivity(intent);
     }
 
-    // OnItemSelectedListener implementation - Spinner to select month
-    public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-        selectedMonth = pos;
-        expenditureDisplay.setText(R.string.str_dollarSign);
-        expenditureDisplay.append(database.getMonthExpenditure(pos).toString());
+    // Click handler for 'Display Month' spinner
+    OnItemSelectedListener selectMonthListener = new OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            displayMonth = position;
+            updateExpenseValuesDisplayed(displayCurrency);
+        }
 
-        updateExpensesCategoriesBreakdown();
-    }
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
 
-    // OnItemSelectedListener implementation
-    public void onNothingSelected(AdapterView<?> parent) {
-    }
+        }
+    };
+
+    CompoundButton.OnCheckedChangeListener selectCurrencyListener = new CompoundButton.OnCheckedChangeListener() {
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            if (isChecked) {
+                displayCurrency = "SGD";
+                updateExpenseValuesDisplayed(displayCurrency);
+            } else {
+                displayCurrency = "EUR";
+                updateExpenseValuesDisplayed(displayCurrency);
+            }
+        }
+    };
 
     // Click handler for 'View Expenses List' button
     public void onClickViewExpensesList(View view) {
         Intent intent = new Intent(this, DetailsActivity.class);
-        intent.putExtra("month", selectedMonth);
+        intent.putExtra("month", displayMonth);
         startActivity(intent);
     }
 
@@ -105,27 +129,57 @@ public class OverviewActivity extends Activity implements OnItemSelectedListener
      * ====================== HELPER METHODS ======================
      */
 
-    private void updateExpensesCategoriesBreakdown() {
-        TextView amountEntertainment = (TextView) findViewById(R.id.amount_categoryBreakdown_entertainment);
-        TextView amountFood = (TextView) findViewById(R.id.amount_categoryBreakdown_food);
-        TextView amountGifts = (TextView) findViewById(R.id.amount_categoryBreakdown_gifts);
-        TextView amountMisc = (TextView) findViewById(R.id.amount_categoryBreakdown_misc);
-        TextView amountShopping = (TextView) findViewById(R.id.amount_categoryBreakdown_shopping);
-        TextView amountTravel = (TextView) findViewById(R.id.amount_categoryBreakdown_travel);
+    // Updates all expense values on the screen, in the correct display currency (total amount + individual categories)
+    private void updateExpenseValuesDisplayed(String displayCurrency) {
+        TextView foodExpenseDisplay = (TextView) findViewById(R.id.amount_categoryBreakdown_food);
+        TextView giftsExpenseDisplay = (TextView) findViewById(R.id.amount_categoryBreakdown_gifts);
+        TextView leisureExpenseDisplay = (TextView) findViewById(R.id.amount_categoryBreakdown_leisure);
+        TextView miscExpenseDisplay = (TextView) findViewById(R.id.amount_categoryBreakdown_misc);
+        TextView shoppingExpenseDisplay = (TextView) findViewById(R.id.amount_categoryBreakdown_shopping);
+        TextView travelExpenseDisplay = (TextView) findViewById(R.id.amount_categoryBreakdown_travel);
+        BigDecimal foodExpense = new BigDecimal(-1);
+        BigDecimal giftsExpense = new BigDecimal(-1);
+        BigDecimal leisureExpense = new BigDecimal(-1);
+        BigDecimal miscExpense = new BigDecimal(-1);
+        BigDecimal shoppingExpense = new BigDecimal(-1);
+        BigDecimal travelExpense = new BigDecimal(-1);
 
-        amountEntertainment.setText(R.string.str_dollarSign);
-        amountFood.setText(R.string.str_dollarSign);
-        amountGifts.setText(R.string.str_dollarSign);
-        amountMisc.setText(R.string.str_dollarSign);
-        amountShopping.setText(R.string.str_dollarSign);
-        amountTravel.setText(R.string.str_dollarSign);
+        if (displayCurrency.equals("EUR")) {
+            foodExpenseDisplay.setText(R.string.str_euroSign);
+            giftsExpenseDisplay.setText(R.string.str_euroSign);
+            leisureExpenseDisplay.setText(R.string.str_euroSign);
+            miscExpenseDisplay.setText(R.string.str_euroSign);
+            shoppingExpenseDisplay.setText(R.string.str_euroSign);
+            travelExpenseDisplay.setText(R.string.str_euroSign);
+            expenditureDisplay.setText(R.string.str_euroSign);
+        } else { // display in SGD
+            foodExpenseDisplay.setText(R.string.str_dollarSign);
+            giftsExpenseDisplay.setText(R.string.str_dollarSign);
+            leisureExpenseDisplay.setText(R.string.str_dollarSign);
+            miscExpenseDisplay.setText(R.string.str_dollarSign);
+            shoppingExpenseDisplay.setText(R.string.str_dollarSign);
+            travelExpenseDisplay.setText(R.string.str_dollarSign);
+            expenditureDisplay.setText(R.string.str_dollarSign);
+        }
 
-        amountEntertainment.append(database.getCategoryExpenditure("entertainment", selectedMonth).toString());
-        amountFood.append(database.getCategoryExpenditure("food", selectedMonth).toString());
-        amountGifts.append(database.getCategoryExpenditure("gifts", selectedMonth).toString());
-        amountMisc.append(database.getCategoryExpenditure("misc", selectedMonth).toString());
-        amountShopping.append(database.getCategoryExpenditure("shopping", selectedMonth).toString());
-        amountTravel.append(database.getCategoryExpenditure("travel", selectedMonth).toString());
+        leisureExpense = database.getCategoryExpenditure("leisure", displayMonth, displayCurrency);
+        foodExpense = database.getCategoryExpenditure("food", displayMonth, displayCurrency);
+        giftsExpense = database.getCategoryExpenditure("gifts", displayMonth, displayCurrency);
+        miscExpense = database.getCategoryExpenditure("misc", displayMonth, displayCurrency);
+        shoppingExpense = database.getCategoryExpenditure("shopping", displayMonth, displayCurrency);
+        travelExpense = database.getCategoryExpenditure("travel", displayMonth, displayCurrency);
+
+        foodExpenseDisplay.append(foodExpense.toString());
+        giftsExpenseDisplay.append(giftsExpense.toString());
+        leisureExpenseDisplay.append(leisureExpense.toString());
+        miscExpenseDisplay.append(miscExpense.toString());
+        shoppingExpenseDisplay.append(shoppingExpense.toString());
+        travelExpenseDisplay.append(travelExpense.toString());
+
+        BigDecimal totalExpenditure = leisureExpense.add(foodExpense).add(giftsExpense).add(miscExpense)
+                .add(shoppingExpense).add(travelExpense);
+        expenditureDisplay.append(totalExpenditure.toString());
+
     }
 
 }

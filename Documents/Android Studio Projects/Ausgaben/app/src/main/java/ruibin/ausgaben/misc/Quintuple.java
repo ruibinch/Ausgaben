@@ -1,22 +1,22 @@
 package ruibin.ausgaben.misc;
 
-public class Quadruple <S, T, U, V> {
+public class Quintuple<S, T, U, V, W> {
 
 	private S first;
 	private T second;
 	private U third;
 	private V fourth;
+	private W fifth;
 	
-	public Quadruple(S first, T second, U third, V fourth) {
+	public Quintuple(S first, T second, U third, V fourth, W fifth) {
 		this.first = first;
 		this.second = second;
 		this.third = third;
 		this.fourth = fourth;
+		this.fifth = fifth;
 	}
 	
-	public Quadruple() {
-		
-	}
+	public Quintuple() { }
 	
 	public S getFirst() {
 		return first;
@@ -32,5 +32,9 @@ public class Quadruple <S, T, U, V> {
 	
 	public V getFourth() {
 		return fourth;
+	}
+
+	public W getFifth() {
+		return fifth;
 	}
 }

@@ -1,8 +1,6 @@
 package ruibin.ausgaben;
 
 import android.content.Context;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,17 +34,18 @@ class DetailsAdapter extends ArrayAdapter<Expense> {
     private boolean isNameEdited;
     private boolean isCategoryEdited;
     private boolean isAmountEdited;
+    private boolean isCurrencyEdited;
 
 
     DetailsAdapter(Context context, ArrayList<Expense> list) {
-        super(context, R.layout.row, list);
+        super(context, R.layout.row_expenseslist, list);
 
         this.context = context;
         this.list = list;
     }
 
     DetailsAdapter(Context context, ArrayList<Expense> list, long newExpenseId) {
-        super(context, R.layout.row, list);
+        super(context, R.layout.row_expenseslist, list);
 
         this.context = context;
         this.list = list;
@@ -54,8 +53,8 @@ class DetailsAdapter extends ArrayAdapter<Expense> {
     }
 
     DetailsAdapter(Context context, ArrayList<Expense> list, long editExpenseId,
-                   boolean isDateEdited, boolean isNameEdited, boolean isCategoryEdited, boolean isAmountEdited) {
-        super(context, R.layout.row, list);
+                   boolean isDateEdited, boolean isNameEdited, boolean isCategoryEdited, boolean isAmountEdited, boolean isCurrencyEdited) {
+        super(context, R.layout.row_expenseslist, list);
 
         this.context = context;
         this.list = list;
@@ -64,6 +63,7 @@ class DetailsAdapter extends ArrayAdapter<Expense> {
         this.isNameEdited = isNameEdited;
         this.isCategoryEdited = isCategoryEdited;
         this.isAmountEdited = isAmountEdited;
+        this.isCurrencyEdited = isCurrencyEdited;
     }
 
     @Override
@@ -72,7 +72,7 @@ class DetailsAdapter extends ArrayAdapter<Expense> {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         // Get rowView from inflater
-        View rowView = inflater.inflate(R.layout.row, parent, false);
+        View rowView = inflater.inflate(R.layout.row_expenseslist, parent, false);
 
         // Get the Views from the RowView
         ImageView categoryIconView = (ImageView) rowView.findViewById(R.id.list_icon);
@@ -84,7 +84,11 @@ class DetailsAdapter extends ArrayAdapter<Expense> {
         setIconView(categoryIconView, list.get(pos).getCategory());
         dateView.setText(sdf.format(new Date(list.get(pos).getDate())));
         nameView.setText(list.get(pos).getName());
-        amountView.setText("$" + list.get(pos).getAmount().setScale(2, BigDecimal.ROUND_HALF_UP).toString());
+        // Set the currency display - depending on the currency, the currency sign can be before or after the value
+        String currency = list.get(pos).getCurrency();
+        amountView.setText(list.get(pos).getAmount().setScale(2, BigDecimal.ROUND_HALF_UP).toString());
+        amountView.append(getCurrencySign(currency));
+
 
         // Highlight the added item or the edited details
         int colourDarkGreen = ContextCompat.getColor(parent.getContext(), R.color.colorDarkGreen);
@@ -103,7 +107,7 @@ class DetailsAdapter extends ArrayAdapter<Expense> {
                     dateView.setTextColor(colourDarkGreen);
                 if (isNameEdited)
                     nameView.setTextColor(colourDarkGreen);
-                if (isAmountEdited)
+                if (isAmountEdited || isCurrencyEdited)
                     amountView.setTextColor(colourDarkGreen);
             }
         }
@@ -117,14 +121,14 @@ class DetailsAdapter extends ArrayAdapter<Expense> {
 
     private void setIconView(ImageView iconView, String category) {
         switch (category) {
-            case "Entertainment" :
-                iconView.setImageResource(R.drawable.ic_entertainment);
-                break;
             case "Food" :
                 iconView.setImageResource(R.drawable.ic_food);
                 break;
             case "Gifts" :
                 iconView.setImageResource(R.drawable.ic_gifts);
+                break;
+            case "Leisure" :
+                iconView.setImageResource(R.drawable.ic_leisure);
                 break;
             case "Misc" :
                 iconView.setImageResource(R.drawable.ic_misc);
@@ -136,7 +140,50 @@ class DetailsAdapter extends ArrayAdapter<Expense> {
                 iconView.setImageResource(R.drawable.ic_travel);
                 break;
         }
+    }
 
+    private String getCurrencySign(String currency) {
+        switch (currency) {
+            case "ALL" :
+                return " L";
+            case "BAM" :
+                return " KM";
+            case "BGN" :
+                return " лв";
+            case "BYN" :
+                return " Br";
+            case "CHF" :
+                return " CHF";
+            case "CZK" :
+                return " Kč";
+            case "DKK" :
+                return " kr";
+            case "EUR" :
+                return " €";
+            case "GBP" :
+                return " £";
+            case "HRK" :
+                return " kn";
+            case "HUF" :
+                return " Ft";
+            case "MKD" :
+                return " ден";
+            case "NOK" :
+                return " kr";
+            case "PLN" :
+                return " zł";
+            case "RON" :
+                return " lei";
+            case "RSD" :
+                return " din.";
+            case "SEK" :
+                return " kr";
+            case "SGD" :
+                return " S$";
+            case "TRY" :
+                return " ₺";
+        }
+        return "";
     }
 
 }

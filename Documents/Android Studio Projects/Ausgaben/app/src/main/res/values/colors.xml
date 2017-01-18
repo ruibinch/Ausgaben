@@ -5,4 +5,9 @@
     <color name="colorAccent">#FF4081</color>
 
     <color name="colorDarkGreen">#008000</color>
+    <color name="darkSlateBlue">#483D8B</color>
+    <color name="midnightBlue">#191970</color>
+    <color name="darkSlateGray">#2F4F4F</color>
+    <color name="lightGray">#D0D3D4</color>
+
 </resources>

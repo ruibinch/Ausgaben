@@ -7,13 +7,10 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -36,9 +33,9 @@ public class DetailsActivity extends ListActivity {
     private Animation animationFadeOut;
 
     // Declaration of Checkboxes - defaulted to true
-    private boolean isEntertainmentVisible = true;
     private boolean isFoodVisible = true;
     private boolean isGiftsVisible = true;
+    private boolean isLeisureVisible = true;
     private boolean isMiscVisibile = true;
     private boolean isShoppingVisible = true;
     private boolean isTravelVisible = true;
@@ -95,13 +92,14 @@ public class DetailsActivity extends ListActivity {
         boolean isNameEdited = getIntent().getBooleanExtra("isNameEdited", false);
         boolean isCategoryEdited = getIntent().getBooleanExtra("isCategoryEdited", false);
         boolean isAmountEdited = getIntent().getBooleanExtra("isAmountEdited", false);
+        boolean isCurrencyEdited = getIntent().getBooleanExtra("isCurrencyEdited", false);
 
         DetailsAdapter adapter;
         if (newExpenseId != -1) {
             adapter = new DetailsAdapter(this, displayData(), newExpenseId);
         } else if (editExpenseId != -1) {
             adapter = new DetailsAdapter(this, displayData(), editExpenseId,
-                    isDateEdited, isNameEdited, isCategoryEdited, isAmountEdited);
+                    isDateEdited, isNameEdited, isCategoryEdited, isAmountEdited, isCurrencyEdited);
         } else {
             adapter = new DetailsAdapter(this, displayData());
         }
@@ -143,6 +141,7 @@ public class DetailsActivity extends ListActivity {
             bundle.putString("name", expense.getName());
             bundle.putString("category", expense.getCategory());
             bundle.putString("amount", expense.getAmount().setScale(2, BigDecimal.ROUND_HALF_UP).toString());
+            bundle.putString("currency", expense.getCurrency());
 
             intent.putExtras(bundle);
             startActivity(intent);
@@ -161,37 +160,37 @@ public class DetailsActivity extends ListActivity {
         }
 
         // Toggles the display of the checkboxes and the list
-        CheckBox cbEntertainment = (CheckBox) findViewById(R.id.checkbox_entertainment);
         CheckBox cbFood = (CheckBox) findViewById(R.id.checkbox_food);
         CheckBox cbGifts = (CheckBox) findViewById(R.id.checkbox_gifts);
+        CheckBox cbLeisure = (CheckBox) findViewById(R.id.checkbox_leisure);
         CheckBox cbMisc = (CheckBox) findViewById(R.id.checkbox_misc);
         CheckBox cbShopping = (CheckBox) findViewById(R.id.checkbox_shopping);
         CheckBox cbTravel = (CheckBox) findViewById(R.id.checkbox_travel);
 
-        if (cbEntertainment.getVisibility() == View.VISIBLE) {
-            cbEntertainment.startAnimation(animationFadeOut);
+        if (cbFood.getVisibility() == View.VISIBLE) {
             cbFood.startAnimation(animationFadeOut);
             cbGifts.startAnimation(animationFadeOut);
+            cbLeisure.startAnimation(animationFadeOut);
             cbMisc.startAnimation(animationFadeOut);
             cbShopping.startAnimation(animationFadeOut);
             cbTravel.startAnimation(animationFadeOut);
-            cbEntertainment.setVisibility(View.GONE);
             cbFood.setVisibility(View.GONE);
             cbGifts.setVisibility(View.GONE);
+            cbLeisure.setVisibility(View.GONE);
             cbMisc.setVisibility(View.GONE);
             cbShopping.setVisibility(View.GONE);
             cbTravel.setVisibility(View.GONE);
             // shiftListPosition(0);
         } else {
-            cbEntertainment.startAnimation(animationFadeIn);
             cbFood.startAnimation(animationFadeIn);
             cbGifts.startAnimation(animationFadeIn);
+            cbLeisure.startAnimation(animationFadeIn);
             cbMisc.startAnimation(animationFadeIn);
             cbShopping.startAnimation(animationFadeIn);
             cbTravel.startAnimation(animationFadeIn);
-            cbEntertainment.setVisibility(View.VISIBLE);
             cbFood.setVisibility(View.VISIBLE);
             cbGifts.setVisibility(View.VISIBLE);
+            cbLeisure.setVisibility(View.VISIBLE);
             cbMisc.setVisibility(View.VISIBLE);
             cbShopping.setVisibility(View.VISIBLE);
             cbTravel.setVisibility(View.VISIBLE);
@@ -214,14 +213,14 @@ public class DetailsActivity extends ListActivity {
     // Toggles the list display accordingly based on the (un)selected filters
     public void onClickToggleFilters(View view) {
         switch (view.getId()) {
-            case R.id.checkbox_entertainment :
-                isEntertainmentVisible = !isEntertainmentVisible;
-                break;
             case R.id.checkbox_food :
                 isFoodVisible = !isFoodVisible;
                 break;
             case R.id.checkbox_gifts :
                 isGiftsVisible = !isGiftsVisible;
+                break;
+            case R.id.checkbox_leisure :
+                isLeisureVisible = !isLeisureVisible;
                 break;
             case R.id.checkbox_misc :
                 isMiscVisibile = !isMiscVisibile;
@@ -242,7 +241,7 @@ public class DetailsActivity extends ListActivity {
 
     // Updates the displayed list based on the category filters
     private void updateListView() {
-        boolean[] filters = { isEntertainmentVisible, isFoodVisible, isGiftsVisible,
+        boolean[] filters = {isFoodVisible, isGiftsVisible, isLeisureVisible,
                 isMiscVisibile, isShoppingVisible, isTravelVisible};
 
         DetailsAdapter adapter = new DetailsAdapter(this, displayData(filters));
@@ -261,13 +260,13 @@ public class DetailsActivity extends ListActivity {
         expenseList = sortMostRecentFirst(expenseList);
 
         if (!filters[0]) {
-            expenseList = filterList(expenseList, "entertainment");
-        }
-        if (!filters[1]) {
             expenseList = filterList(expenseList, "food");
         }
-        if (!filters[2]) {
+        if (!filters[1]) {
             expenseList = filterList(expenseList, "gifts");
+        }
+        if (!filters[2]) {
+            expenseList = filterList(expenseList, "leisure");
         }
         if (!filters[3]) {
             expenseList = filterList(expenseList, "misc");
