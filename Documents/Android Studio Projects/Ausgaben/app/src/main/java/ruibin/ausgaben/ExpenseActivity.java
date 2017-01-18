@@ -53,9 +53,9 @@ public class ExpenseActivity extends Activity {
 
         // Initalisation methods
         openDatabase();
-        setCurrencyVisbility();
         setDisplays();
         populateDataFromBundle();
+        setCurrencyVisbility();
         setDeleteButtonVisibility();
 
     }
@@ -69,20 +69,6 @@ public class ExpenseActivity extends Activity {
         database.open();
     }
 
-    // Sets the visibility of the currencies in the Spinner
-    private void setCurrencyVisbility() {
-        List<String> currencyList = new ArrayList<String>(Arrays.asList(getResources().getStringArray(R.array.spn_currency_entries)));
-        SharedPreferences mPrefs = getSharedPreferences("toggleRates", MODE_PRIVATE);
-        filterHiddenCurrencies(currencyList, mPrefs);
-
-        Spinner currencySpinner = (Spinner) findViewById(R.id.spn_currency);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, currencyList);
-        adapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item);
-
-        currencySpinner.setAdapter(adapter);
-
-    }
-
     // Sets the correct displays for the elements
     private void setDisplays() {
         // Sets the date to today's date by default
@@ -92,11 +78,6 @@ public class ExpenseActivity extends Activity {
         // Sets the input amount to 2 decimal places
         EditText editText = (EditText) findViewById(R.id.input_expenseAmt);
         editText.setFilters(new InputFilter[] {new DecimalDigitsInputFilter(6,2)});
-
-        // Sets the default currency to 'EUR'
-        Spinner currencySpinner = (Spinner) findViewById(R.id.spn_currency);
-        currencySpinner.setSelection(7);
-
     }
 
     // Populates the fields with data if applicable (i.e. editing an existing expense)
@@ -123,6 +104,22 @@ public class ExpenseActivity extends Activity {
              Spinner currencySpinner = (Spinner) findViewById(R.id.spn_currency);
              setCurrencySpinner(currencySpinner, bundle.getString("currency"));
          }
+    }
+
+    // Sets the visibility of the currencies in the Spinner - only applicable when adding a new expense
+    private void setCurrencyVisbility() {
+        if (!isEditExpense) {
+            ArrayList<String> currencyList = new ArrayList<String>(Arrays.asList(getResources().getStringArray(R.array.spn_currency_entries)));
+            SharedPreferences mPrefs = getSharedPreferences("toggleRates", MODE_PRIVATE);
+            currencyList = filterHiddenCurrencies(currencyList, mPrefs);
+
+            Spinner currencySpinner = (Spinner) findViewById(R.id.spn_currency);
+            ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, currencyList);
+            adapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item);
+
+            currencySpinner.setAdapter(adapter);
+            currencySpinner.setSelection(currencyList.indexOf("EUR")); // Sets the default currency to EUR
+        }
     }
 
     // Sets the 'Delete' button to be visible if applicable
@@ -272,10 +269,18 @@ public class ExpenseActivity extends Activity {
     }
 
     // Filters the list of currencies to be displayed in the Spinner
-    private void filterHiddenCurrencies(List<String> currencyList, SharedPreferences mPrefs) {
+    private ArrayList<String> filterHiddenCurrencies(ArrayList<String> list, SharedPreferences mPrefs) {
+        String[] currencies = { "ALL", "BAM", "BGN", "BYN", "CHF", "CZK", "DKK", "GBP", "HUF",
+                                "HRK", "MKD", "NOK", "PLN", "RON", "RSD", "SEK", "SGD", "TRY"};
 
+        for (int i = 0; i < currencies.length; i++) {
+            if (!mPrefs.getBoolean(currencies[i], true)) { // if boolean is false, remove the currency
+                list.remove(currencies[i]);
+            }
+        }
+
+        return list;
     }
-
 
     // Sets the month to that of the expense being added/edited
     private void setSelectedMonth(Date date) {
