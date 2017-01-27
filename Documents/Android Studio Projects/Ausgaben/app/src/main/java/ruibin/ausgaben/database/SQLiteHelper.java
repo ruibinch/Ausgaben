@@ -3,6 +3,9 @@ package ruibin.ausgaben.database;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.widget.Toast;
+
+import ruibin.ausgaben.ExpenseActivity;
 
 /**
  * Created by Ruibin on 1/1/2017.
@@ -19,6 +22,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     public static final String COLUMN_CURRENCY = "currency";
     public static final String COLUMN_FOREXRATE = "forexrate";
     public static final String COLUMN_FOREXRATE_EURTOSGD = "forexrate_eurtosgd";
+    public static final String COLUMN_COUNTRY = "country";
 
     private static final String DATABASE_NAME = "expenses.db";
     private static final int DATABASE_VERSION = 1;
@@ -32,7 +36,8 @@ public class SQLiteHelper extends SQLiteOpenHelper {
             COLUMN_AMOUNT + " DECIMAL(10,2) NOT NULL, " +
             COLUMN_CURRENCY + " TEXT NOT NULL, " +
             COLUMN_FOREXRATE + " DECIMAL(5,2) NOT NULL, " +
-            COLUMN_FOREXRATE_EURTOSGD + " DECIMAL(3,2) NOT NULL);";
+            COLUMN_FOREXRATE_EURTOSGD + " DECIMAL(3,2) NOT NULL, " +
+            COLUMN_COUNTRY + " TEXT NOT NULL);";
 
 
     public SQLiteHelper(Context context) {

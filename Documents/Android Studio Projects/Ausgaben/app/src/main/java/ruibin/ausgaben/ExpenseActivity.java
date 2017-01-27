@@ -180,18 +180,23 @@ public class ExpenseActivity extends Activity {
             Quintuple<Long, String, String, BigDecimal, String> quint = extractInputData(); // date, name, category, amount, currency
             setSelectedMonth(new Date(quint.getFirst()));
 
+            // Forex rates Preferences
             SharedPreferences mPrefs = getSharedPreferences("forexRates", MODE_PRIVATE);
             Intent intent = new Intent(this, DetailsActivity.class);
 
+            // Location Preferences
+            SharedPreferences mPrefsCountry = getSharedPreferences("location", MODE_PRIVATE);
+            String countryName = mPrefsCountry.getString("country", "");
+
             if (!isEditExpense) {
-                Expense newExpense = database.createExpense(mPrefs, quint.getFirst(), quint.getSecond(),
-                        quint.getThird(), quint.getFourth(), quint.getFifth());
+                Expense newExpense = database.createExpense(quint.getFirst(), quint.getSecond(),
+                        quint.getThird(), quint.getFourth(), quint.getFifth(), mPrefs, countryName);
                 intent.putExtra("newExpenseId", newExpense.getId());
                 intent.putExtra("source", "ExpenseActivity");
                 Toast.makeText(getApplicationContext(), "'" + quint.getSecond() + "' added in " + quint.getFifth(), Toast.LENGTH_SHORT).show();
             } else {
-                boolean[] isEditsMade = database.editExpense(mPrefs, editExpenseId, quint.getFirst(), quint.getSecond(),
-                        quint.getThird(), quint.getFourth(), quint.getFifth());
+                boolean[] isEditsMade = database.editExpense(editExpenseId, quint.getFirst(), quint.getSecond(),
+                        quint.getThird(), quint.getFourth(), quint.getFifth(), mPrefs);
                 intent.putExtra("editExpenseId", editExpenseId);
                 intent.putExtra("isDateEdited", isEditsMade[0]);
                 intent.putExtra("isNameEdited", isEditsMade[1]);

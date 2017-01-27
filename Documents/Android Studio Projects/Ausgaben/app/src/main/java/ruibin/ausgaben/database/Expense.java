@@ -15,20 +15,25 @@ public class Expense {
 
     private SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yy");
 
+    // Main info
     private long id;
     private long date;
     private String name;
     private String category;
     private BigDecimal amount;
 
+    // Currency info
     private String currency;
     private double forexRate; // Forex rate of the currency at the time when the expense is saved in the DB
     private double forexRateEurToSgd; // Forex rate of EUR to SGD at the time when the expense is saved
 
+    // Location info
+    private String country;
+
     public Expense() { }
 
     public Expense(long id, long date, String name, String category, BigDecimal amount, String currency,
-                   double forexRate, double forexRateEurToSgd) {
+                   double forexRate, double forexRateEurToSgd, String country) {
         this.id = id;
         this.date = date;
         this.name = name;
@@ -37,12 +42,14 @@ public class Expense {
         this.currency = currency;
         this.forexRate = forexRate;
         this.forexRateEurToSgd = forexRateEurToSgd;
+        this.country = country;
     }
 
     @Override
     public String toString() {
         return (sdf.format(new Date(date)) + ", " + name + ", " + category + ", " + amount.setScale(2, BigDecimal.ROUND_HALF_UP) +
-                ", forexRates = (" + String.format(Locale.ENGLISH, "%,.2f", forexRate) + ", " + String.format(Locale.ENGLISH, "%,.2f", forexRateEurToSgd) + ")");
+                ", forexRates = (" + String.format(Locale.ENGLISH, "%,.2f", forexRate) + ", " + String.format(Locale.ENGLISH, "%,.2f", forexRateEurToSgd) + ")" +
+                ", " + country.toUpperCase());
     }
 
     // GETTERS
@@ -79,6 +86,10 @@ public class Expense {
         return forexRateEurToSgd;
     }
 
+    public String getCountry() {
+        return country;
+    }
+
     // SETTERS
 
     public void setId(long id) {
@@ -107,6 +118,10 @@ public class Expense {
 
     public void setForexRate(double forexRate) {
         this.forexRate = forexRate;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
     }
 
 }

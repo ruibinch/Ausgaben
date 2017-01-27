@@ -42,7 +42,6 @@ public class OverviewActivity extends Activity {
 
         // Populate data
         updateExpenseValuesDisplayed(displayCurrency); // default display currency is EUR
-        // TODO - include settings to specify forex rates
 
     }
 

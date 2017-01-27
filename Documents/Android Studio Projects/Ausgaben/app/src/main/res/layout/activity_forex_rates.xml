@@ -264,32 +264,6 @@
                     android:maxLines="1" />
             </TableRow>
 
-            <!-- HUF -->
-            <TableRow
-                android:id="@+id/currencyHUF"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" >
-
-                <CheckBox
-                    android:id="@+id/toggle_currencyHUF"
-                    android:layout_width="@dimen/forexTable_showHide"
-                    android:layout_height="wrap_content" />
-
-                <TextView
-                    android:layout_width="@dimen/forexTable_toCurrency"
-                    android:layout_height="wrap_content"
-                    android:labelFor="@+id/rate_currencyHUF"
-                    android:text="@string/currencyHUF" />
-
-                <EditText
-                    android:id="@+id/rate_currencyHUF"
-                    android:layout_width="@dimen/forexTable_exchangeRate"
-                    android:layout_height="wrap_content"
-                    android:background="@android:color/transparent"
-                    android:inputType="numberDecimal"
-                    android:maxLines="1" />
-            </TableRow>
-
             <!-- HRK -->
             <TableRow
                 android:id="@+id/currencyHRK"
@@ -309,6 +283,32 @@
 
                 <EditText
                     android:id="@+id/rate_currencyHRK"
+                    android:layout_width="@dimen/forexTable_exchangeRate"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:inputType="numberDecimal"
+                    android:maxLines="1" />
+            </TableRow>
+
+            <!-- HUF -->
+            <TableRow
+                android:id="@+id/currencyHUF"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+
+                <CheckBox
+                    android:id="@+id/toggle_currencyHUF"
+                    android:layout_width="@dimen/forexTable_showHide"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:layout_width="@dimen/forexTable_toCurrency"
+                    android:layout_height="wrap_content"
+                    android:labelFor="@+id/rate_currencyHUF"
+                    android:text="@string/currencyHUF" />
+
+                <EditText
+                    android:id="@+id/rate_currencyHUF"
                     android:layout_width="@dimen/forexTable_exchangeRate"
                     android:layout_height="wrap_content"
                     android:background="@android:color/transparent"

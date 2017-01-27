@@ -31,13 +31,38 @@
         android:layout_centerHorizontal="true"
         android:onClick="onClickAddExpense" />
 
+    <TextView
+        android:id="@+id/text_location"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="7dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:text="Location not found"
+        android:textColor="@android:color/black"
+        android:textSize="14sp" />
+
+    <ImageView
+        android:id="@+id/icon_location"
+        android:src="@drawable/ic_location"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toStartOf="@id/text_location"
+        android:layout_marginEnd="4dp"
+        android:layout_alignBottom="@id/text_location"
+        android:visibility="gone"
+        tools:ignore="ContentDescription" />
+
     <ImageButton
-        android:id="@+id/imageButton"
-        app:srcCompat="@drawable/ic_forex"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:id="@+id/btn_setForexRates"
+        android:src="@drawable/ic_forex"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
-        android:onClick="onClickSetForexRates"/>
+        android:layout_toEndOf="@id/btn_setForexRates"
+        android:onClick="onClickSetForexRates"
+        android:background="@android:color/transparent"
+        tools:ignore="ContentDescription" />
 
 </RelativeLayout>

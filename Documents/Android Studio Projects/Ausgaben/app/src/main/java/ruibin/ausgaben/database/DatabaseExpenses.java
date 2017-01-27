@@ -31,7 +31,8 @@ public class DatabaseExpenses {
             SQLiteHelper.COLUMN_AMOUNT,
             SQLiteHelper.COLUMN_CURRENCY,
             SQLiteHelper.COLUMN_FOREXRATE,
-            SQLiteHelper.COLUMN_FOREXRATE_EURTOSGD
+            SQLiteHelper.COLUMN_FOREXRATE_EURTOSGD,
+            SQLiteHelper.COLUMN_COUNTRY
     };
 
     public DatabaseExpenses(Context context) {
@@ -40,7 +41,7 @@ public class DatabaseExpenses {
 
     public void open() throws SQLException {
         database = dbHelper.getWritableDatabase();
-        // dbHelper.onUpgrade(database, 2, 3);
+        // dbHelper.onUpgrade(database, 3, 4);
     }
 
     public void close() {
@@ -52,7 +53,7 @@ public class DatabaseExpenses {
      */
 
     // Creates a new expense and adds it to the DB
-    public Expense createExpense(SharedPreferences mPrefs, long date, String name, String category, BigDecimal amount, String currency) {
+    public Expense createExpense(long date, String name, String category, BigDecimal amount, String currency, SharedPreferences mPrefs, String country) {
         // Creating the set of values to be inserted into the DB
         ContentValues values = new ContentValues();
         values.put(SQLiteHelper.COLUMN_DATE, date);
@@ -62,6 +63,7 @@ public class DatabaseExpenses {
         values.put(SQLiteHelper.COLUMN_CURRENCY, currency);
         values.put(SQLiteHelper.COLUMN_FOREXRATE, getForexRate(mPrefs, currency));
         values.put(SQLiteHelper.COLUMN_FOREXRATE_EURTOSGD, getForexRate(mPrefs, "SGD"));
+        values.put(SQLiteHelper.COLUMN_COUNTRY, country);
 
         // Insert the data into the DB and obtain the ID
         long insertId = database.insert(SQLiteHelper.TABLE_EXPENSES, null, values);
@@ -78,7 +80,7 @@ public class DatabaseExpenses {
     }
 
     // Edits an existing expense in the DB
-    public boolean[] editExpense(SharedPreferences mPrefs, long editId, long date, String name, String category, BigDecimal amount, String currency) {
+    public boolean[] editExpense(long editId, long date, String name, String category, BigDecimal amount, String currency, SharedPreferences mPrefs) {
         // Obtain the current row_expenseslist of values in the DB
         Cursor cursor = database.query(SQLiteHelper.TABLE_EXPENSES, allColumns, SQLiteHelper.COLUMN_ID + " = " + editId,
                 null, null, null, null);
@@ -173,6 +175,8 @@ public class DatabaseExpenses {
         while (!cursor.isAfterLast()) {
             if (expenseWithinCategory(cursor, category) && (month == 0 || expenseWithinMonth(cursor.getLong(0), month))) {
                 BigDecimal expenditure = getExpenditureAmount(cursor.getString(2), cursor.getDouble(3)); // expenditure value here is in euros
+
+                System.out.println("EXPENDITURE = " + expenditure.setScale(2, RoundingMode.HALF_UP));
                 if (displayCurrency.equals("SGD"))
                     expenditure = convertExpenditureAmountToSgd(expenditure, cursor.getDouble(4)); // convert to SGD if need be
                 categoryExpenditure = categoryExpenditure.add(expenditure);
@@ -208,7 +212,7 @@ public class DatabaseExpenses {
     // Get all the details of an expense in an Expense object
     private Expense getExpenseDetails(Cursor cursor) {
         return new Expense(cursor.getLong(0), cursor.getLong(1), cursor.getString(2), cursor.getString(3),
-                new BigDecimal(cursor.getString(4)), cursor.getString(5), cursor.getLong(6), cursor.getLong(7));
+                new BigDecimal(cursor.getString(4)), cursor.getString(5), cursor.getLong(6), cursor.getLong(7), cursor.getString(8));
     }
 
     // Get the expenditure amount, converted into euros, rounded to 2 decimal places
@@ -280,7 +284,7 @@ public class DatabaseExpenses {
             case "TRY" :
                 return Double.valueOf(mPrefs.getString("TRY", ""));
         }
-        return -1;
+        return 1; // EUR
     }
 
     /*
