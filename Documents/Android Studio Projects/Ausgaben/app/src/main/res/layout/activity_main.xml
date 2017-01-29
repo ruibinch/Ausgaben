@@ -24,12 +24,12 @@
     <Button
         android:id="@+id/btn_addExpense"
         android:text="@string/str_addExpense"
-        android:layout_below="@+id/btn_overview"
         android:layout_width="200dp"
         android:layout_height="100dp"
-        android:layout_marginTop="75dp"
-        android:layout_centerHorizontal="true"
-        android:onClick="onClickAddExpense" />
+        android:layout_marginTop="60dp"
+        android:layout_alignEnd="@id/btn_overview"
+        android:onClick="onClickAddExpense"
+        android:layout_below="@id/btn_overview" />
 
     <TextView
         android:id="@+id/text_location"
@@ -64,5 +64,6 @@
         android:onClick="onClickSetForexRates"
         android:background="@android:color/transparent"
         tools:ignore="ContentDescription" />
+
 
 </RelativeLayout>

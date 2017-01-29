@@ -208,7 +208,7 @@ public class MainActivity extends Activity implements
     }
 
     // TODO - import CSV / export as CSV
-    // TODO - Include location
+    // TODO - Populate country Spinner based on input countries
 
 
     /*

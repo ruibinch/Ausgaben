@@ -131,7 +131,7 @@ public class DatabaseExpenses {
         cursor.moveToFirst();
 
         while (!cursor.isAfterLast()) {
-            if (month == 0 || expenseWithinMonth(cursor.getLong(1), month)) {
+            if (month == 0 || expenseWithinMonth(cursor, month)) {
                 Expense expense = getExpenseDetails(cursor);
                 expenseList.add(expense);
             }
@@ -163,20 +163,21 @@ public class DatabaseExpenses {
     }
     */
 
-    // Obtains the total expenditure for expenses of the specified CATEGORY in the specified MONTH in the correct display currency
-    public BigDecimal getCategoryExpenditure(String category, int month, String displayCurrency){
+    // Obtains the total expenditure for expenses of the specified CATEGORY in the specified MONTH in the correct display CURRENCY and made in the correct COUNTRY
+    public BigDecimal getCategoryExpenditure(String category, int month, String displayCurrency, String country){
         Cursor cursor = database.query(SQLiteHelper.TABLE_EXPENSES,
                 new String[] { SQLiteHelper.COLUMN_DATE, SQLiteHelper.COLUMN_CATEGORY, SQLiteHelper.COLUMN_AMOUNT,
-                        SQLiteHelper.COLUMN_FOREXRATE, SQLiteHelper.COLUMN_FOREXRATE_EURTOSGD }, // columns to return
+                        SQLiteHelper.COLUMN_FOREXRATE, SQLiteHelper.COLUMN_FOREXRATE_EURTOSGD, SQLiteHelper.COLUMN_COUNTRY }, // columns to return
                 null, null, null, null, null, null);
         cursor.moveToFirst();
 
         BigDecimal categoryExpenditure = new BigDecimal(0);
         while (!cursor.isAfterLast()) {
-            if (expenseWithinCategory(cursor, category) && (month == 0 || expenseWithinMonth(cursor.getLong(0), month))) {
+            if (expenseWithinCategory(cursor, category) &&
+                    (month == 0 || expenseWithinMonth(cursor, month)) &&
+                    expenseWithinCountry(cursor, country)) {
                 BigDecimal expenditure = getExpenditureAmount(cursor.getString(2), cursor.getDouble(3)); // expenditure value here is in euros
 
-                System.out.println("EXPENDITURE = " + expenditure.setScale(2, RoundingMode.HALF_UP));
                 if (displayCurrency.equals("SGD"))
                     expenditure = convertExpenditureAmountToSgd(expenditure, cursor.getDouble(4)); // convert to SGD if need be
                 categoryExpenditure = categoryExpenditure.add(expenditure);
@@ -198,8 +199,8 @@ public class DatabaseExpenses {
      */
 
     // Checks if the expense occurs within the specified month
-    private boolean expenseWithinMonth(long date, int month) {
-        int expMonth = getMonth(date);
+    private boolean expenseWithinMonth(Cursor cursor, int month) {
+        int expMonth = getMonth(cursor.getLong(0));
         return expMonth+1 == month;
     }
 
@@ -207,6 +208,11 @@ public class DatabaseExpenses {
     private boolean expenseWithinCategory(Cursor cursor, String category) {
         String expCategory = cursor.getString(1);
         return expCategory.equalsIgnoreCase(category);
+    }
+
+    // Checks if the expense is made in a specific country
+    private boolean expenseWithinCountry(Cursor cursor, String country) {
+        return (country.equals("All Countries") || country.equals(cursor.getString(5)));
     }
 
     // Get all the details of an expense in an Expense object
