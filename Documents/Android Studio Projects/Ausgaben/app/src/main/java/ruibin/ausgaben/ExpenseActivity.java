@@ -7,15 +7,14 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.text.InputFilter;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,7 +24,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 
 import ruibin.ausgaben.misc.DecimalDigitsInputFilter;
 import ruibin.ausgaben.misc.Quintuple;
@@ -33,7 +31,7 @@ import ruibin.ausgaben.database.DatabaseExpenses;
 import ruibin.ausgaben.database.Expense;
 import ruibin.ausgaben.exceptions.MissingNameException;
 
-public class ExpenseActivity extends Activity {
+public class ExpenseActivity extends AppCompatActivity {
 
     private SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy");
     private Calendar mCal = Calendar.getInstance();
@@ -55,7 +53,7 @@ public class ExpenseActivity extends Activity {
         openDatabase();
         setDisplays();
         populateDataFromBundle();
-        setCurrencyVisbility();
+        setCurrencyVisibility();
         setDeleteButtonVisibility();
 
     }
@@ -107,7 +105,7 @@ public class ExpenseActivity extends Activity {
     }
 
     // Sets the visibility of the currencies in the Spinner - only applicable when adding a new expense
-    private void setCurrencyVisbility() {
+    private void setCurrencyVisibility() {
         if (!isEditExpense) {
             ArrayList<String> currencyList = new ArrayList<String>(Arrays.asList(getResources().getStringArray(R.array.spn_currency_entries)));
             SharedPreferences mPrefs = getSharedPreferences("toggleRates", MODE_PRIVATE);

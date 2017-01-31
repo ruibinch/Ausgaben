@@ -39,7 +39,7 @@ public class OverviewActivity extends Activity {
         // Initialisation methods
         openDatabase();
         initialiseWidgets();
-        setMonthSelection();
+        setMonthAndCountrySelection();
         setTextViews();
 
         // Populate data
@@ -67,13 +67,21 @@ public class OverviewActivity extends Activity {
     }
 
     // Sets the default display to the current month
-    private void setMonthSelection() {
+    private void setMonthAndCountrySelection() {
         int displayMonth = getIntent().getIntExtra("month", -1);
+        String displayCountry = getIntent().getStringExtra("country");
+
+        // Set the month Spinner to the correct selection
         if (displayMonth == -1) {
             Calendar cal = Calendar.getInstance();
-            selectMonthDisplay.setSelection(cal.get(Calendar.MONTH) + 1);
+            selectMonthDisplay.setSelection(cal.get(Calendar.MONTH) + 1); // set to current month
         } else {
             selectMonthDisplay.setSelection(displayMonth);
+        }
+
+        // Set the country Spinner to the correct selection
+        if (displayCountry != null) {
+            selectCountryDisplay.setSelection(getCountrySpinnerIndex(displayCountry));
         }
     }
 
@@ -132,8 +140,11 @@ public class OverviewActivity extends Activity {
 
     // Click handler for 'View Expenses List' button
     public void onClickViewExpensesList(View view) {
+        String country = (String) selectCountryDisplay.getItemAtPosition(displayCountry);
+
         Intent intent = new Intent(this, DetailsActivity.class);
         intent.putExtra("month", displayMonth);
+        intent.putExtra("country", country);
         startActivity(intent);
     }
 
@@ -194,6 +205,16 @@ public class OverviewActivity extends Activity {
                 .add(shoppingExpense).add(travelExpense);
         expenditureDisplay.append(totalExpenditure.toString());
 
+    }
+
+    // Returns the Spinner index at which the specified country is stored
+    private int getCountrySpinnerIndex(String displayCountry) {
+        for (int i = 0; i < selectCountryDisplay.getCount(); i++) {
+            if (selectCountryDisplay.getItemAtPosition(i).toString().equalsIgnoreCase(displayCountry)) {
+                return i;
+            }
+        }
+        return -1;
     }
 
 }

@@ -122,8 +122,8 @@ public class DatabaseExpenses {
         return deletedExpenseName;
     }
 
-    // Obtains a list of expenses (in Expense objects) for the specified month from the DB
-    public ArrayList<Expense> getExpensesList(int month) {
+    // Obtains a list of expenses (in Expense objects) for the specified MONTH and the specified COUNTRY from the DB
+    public ArrayList<Expense> getExpensesList(int month, String country) {
         ArrayList<Expense> expenseList = new ArrayList<Expense>();
 
         Cursor cursor = database.query(SQLiteHelper.TABLE_EXPENSES, allColumns,
@@ -131,7 +131,8 @@ public class DatabaseExpenses {
         cursor.moveToFirst();
 
         while (!cursor.isAfterLast()) {
-            if (month == 0 || expenseWithinMonth(cursor, month)) {
+            if (month == 0 || expenseWithinMonth(cursor.getLong(1), month) &&
+                    expenseWithinCountry(cursor.getString(8), country)) {
                 Expense expense = getExpenseDetails(cursor);
                 expenseList.add(expense);
             }
@@ -173,9 +174,9 @@ public class DatabaseExpenses {
 
         BigDecimal categoryExpenditure = new BigDecimal(0);
         while (!cursor.isAfterLast()) {
-            if (expenseWithinCategory(cursor, category) &&
-                    (month == 0 || expenseWithinMonth(cursor, month)) &&
-                    expenseWithinCountry(cursor, country)) {
+            if (expenseWithinCategory(cursor.getString(1), category) &&
+                    (month == 0 || expenseWithinMonth(cursor.getLong(0), month)) &&
+                    expenseWithinCountry(cursor.getString(5), country)) {
                 BigDecimal expenditure = getExpenditureAmount(cursor.getString(2), cursor.getDouble(3)); // expenditure value here is in euros
 
                 if (displayCurrency.equals("SGD"))
@@ -199,20 +200,19 @@ public class DatabaseExpenses {
      */
 
     // Checks if the expense occurs within the specified month
-    private boolean expenseWithinMonth(Cursor cursor, int month) {
-        int expMonth = getMonth(cursor.getLong(0));
+    private boolean expenseWithinMonth(long expenseDate, int month) {
+        int expMonth = getMonth(expenseDate);
         return expMonth+1 == month;
     }
 
     // Checks if the expense is of a specified category
-    private boolean expenseWithinCategory(Cursor cursor, String category) {
-        String expCategory = cursor.getString(1);
-        return expCategory.equalsIgnoreCase(category);
+    private boolean expenseWithinCategory(String expenseCategory, String category) {
+        return expenseCategory.equalsIgnoreCase(category);
     }
 
     // Checks if the expense is made in a specific country
-    private boolean expenseWithinCountry(Cursor cursor, String country) {
-        return (country.equals("All Countries") || country.equals(cursor.getString(5)));
+    private boolean expenseWithinCountry(String expenseCountry, String country) {
+        return (country.equals("All Countries") || country.equals(expenseCountry));
     }
 
     // Get all the details of an expense in an Expense object

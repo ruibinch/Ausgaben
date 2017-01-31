@@ -27,6 +27,7 @@ public class DetailsActivity extends ListActivity {
 
     private ListView listView;
     private int selectedMonth;
+    private String selectedCountry;
     private DatabaseExpenses database;
 
     private Animation animationFadeIn;
@@ -48,7 +49,7 @@ public class DetailsActivity extends ListActivity {
 
         // Initialisation methods
         openDatabase();
-        setMonthDisplay();
+        setMonthAndCountryDisplay();
         setTextViewsAttributes();
         initFadeAnimations();
 
@@ -66,8 +67,9 @@ public class DetailsActivity extends ListActivity {
     }
 
     // Sets the month for which to display the expenses list
-    private void setMonthDisplay() {
+    private void setMonthAndCountryDisplay() {
         selectedMonth = getIntent().getIntExtra("month", -1);
+        selectedCountry = getIntent().getStringExtra("country");
     }
 
     // Sets the attributes for the various TextViews
@@ -121,6 +123,7 @@ public class DetailsActivity extends ListActivity {
         } else {
             Intent intent = new Intent(this, OverviewActivity.class);
             intent.putExtra("month", selectedMonth);
+            intent.putExtra("country", selectedCountry);
             startActivity(intent);
         }
     }
@@ -249,14 +252,14 @@ public class DetailsActivity extends ListActivity {
     }
 
     private ArrayList<Expense> displayData() {
-        ArrayList<Expense> expenseList = database.getExpensesList(selectedMonth);
+        ArrayList<Expense> expenseList = database.getExpensesList(selectedMonth, selectedCountry);
         expenseList = sortMostRecentFirst(expenseList);
         return expenseList;
     }
 
     // Overloaded method to handle the category filters
     private ArrayList<Expense> displayData(boolean[] filters) {
-        ArrayList<Expense> expenseList = database.getExpensesList(selectedMonth);
+        ArrayList<Expense> expenseList = database.getExpensesList(selectedMonth, selectedCountry);
         expenseList = sortMostRecentFirst(expenseList);
 
         if (!filters[0]) {

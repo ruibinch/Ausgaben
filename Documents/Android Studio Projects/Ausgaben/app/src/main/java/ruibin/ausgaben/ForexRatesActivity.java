@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -11,7 +12,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class ForexRatesActivity extends Activity {
+public class ForexRatesActivity extends AppCompatActivity {
 
     SharedPreferences mPrefsToggleRates;
     SharedPreferences mPrefsForexRates;
