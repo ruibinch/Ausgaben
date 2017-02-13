@@ -2,11 +2,15 @@ package ruibin.ausgaben;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Paint;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.Spinner;
 import android.widget.Switch;
@@ -15,11 +19,16 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 import ruibin.ausgaben.database.DatabaseExpenses;
 
-public class OverviewActivity extends Activity {
+public class OverviewActivity extends AppCompatActivity {
 
     private DatabaseExpenses database;
     private int displayMonth;
@@ -35,10 +44,14 @@ public class OverviewActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_overview);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         // Initialisation methods
         openDatabase();
         initialiseWidgets();
+        populateCountrySpinnerList();
         setMonthAndCountrySelection();
         setTextViews();
 
@@ -66,10 +79,21 @@ public class OverviewActivity extends Activity {
         selectCountryDisplay.setOnItemSelectedListener(selectCountryListener);
     }
 
+    // Populates the country Spinner with the list of existin countries in the DB
+    private void populateCountrySpinnerList() {
+        ArrayList<String> countriesList = database.getCountriesList();
+        Collections.sort(countriesList); // Sorts in alphabetical order
+        countriesList.add(0, "All Countries");
+
+        ArrayAdapter<String> selectCountryDisplayArray = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, countriesList);
+        selectCountryDisplayArray.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        selectCountryDisplay.setAdapter(selectCountryDisplayArray);
+    }
+
     // Sets the default display to the current month
     private void setMonthAndCountrySelection() {
         int displayMonth = getIntent().getIntExtra("month", -1);
-        String displayCountry = getIntent().getStringExtra("country");
+        String displayCountry = getIntent().getStringExtra("country"); // only applicable when returning from DetailsActivity
 
         // Set the month Spinner to the correct selection
         if (displayMonth == -1) {
@@ -140,11 +164,11 @@ public class OverviewActivity extends Activity {
 
     // Click handler for 'View Expenses List' button
     public void onClickViewExpensesList(View view) {
-        String country = (String) selectCountryDisplay.getItemAtPosition(displayCountry);
+        String selectedCountry = (String) selectCountryDisplay.getItemAtPosition(displayCountry);
 
         Intent intent = new Intent(this, DetailsActivity.class);
-        intent.putExtra("month", displayMonth);
-        intent.putExtra("country", country);
+        intent.putExtra("displayMonth", displayMonth);
+        intent.putExtra("displayCountry", selectedCountry);
         startActivity(intent);
     }
 

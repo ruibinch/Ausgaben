@@ -9,6 +9,7 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -20,8 +21,11 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 public class MainActivity extends AppCompatActivity implements
         GoogleApiClient.ConnectionCallbacks,
@@ -35,6 +39,11 @@ public class MainActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Setup toolbar
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         initLocationClients();
         setRatesSettingsIfFirstStartup(); // for first-time startup
@@ -209,8 +218,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     // TODO - import CSV / export as CSV
-    // TODO - Populate country Spinner based on input countries
-
+    // TODO - Include country flags
 
     /*
      * ====================== HELPER METHODS ======================
@@ -222,14 +230,20 @@ public class MainActivity extends AppCompatActivity implements
         String countryName = "";
 
         // Preferences API
-        SharedPreferences mPrefs = getSharedPreferences("location", MODE_PRIVATE);
-        SharedPreferences.Editor mEditor = mPrefs.edit();
+        SharedPreferences mPrefsLocation = getSharedPreferences("location", MODE_PRIVATE);
+        //Set<String> countrySet = mPrefsLocation.getStringSet("countrySet", new HashSet<String>());
+        //countrySet.clear();
+        SharedPreferences.Editor mEditor = mPrefsLocation.edit();
         mEditor.clear();
 
         if (location != null) {
             double latitude = location.getLatitude();
             double longitude = location.getLongitude();
             Geocoder gc = new Geocoder(this, Locale.getDefault());
+
+            // Manual test of location
+            //latitude = 41.993199;
+            //longitude = 21.432557;
 
             try {
                 List<Address> addresses = gc.getFromLocation(latitude, longitude, 1);
@@ -259,6 +273,17 @@ public class MainActivity extends AppCompatActivity implements
         // Save the updated location in the Preferences API
         mEditor.putString("city", cityName);
         mEditor.putString("country", countryName);
+
+        /* If it is a new country, add it to the set of countries
+        if (!countrySet.contains(countryName)) {
+            Set<String> countrySetNew = new HashSet<String>(countrySet); // Mirror this cause Java
+            countrySetNew.add(countryName); // Add the new country name
+            mEditor.putStringSet("countrySet", countrySetNew);
+        } else {
+            mEditor.putStringSet("countrySet", countrySet);
+        }
+        */
+
         mEditor.commit();
 
         setLocationText();

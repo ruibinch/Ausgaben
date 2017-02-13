@@ -22,6 +22,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     public static final String COLUMN_CURRENCY = "currency";
     public static final String COLUMN_FOREXRATE = "forexrate";
     public static final String COLUMN_FOREXRATE_EURTOSGD = "forexrate_eurtosgd";
+    public static final String COLUMN_CITY = "city";
     public static final String COLUMN_COUNTRY = "country";
 
     private static final String DATABASE_NAME = "expenses.db";
@@ -37,6 +38,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
             COLUMN_CURRENCY + " TEXT NOT NULL, " +
             COLUMN_FOREXRATE + " DECIMAL(5,2) NOT NULL, " +
             COLUMN_FOREXRATE_EURTOSGD + " DECIMAL(3,2) NOT NULL, " +
+            COLUMN_CITY + " TEXT NOT NULL, " +
             COLUMN_COUNTRY + " TEXT NOT NULL);";
 
 
@@ -53,11 +55,6 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase database, int oldVersion, int newVersion) {
         database.execSQL("DROP TABLE IF EXISTS " + TABLE_EXPENSES);
         onCreate(database);
-    }
-
-    // Populate the DB with data
-    public void insertData() {
-
     }
 
 }

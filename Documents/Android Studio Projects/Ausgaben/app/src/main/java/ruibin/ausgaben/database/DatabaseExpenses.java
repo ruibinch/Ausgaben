@@ -12,6 +12,10 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import ruibin.ausgaben.ExpenseActivity;
 
 
 /**
@@ -32,6 +36,7 @@ public class DatabaseExpenses {
             SQLiteHelper.COLUMN_CURRENCY,
             SQLiteHelper.COLUMN_FOREXRATE,
             SQLiteHelper.COLUMN_FOREXRATE_EURTOSGD,
+            SQLiteHelper.COLUMN_CITY,
             SQLiteHelper.COLUMN_COUNTRY
     };
 
@@ -41,11 +46,16 @@ public class DatabaseExpenses {
 
     public void open() throws SQLException {
         database = dbHelper.getWritableDatabase();
-        // dbHelper.onUpgrade(database, 3, 4);
+        //upgradeDatabase();
     }
 
     public void close() {
         dbHelper.close();
+    }
+
+    private void upgradeDatabase() {
+        dbHelper.onUpgrade(database, 4, 5);
+        System.out.println("Database upgraded");
     }
 
     /*
@@ -53,7 +63,7 @@ public class DatabaseExpenses {
      */
 
     // Creates a new expense and adds it to the DB
-    public Expense createExpense(long date, String name, String category, BigDecimal amount, String currency, SharedPreferences mPrefs, String country) {
+    public Expense createExpense(long date, String name, String category, BigDecimal amount, String currency, SharedPreferences mPrefs, String city, String country) {
         // Creating the set of values to be inserted into the DB
         ContentValues values = new ContentValues();
         values.put(SQLiteHelper.COLUMN_DATE, date);
@@ -63,6 +73,7 @@ public class DatabaseExpenses {
         values.put(SQLiteHelper.COLUMN_CURRENCY, currency);
         values.put(SQLiteHelper.COLUMN_FOREXRATE, getForexRate(mPrefs, currency));
         values.put(SQLiteHelper.COLUMN_FOREXRATE_EURTOSGD, getForexRate(mPrefs, "SGD"));
+        values.put(SQLiteHelper.COLUMN_CITY, city);
         values.put(SQLiteHelper.COLUMN_COUNTRY, country);
 
         // Insert the data into the DB and obtain the ID
@@ -80,8 +91,9 @@ public class DatabaseExpenses {
     }
 
     // Edits an existing expense in the DB
-    public boolean[] editExpense(long editId, long date, String name, String category, BigDecimal amount, String currency, SharedPreferences mPrefs) {
-        // Obtain the current row_expenseslist of values in the DB
+    public boolean[] editExpense(long editId, long date, String name, String category, BigDecimal amount,
+                                 String currency, SharedPreferences mPrefs, String country) {
+        // Obtain the current row of values in the DB
         Cursor cursor = database.query(SQLiteHelper.TABLE_EXPENSES, allColumns, SQLiteHelper.COLUMN_ID + " = " + editId,
                 null, null, null, null);
         cursor.moveToFirst();
@@ -94,10 +106,11 @@ public class DatabaseExpenses {
         values.put(SQLiteHelper.COLUMN_CATEGORY, category);
         values.put(SQLiteHelper.COLUMN_AMOUNT, amount.toPlainString());
         values.put(SQLiteHelper.COLUMN_CURRENCY, currency);
+        values.put(SQLiteHelper.COLUMN_COUNTRY, country);
 
-        // Obtain what has been edited - if there is a currency change, then change the forex rate
+        // Obtain what has been edited
         boolean[] isEditsMade = compareDifferences(expense, values);
-        if (isEditsMade[4]) {
+        if (isEditsMade[4]) { // if there is a currency change, then change the forex rate
             values.put(SQLiteHelper.COLUMN_FOREXRATE, getForexRate(mPrefs, currency));
         }
 
@@ -132,7 +145,7 @@ public class DatabaseExpenses {
 
         while (!cursor.isAfterLast()) {
             if (month == 0 || expenseWithinMonth(cursor.getLong(1), month) &&
-                    expenseWithinCountry(cursor.getString(8), country)) {
+                    expenseWithinCountry(cursor.getString(9), country)) {
                 Expense expense = getExpenseDetails(cursor);
                 expenseList.add(expense);
             }
@@ -143,26 +156,25 @@ public class DatabaseExpenses {
         return expenseList;
     }
 
-    /* Obtains the total expenditure for all expenses occurring in the specified MONTH
-    public BigDecimal getMonthExpenditure(int month) {
-        Cursor cursor = database.query(SQLiteHelper.TABLE_EXPENSES,
-                new String[] { SQLiteHelper.COLUMN_DATE, SQLiteHelper.COLUMN_AMOUNT }, // columns to return
-                null, null, null, null, null, null);
+    // Obtains a list of the countries that are existing in the DB
+    public ArrayList<String> getCountriesList() {
+        ArrayList<String> countriesList = new ArrayList<String>();
+
+        Cursor cursor = database.query(SQLiteHelper.TABLE_EXPENSES, new String[] { SQLiteHelper.COLUMN_COUNTRY },
+                null, null, null, null, null);
         cursor.moveToFirst();
 
-        BigDecimal monthExpenditure = new BigDecimal(0);
         while (!cursor.isAfterLast()) {
-            if (month == 0 || expenseWithinMonth(cursor.getLong(0), month)) {
-                BigDecimal expenditure = getExpenditureAmount(cursor.getString(1));
-                monthExpenditure = monthExpenditure.add(expenditure);
+            String country = cursor.getString(0);
+            if (!countriesList.contains(country)) {
+                countriesList.add(country);
             }
             cursor.moveToNext();
         }
 
-        monthExpenditure = monthExpenditure.setScale(2);
-        return monthExpenditure;
+        cursor.close();
+        return countriesList;
     }
-    */
 
     // Obtains the total expenditure for expenses of the specified CATEGORY in the specified MONTH in the correct display CURRENCY and made in the correct COUNTRY
     public BigDecimal getCategoryExpenditure(String category, int month, String displayCurrency, String country){
@@ -186,6 +198,7 @@ public class DatabaseExpenses {
             cursor.moveToNext();
         }
 
+        cursor.close();
         categoryExpenditure = categoryExpenditure.setScale(2, RoundingMode.HALF_UP);
         return categoryExpenditure;
     }
@@ -212,13 +225,14 @@ public class DatabaseExpenses {
 
     // Checks if the expense is made in a specific country
     private boolean expenseWithinCountry(String expenseCountry, String country) {
-        return (country.equals("All Countries") || country.equals(expenseCountry));
+        return (country.equals("All Countries") || country.equalsIgnoreCase(expenseCountry));
     }
 
     // Get all the details of an expense in an Expense object
     private Expense getExpenseDetails(Cursor cursor) {
         return new Expense(cursor.getLong(0), cursor.getLong(1), cursor.getString(2), cursor.getString(3),
-                new BigDecimal(cursor.getString(4)), cursor.getString(5), cursor.getLong(6), cursor.getLong(7), cursor.getString(8));
+                new BigDecimal(cursor.getString(4)), cursor.getString(5), cursor.getLong(6), cursor.getLong(7),
+                cursor.getString(8), cursor.getString(9));
     }
 
     // Get the expenditure amount, converted into euros, rounded to 2 decimal places
@@ -234,7 +248,7 @@ public class DatabaseExpenses {
 
     // Returns a boolean array indicating which fields were edited (date, name, category, amount)
     private boolean[] compareDifferences(Expense expense, ContentValues values) {
-        boolean[] isEditsMade = new boolean[5];
+        boolean[] isEditsMade = new boolean[6];
         if (expense.getDate() != values.getAsLong(SQLiteHelper.COLUMN_DATE))
             isEditsMade[0] = true;
         if (!expense.getName().equals(values.getAsString(SQLiteHelper.COLUMN_NAME)))
@@ -245,6 +259,8 @@ public class DatabaseExpenses {
             isEditsMade[3] = true;
         if (!expense.getCurrency().equals(values.getAsString(SQLiteHelper.COLUMN_CURRENCY)))
             isEditsMade[4] = true;
+        if (!expense.getCountry().equals(values.getAsString(SQLiteHelper.COLUMN_COUNTRY)))
+            isEditsMade[5] = true;
 
         return isEditsMade;
     }
@@ -302,6 +318,15 @@ public class DatabaseExpenses {
         Calendar cal = Calendar.getInstance();
         cal.setTime(new Date(date));
         return cal.get(Calendar.MONTH);
+    }
+
+
+
+    /*
+     * ====================== MANUAL INSERTION OF DATA ======================
+     */
+
+    public void insertData() {
     }
 
 }

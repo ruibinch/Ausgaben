@@ -5,18 +5,33 @@
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="ruibin.ausgaben.MainActivity">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/toolbarHeight"
+        android:background="@color/midnightBlue"
+        android:elevation="6dp"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:text="Ausgaben"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp"/>
+
+    </android.support.v7.widget.Toolbar>
 
     <Button
         android:id="@+id/btn_overview"
         android:text="@string/str_overview"
         android:layout_width="200dp"
         android:layout_height="100dp"
-        android:layout_marginTop="75dp"
+        android:layout_marginTop="150dp"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:onClick="onClickOverview" />
@@ -28,14 +43,14 @@
         android:layout_height="100dp"
         android:layout_marginTop="60dp"
         android:layout_alignEnd="@id/btn_overview"
-        android:onClick="onClickAddExpense"
-        android:layout_below="@id/btn_overview" />
+        android:layout_below="@id/btn_overview"
+        android:onClick="onClickAddExpense" />
 
     <TextView
         android:id="@+id/text_location"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="7dp"
+        android:layout_marginBottom="22dp"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:text="Location not found"
@@ -56,11 +71,13 @@
     <ImageButton
         android:id="@+id/btn_setForexRates"
         android:src="@drawable/ic_forex"
+        android:tint="#1E8449"
         android:layout_width="35dp"
         android:layout_height="35dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
-        android:layout_toEndOf="@id/btn_setForexRates"
+        android:layout_marginBottom="15dp"
+        android:layout_marginEnd="15dp"
         android:onClick="onClickSetForexRates"
         android:background="@android:color/transparent"
         tools:ignore="ContentDescription" />

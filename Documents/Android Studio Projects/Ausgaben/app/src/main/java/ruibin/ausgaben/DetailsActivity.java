@@ -25,10 +25,10 @@ import ruibin.ausgaben.database.Expense;
 
 public class DetailsActivity extends ListActivity {
 
-    private ListView listView;
-    private int selectedMonth;
-    private String selectedCountry;
     private DatabaseExpenses database;
+    private ListView listView;
+    private int displayMonth;
+    private String displayCountry;
 
     private Animation animationFadeIn;
     private Animation animationFadeOut;
@@ -68,8 +68,8 @@ public class DetailsActivity extends ListActivity {
 
     // Sets the month for which to display the expenses list
     private void setMonthAndCountryDisplay() {
-        selectedMonth = getIntent().getIntExtra("month", -1);
-        selectedCountry = getIntent().getStringExtra("country");
+        displayMonth = getIntent().getIntExtra("displayMonth", -1);
+        displayCountry = getIntent().getStringExtra("displayCountry");
     }
 
     // Sets the attributes for the various TextViews
@@ -122,8 +122,8 @@ public class DetailsActivity extends ListActivity {
             startActivity(intent);
         } else {
             Intent intent = new Intent(this, OverviewActivity.class);
-            intent.putExtra("month", selectedMonth);
-            intent.putExtra("country", selectedCountry);
+            intent.putExtra("month", displayMonth);
+            intent.putExtra("country", displayCountry);
             startActivity(intent);
         }
     }
@@ -145,6 +145,14 @@ public class DetailsActivity extends ListActivity {
             bundle.putString("category", expense.getCategory());
             bundle.putString("amount", expense.getAmount().setScale(2, BigDecimal.ROUND_HALF_UP).toString());
             bundle.putString("currency", expense.getCurrency());
+            bundle.putString("country", expense.getCountry());
+            // Insert the display month/country settings into the bundle
+            bundle.putInt("displayMonth", displayMonth);
+            bundle.putString("displayCountry", displayCountry);
+
+            System.out.println("DetailsActivity onClick to ExpenseActivity:");
+            System.out.println("displayMonth = " + displayMonth);
+            System.out.println("displayCountry = " + displayCountry);
 
             intent.putExtras(bundle);
             startActivity(intent);
@@ -252,14 +260,14 @@ public class DetailsActivity extends ListActivity {
     }
 
     private ArrayList<Expense> displayData() {
-        ArrayList<Expense> expenseList = database.getExpensesList(selectedMonth, selectedCountry);
+        ArrayList<Expense> expenseList = database.getExpensesList(displayMonth, displayCountry);
         expenseList = sortMostRecentFirst(expenseList);
         return expenseList;
     }
 
     // Overloaded method to handle the category filters
     private ArrayList<Expense> displayData(boolean[] filters) {
-        ArrayList<Expense> expenseList = database.getExpensesList(selectedMonth, selectedCountry);
+        ArrayList<Expense> expenseList = database.getExpensesList(displayMonth, displayCountry);
         expenseList = sortMostRecentFirst(expenseList);
 
         if (!filters[0]) {

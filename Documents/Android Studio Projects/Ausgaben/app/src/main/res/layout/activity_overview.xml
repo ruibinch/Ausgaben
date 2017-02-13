@@ -1,27 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/activity_overview"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="ruibin.ausgaben.OverviewActivity">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/toolbarHeight"
+        android:background="@color/midnightBlue"
+        android:elevation="6dp"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:text="Ausgaben"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp"/>
+
+    </android.support.v7.widget.Toolbar>
 
     <Spinner
         android:id="@+id/spn_selectMonthDisplay"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_marginStart="5dp"
+        android:layout_marginTop="90dp"
+        android:layout_marginStart="25dp"
         android:dropDownWidth="@dimen/spinner_monthSelection"
         android:entries="@array/spn_selectMonth_entries" />
 
     <Spinner
         android:id="@+id/spn_selectCountryDisplay"
-        android:layout_width="wrap_content"
+        android:layout_width="170dp"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignBaseline="@id/spn_selectMonthDisplay"
@@ -29,9 +45,9 @@
         android:entries="@array/spn_selectCountry_entries" />
 
     <TextView
-        style="@style/TextColourBlack"
         android:id="@+id/text_totalExpenditure"
         android:text="@string/str_totalExpenditure"
+        android:textColor="@android:color/black"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/spn_selectMonthDisplay"
@@ -39,9 +55,9 @@
         android:layout_centerInParent="true" />
 
     <TextView
-        style="@style/TextColourBlack"
         android:id="@+id/expenditure"
         android:textSize="50sp"
+        android:textColor="@android:color/black"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/text_totalExpenditure"
@@ -58,7 +74,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/expenditure"
         android:layout_marginTop="30dp"
-        android:layout_marginStart="40dp" >
+        android:layout_marginStart="60dp" >
 
         <TextView
             android:id="@+id/text_categoryBreakdown_food"
@@ -185,7 +201,7 @@
         android:layout_width="250dp"
         android:layout_height="80dp"
         android:layout_below="@id/layout_categoryBreakdown_travel"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="40dp"
         android:layout_centerInParent="true"
         android:onClick="onClickViewExpensesList" />
 
