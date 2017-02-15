@@ -11,15 +11,14 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/toolbarHeight"
-        android:background="@color/midnightBlue"
         android:elevation="6dp"
+        style="@style/ToolbarTheme"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
             android:text="Ausgaben"
             android:textColor="#FFFFFF"
             android:textSize="20sp"/>

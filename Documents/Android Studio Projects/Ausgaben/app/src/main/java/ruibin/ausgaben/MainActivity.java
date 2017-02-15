@@ -217,8 +217,10 @@ public class MainActivity extends AppCompatActivity implements
         moveTaskToBack(true);
     }
 
+    // TODO - include euro in ForexRatesActivity
     // TODO - import CSV / export as CSV
-    // TODO - Include country flags
+    // TODO - Include remaining country flags
+    // TODO - set back button in toolbar
 
     /*
      * ====================== HELPER METHODS ======================
@@ -231,8 +233,6 @@ public class MainActivity extends AppCompatActivity implements
 
         // Preferences API
         SharedPreferences mPrefsLocation = getSharedPreferences("location", MODE_PRIVATE);
-        //Set<String> countrySet = mPrefsLocation.getStringSet("countrySet", new HashSet<String>());
-        //countrySet.clear();
         SharedPreferences.Editor mEditor = mPrefsLocation.edit();
         mEditor.clear();
 
@@ -273,16 +273,6 @@ public class MainActivity extends AppCompatActivity implements
         // Save the updated location in the Preferences API
         mEditor.putString("city", cityName);
         mEditor.putString("country", countryName);
-
-        /* If it is a new country, add it to the set of countries
-        if (!countrySet.contains(countryName)) {
-            Set<String> countrySetNew = new HashSet<String>(countrySet); // Mirror this cause Java
-            countrySetNew.add(countryName); // Add the new country name
-            mEditor.putStringSet("countrySet", countrySetNew);
-        } else {
-            mEditor.putStringSet("countrySet", countrySet);
-        }
-        */
 
         mEditor.commit();
 

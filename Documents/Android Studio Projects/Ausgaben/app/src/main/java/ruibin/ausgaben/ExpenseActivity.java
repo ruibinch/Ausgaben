@@ -6,14 +6,18 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.InputFilter;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -52,12 +56,22 @@ public class ExpenseActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         // Initalisation methods
         openDatabase();
         setDisplays();
         populateDataFromBundle();
         setCurrencyVisibility();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            NavUtils.navigateUpFromSameTask(this);
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     /*
@@ -413,40 +427,42 @@ public class ExpenseActivity extends AppCompatActivity {
                 spinner.setSelection(12); break;
             case "Germany" :
                 spinner.setSelection(13); break;
-            case "Italy" :
-                spinner.setSelection(14); break;
             case "Hungary" :
+                spinner.setSelection(14); break;
+            case "Italy" :
                 spinner.setSelection(15); break;
             case "Latvia" :
                 spinner.setSelection(16); break;
-            case "Lithuania" :
+            case "Liechtenstein" :
                 spinner.setSelection(17); break;
-            case "Luxembourg" :
+            case "Lithuania" :
                 spinner.setSelection(18); break;
-            case "Macedonia (FYROM)" :
+            case "Luxembourg" :
                 spinner.setSelection(19); break;
-            case "Netherlands" :
+            case "Macedonia (FYROM)" :
                 spinner.setSelection(20); break;
-            case "Norway" :
+            case "Netherlands" :
                 spinner.setSelection(21); break;
-            case "Poland" :
+            case "Norway" :
                 spinner.setSelection(22); break;
-            case "Romania" :
+            case "Poland" :
                 spinner.setSelection(23); break;
-            case "Serbia" :
+            case "Romania" :
                 spinner.setSelection(24); break;
-            case "Singapore" :
+            case "Serbia" :
                 spinner.setSelection(25); break;
-            case "Spain" :
+            case "Singapore" :
                 spinner.setSelection(26); break;
-            case "Sweden" :
+            case "Spain" :
                 spinner.setSelection(27); break;
-            case "Switzerland" :
+            case "Sweden" :
                 spinner.setSelection(28); break;
-            case "Turkey" :
+            case "Switzerland" :
                 spinner.setSelection(29); break;
-            case "United Kingdom" :
+            case "Turkey" :
                 spinner.setSelection(30); break;
+            case "United Kingdom" :
+                spinner.setSelection(31); break;
         }
     }
 }

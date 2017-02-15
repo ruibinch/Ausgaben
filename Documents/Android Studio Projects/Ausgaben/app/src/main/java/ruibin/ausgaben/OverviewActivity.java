@@ -5,8 +5,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Paint;
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
@@ -47,6 +49,7 @@ public class OverviewActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         // Initialisation methods
         openDatabase();
@@ -58,6 +61,15 @@ public class OverviewActivity extends AppCompatActivity {
         // Populate data
         updateExpenseValuesDisplayed(); // default display currency is EUR
 
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            NavUtils.navigateUpFromSameTask(this);
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     /*

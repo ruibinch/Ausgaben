@@ -75,13 +75,15 @@ class DetailsAdapter extends ArrayAdapter<Expense> {
         View rowView = inflater.inflate(R.layout.row_expenseslist, parent, false);
 
         // Get the Views from the RowView
-        ImageView categoryIconView = (ImageView) rowView.findViewById(R.id.list_icon);
+        ImageView countryIconView = (ImageView) rowView.findViewById(R.id.list_countryIcon);
+        ImageView categoryIconView = (ImageView) rowView.findViewById(R.id.list_categoryIcon);
         TextView dateView = (TextView) rowView.findViewById(R.id.list_date);
         TextView nameView = (TextView) rowView.findViewById(R.id.list_name);
         TextView amountView = (TextView) rowView.findViewById(R.id.list_amount);
 
         // Set the text for the TextViews
-        setIconView(categoryIconView, list.get(pos).getCategory());
+        setCountryIconView(countryIconView, list.get(pos).getCountry());
+        setCategoryIconView(categoryIconView, list.get(pos).getCategory());
         dateView.setText(sdf.format(new Date(list.get(pos).getDate())));
         nameView.setText(list.get(pos).getName());
         // Set the currency display - depending on the currency, the currency sign can be before or after the value
@@ -119,26 +121,61 @@ class DetailsAdapter extends ArrayAdapter<Expense> {
      * ====================== HELPER METHODS ======================
      */
 
-    private void setIconView(ImageView iconView, String category) {
+    // Sets the correct country flag to be displayed
+    private void setCountryIconView(ImageView iconView, String country) {
+        switch (country) {
+            case "Austria" :
+                iconView.setImageResource(R.drawable.flag_austria); break;
+            case "Bosnia and Herzegovina" :
+                iconView.setImageResource(R.drawable.flag_bosnia); break;
+            case "Croatia" :
+                iconView.setImageResource(R.drawable.flag_croatia); break;
+            case "Denmark" :
+                iconView.setImageResource(R.drawable.flag_denmark); break;
+            case "Faroe Islands" :
+                iconView.setImageResource(R.drawable.flag_faroe); break;
+            case "Finland" :
+                iconView.setImageResource(R.drawable.flag_finland); break;
+            case "Germany" :
+                iconView.setImageResource(R.drawable.flag_germany); break;
+            case "Hungary" :
+                iconView.setImageResource(R.drawable.flag_hungary); break;
+            case "Latvia" :
+                iconView.setImageResource(R.drawable.flag_latvia); break;
+            case "Luxembourg" :
+                iconView.setImageResource(R.drawable.flag_luxembourg); break;
+            case "Macedonia (FYROM)" :
+                iconView.setImageResource(R.drawable.flag_macedonia); break;
+            case "Norway" :
+                iconView.setImageResource(R.drawable.flag_norway); break;
+            case "Poland" :
+                iconView.setImageResource(R.drawable.flag_poland); break;
+            case "Serbia" :
+                iconView.setImageResource(R.drawable.flag_serbia); break;
+            case "Singapore" :
+                iconView.setImageResource(R.drawable.flag_singapore); break;
+            case "Spain" :
+                iconView.setImageResource(R.drawable.flag_spain); break;
+            case "Turkey" :
+                iconView.setImageResource(R.drawable.flag_turkey); break;
+        }
+    }
+
+    // Sets the correct category icon to be displayed
+    private void setCategoryIconView(ImageView iconView, String category) {
         switch (category) {
             case "Food" :
-                iconView.setImageResource(R.drawable.ic_food);
-                break;
+                iconView.setImageResource(R.drawable.ic_food); break;
             case "Gifts" :
-                iconView.setImageResource(R.drawable.ic_gifts);
-                break;
+                iconView.setImageResource(R.drawable.ic_gifts); break;
             case "Leisure" :
-                iconView.setImageResource(R.drawable.ic_leisure);
-                break;
+                iconView.setImageResource(R.drawable.ic_leisure); break;
             case "Misc" :
-                iconView.setImageResource(R.drawable.ic_misc);
-                break;
+                iconView.setImageResource(R.drawable.ic_misc); break;
             case "Shopping" :
-                iconView.setImageResource(R.drawable.ic_shopping);
-                break;
+                iconView.setImageResource(R.drawable.ic_shopping); break;
             case "Travel" :
-                iconView.setImageResource(R.drawable.ic_travel);
-                break;
+                iconView.setImageResource(R.drawable.ic_travel); break;
         }
     }
 

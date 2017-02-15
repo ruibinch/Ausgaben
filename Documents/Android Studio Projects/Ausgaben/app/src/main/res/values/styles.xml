@@ -3,12 +3,15 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimary">@color/midnightBlue</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="android:windowBackground">@color/lightGray</item>
+        <item name="android:windowBackground">@color/lightBlue</item>
 
+        <item name="android:typeface">serif</item>
+
+        <item name="android:buttonStyle">@style/ButtonStyle</item>
+        <item name="android:homeAsUpIndicator">@drawable/ic_arrow_back</item>
     </style>
-
 
 
     <style name="spinnerDropDownItemStyle" parent="android:TextAppearance.Widget.TextView.SpinnerItem">
@@ -16,8 +19,17 @@
         <item name="android:paddingTop">10sp</item>
     </style>
 
+    <style name="ButtonStyle" parent="@android:style/Widget.Button">
+        <item name="android:background">@color/midnightBlue</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:elevation">@dimen/buttonElevation</item>
+    </style>
+
     <style name="ToolbarTheme" parent="ThemeOverlay.AppCompat.ActionBar">
-        <item name="android:background">#5AC584</item>
+        <item name="android:background">@color/midnightBlue</item>
+        <item name="android:minHeight">@dimen/toolbarHeight</item>
+        <item name="android:windowNoTitle">true</item>
     </style>
 
 </resources>

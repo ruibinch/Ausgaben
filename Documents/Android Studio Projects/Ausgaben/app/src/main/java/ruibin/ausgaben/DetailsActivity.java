@@ -150,10 +150,6 @@ public class DetailsActivity extends ListActivity {
             bundle.putInt("displayMonth", displayMonth);
             bundle.putString("displayCountry", displayCountry);
 
-            System.out.println("DetailsActivity onClick to ExpenseActivity:");
-            System.out.println("displayMonth = " + displayMonth);
-            System.out.println("displayCountry = " + displayCountry);
-
             intent.putExtras(bundle);
             startActivity(intent);
             }
