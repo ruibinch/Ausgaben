@@ -23,7 +23,7 @@
         <item name="android:background">@color/midnightBlue</item>
         <item name="android:textColor">@android:color/white</item>
         <item name="android:textAllCaps">true</item>
-        <item name="android:elevation">@dimen/buttonElevation</item>
+        <item name="android:elevation">@dimen/toolbarButton_elevation</item>
     </style>
 
     <style name="ToolbarTheme" parent="ThemeOverlay.AppCompat.ActionBar">

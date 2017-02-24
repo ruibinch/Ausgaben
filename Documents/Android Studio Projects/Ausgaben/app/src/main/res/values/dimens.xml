@@ -9,7 +9,7 @@
 
     <dimen name="spinner_monthSelection">110sp</dimen>
     <dimen name="spinner_countrySelection">130sp</dimen>
-    <dimen name="spinner_currencySelection">60sp</dimen>
+    <dimen name="spinner_currencySelection">70sp</dimen>
     <dimen name="spinner_editCountrySelection">178sp</dimen>
 
     <dimen name="forexTable_showHide">60dp</dimen>
@@ -17,6 +17,5 @@
     <dimen name="forexTable_exchangeRate">80dp</dimen>
 
     <dimen name="toolbarHeight">70dp</dimen>
-
-    <dimen name="buttonElevation">6dp</dimen>
+    <dimen name="toolbarButton_elevation">6dp</dimen>
 </resources>

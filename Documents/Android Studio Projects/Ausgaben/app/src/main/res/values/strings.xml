@@ -6,6 +6,9 @@
     <string name="str_dollarSign">$</string>
     <string name="str_euroSign">€</string>
 
+    <string name="str_importCSV">Import CSV</string>
+    <string name="str_exportCSV">Export as CSV</string>
+
     <!-- ExpenseActivity -->
     <string name="str_expenseName">Name</string>
     <string name="str_expenseCategory">Category</string>

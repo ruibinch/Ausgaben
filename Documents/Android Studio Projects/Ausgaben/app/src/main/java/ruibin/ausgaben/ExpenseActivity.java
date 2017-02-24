@@ -256,8 +256,9 @@ public class ExpenseActivity extends AppCompatActivity {
             dialog.cancel();
 
             Intent intent = new Intent(ExpenseActivity.this, DetailsActivity.class);
-            intent.putExtra("month", displayMonth);
-            intent.putExtra("country", displayCountry);
+            System.out.println("onClickDelete: month = " + displayMonth + ", country = " + displayCountry);
+            intent.putExtra("displayMonth", displayMonth);
+            intent.putExtra("displayCountry", displayCountry);
             startActivity(intent);
             }
         });
@@ -309,7 +310,7 @@ public class ExpenseActivity extends AppCompatActivity {
 
     // Filters the list of currencies to be displayed in the Spinner
     private ArrayList<String> filterHiddenCurrencies(ArrayList<String> list, SharedPreferences mPrefs) {
-        String[] currencies = { "ALL", "BAM", "BGN", "BYN", "CHF", "CZK", "DKK", "GBP", "HUF",
+        String[] currencies = { "ALL", "BAM", "BGN", "BYN", "CHF", "CZK", "DKK", "EUR", "GBP", "HUF",
                                 "HRK", "MKD", "NOK", "PLN", "RON", "RSD", "SEK", "SGD", "TRY"};
 
         for (int i = 0; i < currencies.length; i++) {

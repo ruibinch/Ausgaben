@@ -1,15 +1,23 @@
 package ruibin.ausgaben;
 
-import android.content.Intent;
 import android.app.Activity;
+import android.content.Intent;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.Manifest;
 import android.os.Bundle;
+import android.os.Environment;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -17,15 +25,23 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.Iterator;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
+
+import ruibin.ausgaben.database.SQLiteHelper;
 
 public class MainActivity extends AppCompatActivity implements
         GoogleApiClient.ConnectionCallbacks,
@@ -33,7 +49,14 @@ public class MainActivity extends AppCompatActivity implements
         com.google.android.gms.location.LocationListener {
 
     private GoogleApiClient mGoogleApiClient;
-    // private LocationRequest mLocationRequest;
+    private SQLiteHelper dbHelper = new SQLiteHelper(this);
+
+    // Storage Permissions
+    private static final int REQUEST_EXTERNAL_STORAGE = 1;
+    private static String[] PERMISSIONS_STORAGE = {
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +67,7 @@ public class MainActivity extends AppCompatActivity implements
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
+        toolbar.showOverflowMenu();
 
         initLocationClients();
         setRatesSettingsIfFirstStartup(); // for first-time startup
@@ -61,6 +85,30 @@ public class MainActivity extends AppCompatActivity implements
         if (mGoogleApiClient.isConnected()) {
             LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
             mGoogleApiClient.disconnect();
+        }
+    }
+
+    /*
+     * ====================== TOOLBAR METHODS ======================
+     */
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.toolbar_actions, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_importCSV :
+                importDatabase();
+                return true;
+            case R.id.action_exportCSV :
+                exportDatabase();
+                return true;
+            default :
+                return super.onOptionsItemSelected(item);
         }
     }
 
@@ -217,10 +265,11 @@ public class MainActivity extends AppCompatActivity implements
         moveTaskToBack(true);
     }
 
-    // TODO - include euro in ForexRatesActivity
     // TODO - import CSV / export as CSV
-    // TODO - Include remaining country flags
-    // TODO - set back button in toolbar
+    // TODO - camera function to take photo of receipt
+    // TODO - currency API
+    // TODO - include option to set defaults in ExpenseActivity
+    // TODO - auto-back up to Google Drive
 
     /*
      * ====================== HELPER METHODS ======================
@@ -300,5 +349,126 @@ public class MainActivity extends AppCompatActivity implements
         locationIcon.getLayoutParams().height = 80;
 
         locationText.setText(sb.toString());
+    }
+
+
+    // Imports a CSV file into the DB
+    private void importDatabase() {
+        try {
+            InputStream inputStream = getAssets().open("expenses.csv");
+            BufferedReader br = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
+            String line = "";
+            String tableName = "expenses";
+            String columns = "date, name, category, amount, currency, forexrate, forexrate_eurtosgd, city, country";
+            String sqlStart = "INSERT INTO " + tableName + " (" + columns + ") VALUES (";
+            String sqlEnd = ");";
+
+            SQLiteDatabase sqldb = dbHelper.getReadableDatabase();
+            sqldb.beginTransaction();
+            while ((line = br.readLine()) != null) {
+                StringBuilder sb = new StringBuilder(sqlStart);
+                String[] splitLine = line.split(",");
+
+                // Converts the date from YYYYMMDD format to long
+                Calendar cal = Calendar.getInstance();
+                cal.set(Integer.parseInt(splitLine[0].substring(0,4)),
+                        Integer.parseInt(splitLine[0].substring(4,6)) - 1,
+                        Integer.parseInt(splitLine[0].substring(6,8)));
+
+                sb.append(cal.getTimeInMillis() + ", ");
+                sb.append("'" + splitLine[1] + "', ");
+                sb.append("'" + splitLine[2] + "', ");
+                sb.append(splitLine[3] + ", ");
+                sb.append("'" + splitLine[4] + "', ");
+                sb.append(splitLine[5] + ", ");
+                sb.append(splitLine[6] + ", ");
+                sb.append("'" + splitLine[7] + "', ");
+                sb.append("'" + splitLine[8] + "'");
+                sb.append(sqlEnd);
+                System.out.println(sb.toString());
+                sqldb.execSQL(sb.toString());
+            }
+
+            Toast.makeText(this, "Import successful", Toast.LENGTH_SHORT).show();
+            sqldb.setTransactionSuccessful();
+            sqldb.endTransaction();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            Toast.makeText(this, "File not found", Toast.LENGTH_SHORT).show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            Toast.makeText(this, "IOException encountered", Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    // Exports the DB to a CSV file
+    private void exportDatabase() {
+        verifyStoragePermissions(); // for API 23+
+
+        SQLiteDatabase sqldb = dbHelper.getReadableDatabase();
+        Cursor cursor;
+
+        try {
+            cursor = sqldb.rawQuery("SELECT * FROM expenses", null);
+            int rowCount = 0;
+            int colCount = 0;
+            File directory = Environment.getExternalStorageDirectory();
+            System.out.println("directory = " + directory);
+            String fileName = "expenses.csv";
+            File saveFile = new File(directory, fileName);
+            FileWriter fw = new FileWriter(saveFile);
+
+            BufferedWriter bw = new BufferedWriter(fw);
+            rowCount = cursor.getCount();
+            colCount = cursor.getColumnCount();
+            System.out.println("rowCount = " + rowCount + ", colCount = " + colCount);
+
+            if (rowCount > 0) {
+                cursor.moveToFirst();
+
+                for (int i = 0; i < colCount; i++) {
+                    if (i != colCount - 1)
+                        bw.write(cursor.getColumnName(i) + ", " );
+                    else
+                        bw.write(cursor.getColumnName(i));
+                }
+                bw.newLine();
+
+                for (int i = 0; i < rowCount; i++ ) {
+                    cursor.moveToPosition(i);
+                    for (int j = 0; j < colCount; j++) {
+                        if (j != colCount - 1)
+                            bw.write(cursor.getString(j) + ", " );
+                        else
+                            bw.write(cursor.getString(j));
+                    }
+                    bw.newLine();
+                }
+
+                bw.flush();
+                bw.close();
+                Toast.makeText(this, "Database exported: " + rowCount + " rows", Toast.LENGTH_SHORT).show();
+            }
+            cursor.close();
+        } catch (IOException e) {
+            if (sqldb.isOpen()) {
+                sqldb.close();
+            }
+            e.printStackTrace();
+            Toast.makeText(this, "IOException encountered", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void verifyStoragePermissions() {
+        int permission = ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            System.out.println("No permission!");
+            ActivityCompat.requestPermissions(
+                    this,
+                    PERMISSIONS_STORAGE,
+                    REQUEST_EXTERNAL_STORAGE);
+        }
     }
 }

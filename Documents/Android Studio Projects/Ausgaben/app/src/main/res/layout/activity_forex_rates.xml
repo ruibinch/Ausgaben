@@ -12,7 +12,7 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/toolbarHeight"
-        android:elevation="6dp"
+        android:elevation="@dimen/toolbarButton_elevation"
         style="@style/ToolbarTheme"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
@@ -253,6 +253,24 @@
                     android:background="@android:color/transparent"
                     android:inputType="numberDecimal"
                     android:maxLines="1" />
+            </TableRow>
+
+            <!-- EUR -->
+            <TableRow
+                android:id="@+id/currencyEUR"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+
+                <CheckBox
+                    android:id="@+id/toggle_currencyEUR"
+                    android:layout_width="@dimen/forexTable_showHide"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:layout_width="@dimen/forexTable_toCurrency"
+                    android:layout_height="wrap_content"
+                    android:labelFor="@+id/rate_currencyEUR"
+                    android:text="@string/currencyEUR" />
             </TableRow>
 
             <!-- GBP -->

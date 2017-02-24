@@ -35,6 +35,7 @@ public class ForexRatesActivity extends AppCompatActivity {
     CheckBox toggleCHF;
     CheckBox toggleCZK;
     CheckBox toggleDKK;
+    CheckBox toggleEUR;
     CheckBox toggleGBP;
     CheckBox toggleHRK;
     CheckBox toggleHUF;
@@ -108,6 +109,7 @@ public class ForexRatesActivity extends AppCompatActivity {
         toggleCHF = (CheckBox) findViewById(R.id.toggle_currencyCHF);
         toggleCZK = (CheckBox) findViewById(R.id.toggle_currencyCZK);
         toggleDKK = (CheckBox) findViewById(R.id.toggle_currencyDKK);
+        toggleEUR = (CheckBox) findViewById(R.id.toggle_currencyEUR);
         toggleGBP = (CheckBox) findViewById(R.id.toggle_currencyGBP);
         toggleHUF = (CheckBox) findViewById(R.id.toggle_currencyHUF);
         toggleHRK = (CheckBox) findViewById(R.id.toggle_currencyHRK);
@@ -154,6 +156,7 @@ public class ForexRatesActivity extends AppCompatActivity {
         toggleCHF.setChecked(mPrefsToggleRates.getBoolean("CHF", true));
         toggleCZK.setChecked(mPrefsToggleRates.getBoolean("CZK", true));
         toggleDKK.setChecked(mPrefsToggleRates.getBoolean("DKK", true));
+        toggleEUR.setChecked(mPrefsToggleRates.getBoolean("EUR", true));
         toggleGBP.setChecked(mPrefsToggleRates.getBoolean("GBP", true));
         toggleHRK.setChecked(mPrefsToggleRates.getBoolean("HRK", true));
         toggleHUF.setChecked(mPrefsToggleRates.getBoolean("HUF", true));
@@ -221,6 +224,7 @@ public class ForexRatesActivity extends AppCompatActivity {
         newToggleSettingsList.add(toggleCHF.isChecked());
         newToggleSettingsList.add(toggleCZK.isChecked());
         newToggleSettingsList.add(toggleDKK.isChecked());
+        newToggleSettingsList.add(toggleEUR.isChecked());
         newToggleSettingsList.add(toggleGBP.isChecked());
         newToggleSettingsList.add(toggleHRK.isChecked());
         newToggleSettingsList.add(toggleHUF.isChecked());
@@ -243,6 +247,7 @@ public class ForexRatesActivity extends AppCompatActivity {
         mEditor.putBoolean("CHF", toggleCHF.isChecked());
         mEditor.putBoolean("CZK", toggleCZK.isChecked());
         mEditor.putBoolean("DKK", toggleDKK.isChecked());
+        mEditor.putBoolean("EUR", toggleEUR.isChecked());
         mEditor.putBoolean("GBP", toggleGBP.isChecked());
         mEditor.putBoolean("HRK", toggleHRK.isChecked());
         mEditor.putBoolean("HUF", toggleHUF.isChecked());

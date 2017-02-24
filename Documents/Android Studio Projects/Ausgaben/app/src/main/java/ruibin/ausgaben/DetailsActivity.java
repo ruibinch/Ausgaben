@@ -70,6 +70,7 @@ public class DetailsActivity extends ListActivity {
     private void setMonthAndCountryDisplay() {
         displayMonth = getIntent().getIntExtra("displayMonth", -1);
         displayCountry = getIntent().getStringExtra("displayCountry");
+        System.out.println("DetailsActivity, setMonthAndCountryDisplay: month = " + displayMonth + ", country = " + displayCountry);
     }
 
     // Sets the attributes for the various TextViews
