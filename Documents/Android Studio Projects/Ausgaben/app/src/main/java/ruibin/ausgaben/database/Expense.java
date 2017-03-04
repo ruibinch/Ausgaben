@@ -31,10 +31,13 @@ public class Expense {
     private String city;
     private String country;
 
+    // Additional optional main info
+    private String imagePath;
+
     public Expense() { }
 
     public Expense(long id, long date, String name, String category, BigDecimal amount, String currency,
-                   double forexRate, double forexRateEurToSgd, String city, String country) {
+                   double forexRate, double forexRateEurToSgd, String city, String country, String imagePath) {
         this.id = id;
         this.date = date;
         this.name = name;
@@ -45,13 +48,14 @@ public class Expense {
         this.forexRateEurToSgd = forexRateEurToSgd;
         this.city = city;
         this.country = country;
+        this.imagePath = imagePath;
     }
 
     @Override
     public String toString() {
         return (sdf.format(new Date(date)) + ", " + name + ", " + category + ", " + amount.setScale(2, BigDecimal.ROUND_HALF_UP) +
                 ", forexRates = (" + String.format(Locale.ENGLISH, "%,.2f", forexRate) + ", " + String.format(Locale.ENGLISH, "%,.2f", forexRateEurToSgd) + ")" +
-                ", [" + city.toUpperCase() + ", " + country.toUpperCase() + "]");
+                ", [" + city.toUpperCase() + ", " + country.toUpperCase() + "], @ " + imagePath);
     }
 
     // GETTERS
@@ -94,6 +98,10 @@ public class Expense {
 
     public String getCountry() {
         return country;
+    }
+
+    public String getImagePath() {
+        return imagePath;
     }
 
     // SETTERS

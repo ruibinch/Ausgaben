@@ -13,6 +13,8 @@ import ruibin.ausgaben.ExpenseActivity;
 
 public class SQLiteHelper extends SQLiteOpenHelper {
 
+    private static SQLiteHelper mInstance = null;
+
     public static final String TABLE_EXPENSES = "expenses";
     public static final String COLUMN_ID = "id";
     public static final String COLUMN_DATE = "date";
@@ -24,6 +26,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     public static final String COLUMN_FOREXRATE_EURTOSGD = "forexrate_eurtosgd";
     public static final String COLUMN_CITY = "city";
     public static final String COLUMN_COUNTRY = "country";
+    public static final String COLUMN_IMAGEPATH = "imagepath";
 
     private static final String DATABASE_NAME = "expenses.db";
     private static final int DATABASE_VERSION = 1;
@@ -39,11 +42,19 @@ public class SQLiteHelper extends SQLiteOpenHelper {
             COLUMN_FOREXRATE + " DECIMAL(5,2) NOT NULL, " +
             COLUMN_FOREXRATE_EURTOSGD + " DECIMAL(3,2) NOT NULL, " +
             COLUMN_CITY + " TEXT NOT NULL, " +
-            COLUMN_COUNTRY + " TEXT NOT NULL);";
-
+            COLUMN_COUNTRY + " TEXT NOT NULL, " +
+            COLUMN_IMAGEPATH + " TEXT);";
 
     public SQLiteHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+    }
+
+    // DB is a Singleton
+    static SQLiteHelper getInstance(Context context) {
+        if (mInstance == null) {
+            mInstance = new SQLiteHelper(context.getApplicationContext());
+        }
+        return mInstance;
     }
 
     @Override

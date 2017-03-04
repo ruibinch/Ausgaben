@@ -15,6 +15,7 @@
     <string name="str_expenseDate">Date</string>
     <string name="str_expenseDateDisplay">Select Date</string>
     <string name="str_expenseAmt">Amount</string>
+    <string name="str_expensePhoto">Photo</string>
     <string name="str_expenseCountry">Country</string>
     <string name="str_save">Save</string>
     <string name="str_cancel">Cancel</string>
@@ -166,5 +167,7 @@
     <!-- DetailsActivity -->
     <string name="str_showFilters">Show Filters</string>
     <string name="str_hideFilters">Hide Filters</string>
+
+    <string name="title_activity_image">ImageActivity</string>
 
 </resources>

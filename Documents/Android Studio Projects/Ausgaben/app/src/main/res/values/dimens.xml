@@ -7,9 +7,10 @@
     <dimen name="overview_categoryText">200dp</dimen>
     <dimen name="overview_categoryAmount">75dp</dimen>
 
+    <dimen name="spinner_categorySelection">110sp</dimen>
+    <dimen name="spinner_currencySelection">70sp</dimen>
     <dimen name="spinner_monthSelection">110sp</dimen>
     <dimen name="spinner_countrySelection">130sp</dimen>
-    <dimen name="spinner_currencySelection">70sp</dimen>
     <dimen name="spinner_editCountrySelection">178sp</dimen>
 
     <dimen name="forexTable_showHide">60dp</dimen>

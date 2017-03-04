@@ -70,7 +70,6 @@ public class DetailsActivity extends ListActivity {
     private void setMonthAndCountryDisplay() {
         displayMonth = getIntent().getIntExtra("displayMonth", -1);
         displayCountry = getIntent().getStringExtra("displayCountry");
-        System.out.println("DetailsActivity, setMonthAndCountryDisplay: month = " + displayMonth + ", country = " + displayCountry);
     }
 
     // Sets the attributes for the various TextViews
@@ -96,13 +95,14 @@ public class DetailsActivity extends ListActivity {
         boolean isCategoryEdited = getIntent().getBooleanExtra("isCategoryEdited", false);
         boolean isAmountEdited = getIntent().getBooleanExtra("isAmountEdited", false);
         boolean isCurrencyEdited = getIntent().getBooleanExtra("isCurrencyEdited", false);
+        boolean isImagePathEdited = getIntent().getBooleanExtra("isImagePathEdited", false);
 
         DetailsAdapter adapter;
         if (newExpenseId != -1) {
             adapter = new DetailsAdapter(this, displayData(), newExpenseId);
         } else if (editExpenseId != -1) {
-            adapter = new DetailsAdapter(this, displayData(), editExpenseId,
-                    isDateEdited, isNameEdited, isCategoryEdited, isAmountEdited, isCurrencyEdited);
+            adapter = new DetailsAdapter(this, displayData(), editExpenseId, isDateEdited,
+                    isNameEdited, isCategoryEdited, isAmountEdited, isCurrencyEdited, isImagePathEdited);
         } else {
             adapter = new DetailsAdapter(this, displayData());
         }
@@ -147,7 +147,9 @@ public class DetailsActivity extends ListActivity {
             bundle.putString("amount", expense.getAmount().setScale(2, BigDecimal.ROUND_HALF_UP).toString());
             bundle.putString("currency", expense.getCurrency());
             bundle.putString("country", expense.getCountry());
-            // Insert the display month/country settings into the bundle
+            bundle.putString("imagepath", expense.getImagePath());
+
+                // Insert the display month/country settings into the bundle
             bundle.putInt("displayMonth", displayMonth);
             bundle.putString("displayCountry", displayCountry);
 
@@ -204,19 +206,7 @@ public class DetailsActivity extends ListActivity {
             cbTravel.setVisibility(View.VISIBLE);
             //shiftListPosition(250);
         }
-
     }
-
-    /* Shifts the list and updates the new position
-    private void shiftListPosition(int delta) {
-        ListView listView = getListView();
-
-        TranslateAnimation anim = new TranslateAnimation(0, 0, 0, delta);
-        anim.setDuration(200);
-        anim.setFillAfter(true);
-        listView.startAnimation(anim);
-    }
-    */
 
     // Toggles the list display accordingly based on the (un)selected filters
     public void onClickToggleFilters(View view) {

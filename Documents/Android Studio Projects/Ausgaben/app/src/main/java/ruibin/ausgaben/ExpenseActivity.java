@@ -5,23 +5,37 @@ import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.media.ExifInterface;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v4.app.NavUtils;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.InputFilter;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -49,10 +63,18 @@ public class ExpenseActivity extends AppCompatActivity {
     private int displayMonth;
     private String displayCountry;
 
+    // For camera
+    private final int REQUEST_IMAGE_CAPTURE = 1;
+    private String imagePath;
+    private Bitmap imageBitmap;
+    private String currentPhotoPath;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_expense);
+
+        // Initialise toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -117,11 +139,28 @@ public class ExpenseActivity extends AppCompatActivity {
              Spinner spinnerCurrency = (Spinner) findViewById(R.id.spn_currency);
              setCurrencySpinner(spinnerCurrency, bundle.getString("currency"));
 
+             // Set 'Country' row to be visible
              TextView textCountry = (TextView) findViewById(R.id.text_expenseCountry);
              Spinner spinnerCountry = (Spinner) findViewById(R.id.spn_expenseCountry);
              textCountry.setVisibility(View.VISIBLE);
              spinnerCountry.setVisibility(View.VISIBLE);
              setCountrySpinner(spinnerCountry, bundle.getString("country"));
+
+             // and then move 'Photo' row below 'Country'
+             TextView textPhoto = (TextView) findViewById(R.id.text_expensePhoto);
+             ImageView imagePhoto = (ImageView) findViewById(R.id.img_photo);
+             RelativeLayout.LayoutParams textPhotoParams = (RelativeLayout.LayoutParams) textPhoto.getLayoutParams();
+             RelativeLayout.LayoutParams imagePhotoParams = (RelativeLayout.LayoutParams) imagePhoto.getLayoutParams();
+             textPhotoParams.addRule(RelativeLayout.BELOW, R.id.text_expenseCountry);
+             imagePhotoParams.addRule(RelativeLayout.BELOW, R.id.text_expenseCountry);
+
+             // and then display the attached image
+             imagePath = bundle.getString("imagepath");
+             if (imagePath != null) {
+                 loadImageFromStorage(imagePath, imagePhoto);
+                 // if image is loaded, change the onclick listener
+                 imagePhoto.setOnClickListener(onClickCameraForExistingExpense);
+             }
 
              Button delButton = (Button) findViewById(R.id.btn_delete);
              delButton.setVisibility(View.VISIBLE);
@@ -180,8 +219,51 @@ public class ExpenseActivity extends AppCompatActivity {
                 mCal.get(Calendar.YEAR),
                 mCal.get(Calendar.MONTH),
                 mCal.get(Calendar.DAY_OF_MONTH)).show();
-
     }
+
+    public void onClickCameraForNewExpense(View view) {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException e) {
+                Toast.makeText(this, "IOException encountered", Toast.LENGTH_SHORT).show();
+                e.printStackTrace();
+            }
+
+            // Continue only if the file was successfully created
+            if (photoFile != null) {
+                Uri photoURI = FileProvider.getUriForFile(this, "com.ruibin.ausgaben.fileprovider", photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+            }
+        }
+    }
+
+    private View.OnClickListener onClickCameraForExistingExpense = new View.OnClickListener() {
+        public void onClick(View view) {
+            CharSequence options[] = new CharSequence[] { "View photo", "Take new photo" };
+            final View viewview = view;
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(ExpenseActivity.this);
+            builder.setItems(options, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int option) {
+                   if (option == 0) { // "View photo"
+                       Intent intent = new Intent(ExpenseActivity.this, ImageActivity.class);
+                       intent.putExtra("imagepath", imagePath);
+                       startActivity(intent);
+                   } else if (option == 1) { // "Take new photo"
+                       onClickCameraForNewExpense(viewview);
+                   }
+               }
+            });
+
+            builder.show();
+        }
+    };
 
     public void onClickCancel(View view) {
         onBackPressed();
@@ -200,9 +282,14 @@ public class ExpenseActivity extends AppCompatActivity {
             String cityName = mPrefsLocation.getString("city", "");
             String countryName = mPrefsLocation.getString("country", "");
 
+            // Saves the image to internal storage
+            if (imageBitmap != null) {
+                saveImageToInternalStorage(imageBitmap);
+            }
+
             if (!isEditExpense) { // Adding a new expense
-                Expense newExpense = database.createExpense(quint.getFirst(), quint.getSecond(),
-                        quint.getThird(), quint.getFourth(), quint.getFifth(), mPrefs, cityName, countryName);
+                Expense newExpense = database.createExpense(quint.getFirst(), quint.getSecond(), quint.getThird(),
+                        quint.getFourth(), quint.getFifth(), mPrefs, cityName, countryName, currentPhotoPath);
                 setDisplayMonth(new Date(quint.getFirst())); // Sets the display month for DetailsActivity
 
                 intent.putExtra("newExpenseId", newExpense.getId());
@@ -214,7 +301,7 @@ public class ExpenseActivity extends AppCompatActivity {
                 String country = extractInputCountry();
 
                 boolean[] isEditsMade = database.editExpense(editExpenseId, quint.getFirst(), quint.getSecond(),
-                        quint.getThird(), quint.getFourth(), quint.getFifth(), mPrefs, country);
+                        quint.getThird(), quint.getFourth(), quint.getFifth(), mPrefs, country, currentPhotoPath);
                 intent.putExtra("editExpenseId", editExpenseId);
                 intent.putExtra("isDateEdited", isEditsMade[0]);
                 intent.putExtra("isNameEdited", isEditsMade[1]);
@@ -222,6 +309,7 @@ public class ExpenseActivity extends AppCompatActivity {
                 intent.putExtra("isAmountEdited", isEditsMade[3]);
                 intent.putExtra("isCurrencyEdited", isEditsMade[4]);
                 intent.putExtra("isCountryEdited", isEditsMade[5]);
+                intent.putExtra("isImagePathEdited", isEditsMade[6]);
 
                 intent.putExtra("displayMonth", displayMonth);
                 intent.putExtra("displayCountry", displayCountry);
@@ -233,7 +321,7 @@ public class ExpenseActivity extends AppCompatActivity {
                     intent.putExtra("displayCountry", "All Countries");
                 }
 
-                if (isEditsMade[0] || isEditsMade[1] || isEditsMade[2] || isEditsMade[3] || isEditsMade[4] || isEditsMade[5]) // if any edits were made
+                if (isEditsMade[0] || isEditsMade[1] || isEditsMade[2] || isEditsMade[3] || isEditsMade[4] || isEditsMade[5] || isEditsMade[6]) // if any edits were made
                     Toast.makeText(getApplicationContext(), "'" + quint.getSecond() + "' edited", Toast.LENGTH_SHORT).show();
             }
 
@@ -274,6 +362,94 @@ public class ExpenseActivity extends AppCompatActivity {
     }
 
     /*
+     *  ====================== CAMERA METHODS ======================
+     */
+
+    // Creates a file to save the image in
+    private File createImageFile() throws IOException {
+        String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timestamp + "_";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        if (!storageDir.exists()) {
+            if (storageDir.mkdirs()) {
+                System.out.println("Directory created");
+            } else {
+                return null;
+            }
+        }
+
+        File image = File.createTempFile(imageFileName, ".jpg", storageDir);
+
+        currentPhotoPath = image.getAbsolutePath();
+        System.out.println("currentPhotoPath = " + currentPhotoPath);
+        return image;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            File imageFile = new File(currentPhotoPath);
+            imageBitmap = getBitmap(imageFile);
+            imageBitmap = setImageRotation(imageBitmap);
+
+            // Display the image as a thumbnail
+            ImageView cameraBtn = (ImageView) findViewById(R.id.img_photo);
+            cameraBtn.setImageBitmap(imageBitmap);
+
+        }
+    }
+
+    // Get a bitmap from the file
+    private Bitmap getBitmap(File imageFile) {
+        BitmapFactory.Options bounds = new BitmapFactory.Options();
+        bounds.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(imageFile.getPath(), bounds);
+        if ((bounds.outWidth == -1) || (bounds.outHeight == -1))
+            return null;
+
+        int originalSize = (bounds.outHeight > bounds.outWidth) ? bounds.outHeight : bounds.outWidth;
+
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inSampleSize = originalSize / 400;
+        return BitmapFactory.decodeFile(imageFile.getPath(), options);
+    }
+
+    // Sets the image to be displayed correctly in portrait/landscape
+    private Bitmap setImageRotation(Bitmap imageBitmap) {
+        try {
+            ExifInterface exif = new ExifInterface(currentPhotoPath);
+            int rotation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+
+            int rotationInDegrees = 0;
+            if (rotation == ExifInterface.ORIENTATION_ROTATE_90) { rotationInDegrees = 90; }
+            else if (rotation == ExifInterface.ORIENTATION_ROTATE_180) {  rotationInDegrees = 180; }
+            else if (rotation == ExifInterface.ORIENTATION_ROTATE_270) {  rotationInDegrees = 270; }
+
+            // Use the image's rotation as a reference point to rotate the image using a Matrix
+            Matrix matrix = new Matrix();
+            if (rotation != 0f) {
+                matrix.preRotate(rotationInDegrees);
+            }
+
+            return Bitmap.createBitmap(imageBitmap, 0, 0, imageBitmap.getWidth(), imageBitmap.getHeight(), matrix, true);
+        } catch (IOException e) {
+            Toast.makeText(this, "IOException encountered", Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private void addImageToGallery() {
+        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+        File f = new File(currentPhotoPath);
+        Uri contentUri = Uri.fromFile(f);
+        mediaScanIntent.setData(contentUri);
+        this.sendBroadcast(mediaScanIntent);
+
+        Toast.makeText(this, "Image added to gallery", Toast.LENGTH_SHORT).show();
+    }
+
+    /*
      *  ====================== HELPER METHODS ======================
      */
 
@@ -302,6 +478,14 @@ public class ExpenseActivity extends AppCompatActivity {
 
         return new Quintuple<>(date, name, category, amount, currency);
     }
+
+    /*
+    private static byte[] getBitmapAsByteArray(Bitmap bitmap) {
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 0, stream);
+        return stream.toByteArray();
+    }
+    */
 
     private String extractInputCountry() {
         Spinner spn_country = (Spinner) findViewById(R.id.spn_expenseCountry);
@@ -464,6 +648,42 @@ public class ExpenseActivity extends AppCompatActivity {
                 spinner.setSelection(30); break;
             case "United Kingdom" :
                 spinner.setSelection(31); break;
+        }
+    }
+
+    /*
+     *  ====================== STORAGE METHODS ======================
+     */
+
+    private void saveImageToInternalStorage(Bitmap imageBitmap) {
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(currentPhotoPath);
+            imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos); // Write image to OutputStream at 100% quality
+            System.out.println("File saved to internal storage");
+        } catch (FileNotFoundException e) {
+            Toast.makeText(this, "FileNotFoundException encountered", Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+        } finally {
+            try {
+                fos.close();
+            } catch (IOException e) {
+                Toast.makeText(this, "IOException encountered", Toast.LENGTH_SHORT).show();
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void loadImageFromStorage(String path, ImageView imageView) {
+        try {
+            File file = new File(path);
+            Bitmap bitmap = BitmapFactory.decodeStream(new FileInputStream(file));
+            imageView.setImageBitmap(bitmap);
+            System.out.println("Image loaded from " + path);
+        }
+        catch (FileNotFoundException e) {
+            Toast.makeText(this, "FileNotFoundException encountered", Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
         }
     }
 }

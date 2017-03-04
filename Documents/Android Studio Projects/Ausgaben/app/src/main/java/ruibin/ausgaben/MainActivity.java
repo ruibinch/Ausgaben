@@ -36,6 +36,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -265,7 +266,6 @@ public class MainActivity extends AppCompatActivity implements
         moveTaskToBack(true);
     }
 
-    // TODO - import CSV / export as CSV
     // TODO - camera function to take photo of receipt
     // TODO - currency API
     // TODO - include option to set defaults in ExpenseActivity
@@ -351,6 +351,9 @@ public class MainActivity extends AppCompatActivity implements
         locationText.setText(sb.toString());
     }
 
+    /*
+     * ====================== CSV HELPER METHODS ======================
+     */
 
     // Imports a CSV file into the DB
     private void importDatabase() {
@@ -438,9 +441,14 @@ public class MainActivity extends AppCompatActivity implements
                 for (int i = 0; i < rowCount; i++ ) {
                     cursor.moveToPosition(i);
                     for (int j = 0; j < colCount; j++) {
-                        if (j != colCount - 1)
-                            bw.write(cursor.getString(j) + ", " );
-                        else
+                        if (j == 1) { // if this is the date column
+                            Calendar cal = Calendar.getInstance();
+                            cal.setTimeInMillis(cursor.getLong(j));
+                            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+                            bw.write(sdf.format(cal.getTime()) + ", ");
+                        } else if (j != colCount - 1) {
+                            bw.write(cursor.getString(j) + ", ");
+                        } else
                             bw.write(cursor.getString(j));
                     }
                     bw.newLine();
@@ -464,7 +472,6 @@ public class MainActivity extends AppCompatActivity implements
         int permission = ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
 
         if (permission != PackageManager.PERMISSION_GRANTED) {
-            System.out.println("No permission!");
             ActivityCompat.requestPermissions(
                     this,
                     PERMISSIONS_STORAGE,

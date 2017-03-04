@@ -5,6 +5,7 @@
     android:id="@+id/activity_expense"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:focusableInTouchMode="true"
     tools:context="ruibin.ausgaben.ExpenseActivity">
 
     <android.support.v7.widget.Toolbar
@@ -27,153 +28,193 @@
 
     <!-- First row - date -->
 
-    <TextView
-        android:id="@+id/text_expenseDate"
-        android:text="@string/str_expenseDate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="120dp"
-        android:layout_marginStart="40dp" />
+    <ScrollView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/input_expenseDate"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="55dp"
-        android:layout_toEndOf="@id/text_expenseDate"
-        android:layout_alignBaseline="@id/text_expenseDate"
-        android:onClick="onClickSetDate"
-        android:textColor="@android:color/black"
-        android:textSize="15sp"
-        android:clickable="true" />
+            <TextView
+                android:id="@+id/text_expenseDate"
+                android:text="@string/str_expenseDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="100dp"
+                android:layout_marginStart="40dp" />
 
-    <!-- Second row - name -->
+            <TextView
+                android:id="@+id/input_expenseDate"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="55dp"
+                android:layout_toEndOf="@id/text_expenseDate"
+                android:layout_alignBaseline="@id/text_expenseDate"
+                android:onClick="onClickSetDate"
+                android:textColor="@android:color/black"
+                android:textSize="15sp"
+                android:clickable="true" />
 
-    <TextView
-        android:id="@+id/text_expenseName"
-        android:text="@string/str_expenseName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/text_expenseDate"
-        android:layout_alignStart="@id/text_expenseDate"
-        android:layout_marginTop="25dp" />
+            <!-- Second row - name -->
 
-    <EditText
-        android:id="@+id/input_expenseName"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:layout_toEndOf="@id/text_expenseName"
-        android:layout_alignBaseline="@id/text_expenseName"
-        android:layout_alignStart="@id/input_expenseDate"
-        android:background="@android:color/transparent"
-        android:inputType="textCapSentences" />
+            <TextView
+                android:id="@+id/text_expenseName"
+                android:text="@string/str_expenseName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/text_expenseDate"
+                android:layout_alignStart="@id/text_expenseDate"
+                android:layout_marginTop="25dp" />
 
-    <!-- Third row - category -->
+            <EditText
+                android:id="@+id/input_expenseName"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/text_expenseName"
+                android:layout_alignBaseline="@id/text_expenseName"
+                android:layout_alignStart="@id/input_expenseDate"
+                android:background="@android:color/transparent"
+                android:inputType="textCapSentences" />
 
-    <TextView
-        android:id="@+id/text_expenseCategory"
-        android:text="@string/str_expenseCategory"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/text_expenseName"
-        android:layout_alignStart="@id/text_expenseName"
-        android:layout_marginTop="25dp" />
+            <!-- Third row - category -->
 
-    <Spinner
-        android:id="@+id/spn_expenseCategory"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toEndOf="@id/text_expenseCategory"
-        android:layout_alignBaseline="@id/text_expenseCategory"
-        android:layout_alignStart="@id/input_expenseName"
-        android:entries="@array/spn_expenseCategory_entries" />
+            <TextView
+                android:id="@+id/text_expenseCategory"
+                android:text="@string/str_expenseCategory"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/text_expenseName"
+                android:layout_alignStart="@id/text_expenseName"
+                android:layout_marginTop="25dp" />
 
-    <!-- Fourth row - amount -->
+            <Spinner
+                android:id="@+id/spn_expenseCategory"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/text_expenseCategory"
+                android:layout_marginStart="20dp"
+                android:layout_alignBaseline="@id/text_expenseCategory"
+                android:dropDownWidth="@dimen/spinner_categorySelection"
+                android:entries="@array/spn_expenseCategory_entries" />
 
-    <TextView
-        android:id="@+id/text_expenseAmt"
-        android:text="@string/str_expenseAmt"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/text_expenseCategory"
-        android:layout_alignStart="@id/text_expenseCategory"
-        android:layout_marginTop="25dp" />
+            <!-- Fourth row - amount -->
 
-    <EditText
-        android:id="@+id/input_expenseAmt"
-        android:layout_width="80dp"
-        android:layout_height="wrap_content"
-        android:layout_toEndOf="@id/text_expenseAmt"
-        android:layout_alignBaseline="@id/text_expenseAmt"
-        android:layout_alignStart="@id/spn_expenseCategory"
-        android:background="@android:color/transparent"
-        android:inputType="numberDecimal" />
+            <TextView
+                android:id="@+id/text_expenseAmt"
+                android:text="@string/str_expenseAmt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/text_expenseCategory"
+                android:layout_alignStart="@id/text_expenseCategory"
+                android:layout_marginTop="25dp" />
 
-    <Spinner
-        android:id="@+id/spn_currency"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toEndOf="@id/input_expenseAmt"
-        android:layout_alignBaseline="@id/input_expenseAmt"
-        android:layout_marginStart="5dp"
-        android:dropDownWidth="@dimen/spinner_currencySelection"
-        android:entries="@array/spn_currency_entries" />
+            <EditText
+                android:id="@+id/input_expenseAmt"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/text_expenseAmt"
+                android:layout_alignBaseline="@id/text_expenseAmt"
+                android:layout_alignStart="@id/input_expenseName"
+                android:background="@android:color/transparent"
+                android:inputType="numberDecimal" />
 
-    <!-- Fifth row - country -->
+            <Spinner
+                android:id="@+id/spn_currency"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/input_expenseAmt"
+                android:layout_alignBaseline="@id/input_expenseAmt"
+                android:layout_marginStart="5dp"
+                android:dropDownWidth="@dimen/spinner_currencySelection"
+                android:entries="@array/spn_currency_entries" />
 
-    <TextView
-        android:id="@+id/text_expenseCountry"
-        android:text="@string/str_expenseCountry"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/text_expenseAmt"
-        android:layout_alignStart="@id/text_expenseAmt"
-        android:layout_marginTop="25dp"
-        android:visibility="gone" />
+            <!-- Fifth row - country -->
 
-    <Spinner
-        android:id="@+id/spn_expenseCountry"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toEndOf="@id/text_expenseCountry"
-        android:layout_alignBaseline="@id/text_expenseCountry"
-        android:layout_alignStart="@id/input_expenseAmt"
-        android:dropDownWidth="@dimen/spinner_editCountrySelection"
-        android:entries="@array/spn_countries_entries"
-        android:visibility="gone" />
+            <TextView
+                android:id="@+id/text_expenseCountry"
+                android:text="@string/str_expenseCountry"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/text_expenseAmt"
+                android:layout_alignStart="@id/text_expenseAmt"
+                android:layout_marginTop="25dp"
+                android:visibility="gone" />
 
-    <!-- Buttons -->
+            <Spinner
+                android:id="@+id/spn_expenseCountry"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/text_expenseCountry"
+                android:layout_alignBaseline="@id/text_expenseCountry"
+                android:layout_alignStart="@id/spn_expenseCategory"
+                android:dropDownWidth="@dimen/spinner_editCountrySelection"
+                android:entries="@array/spn_countries_entries"
+                android:visibility="gone"  />
 
-    <Button
-        android:id="@+id/btn_cancel"
-        android:text="@string/str_cancel"
-        android:layout_width="120dp"
-        android:layout_height="50dp"
-        android:layout_below="@id/text_expenseAmt"
-        android:layout_marginTop="70dp"
-        android:layout_marginStart="40dp"
-        android:onClick="onClickCancel" />
 
-    <Button
-        android:id="@+id/btn_save"
-        android:text="@string/str_save"
-        android:layout_width="120dp"
-        android:layout_height="50dp"
-        android:layout_toEndOf="@id/btn_cancel"
-        android:layout_alignBottom="@+id/btn_cancel"
-        android:layout_marginStart="35dp"
-        android:onClick="onClickSave" />
+            <!-- Sixth row - camera -->
 
-    <Button
-        android:id="@+id/btn_delete"
-        android:text="@string/str_delete"
-        android:layout_width="wrap_content"
-        android:layout_height="50dp"
-        android:layout_below="@id/btn_cancel"
-        android:layout_alignStart="@id/btn_cancel"
-        android:layout_alignEnd="@id/btn_save"
-        android:layout_marginTop="30dp"
-        android:visibility="gone"
-        android:onClick="onClickDelete" />
+            <ImageView
+                android:id="@+id/img_photo"
+                android:src="@drawable/ic_camera"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/input_expenseAmt"
+                android:layout_alignStart="@id/input_expenseAmt"
+                android:layout_marginTop="20dp"
+                android:adjustViewBounds="true"
+                android:onClick="onClickCameraForNewExpense"
+                tools:ignore="ContentDescription" />
+
+            <TextView
+                android:id="@+id/text_expensePhoto"
+                android:text="@string/str_expensePhoto"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/text_expenseAmt"
+                android:layout_marginTop="25dp"
+                android:layout_alignStart="@id/text_expenseCountry"
+                android:layout_alignBottom="@id/img_photo" />
+
+
+            <!-- Buttons -->
+
+            <Button
+                android:id="@+id/btn_cancel"
+                android:text="@string/str_cancel"
+                android:layout_width="120dp"
+                android:layout_height="50dp"
+                android:layout_below="@id/text_expensePhoto"
+                android:layout_marginTop="40dp"
+                android:layout_marginStart="40dp"
+                android:onClick="onClickCancel" />
+
+            <Button
+                android:id="@+id/btn_save"
+                android:text="@string/str_save"
+                android:layout_width="120dp"
+                android:layout_height="50dp"
+                android:layout_toEndOf="@id/btn_cancel"
+                android:layout_alignBottom="@+id/btn_cancel"
+                android:layout_marginStart="35dp"
+                android:onClick="onClickSave" />
+
+            <Button
+                android:id="@+id/btn_delete"
+                android:text="@string/str_delete"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:layout_below="@id/btn_cancel"
+                android:layout_alignStart="@id/btn_cancel"
+                android:layout_alignEnd="@id/btn_save"
+                android:layout_marginTop="30dp"
+                android:layout_marginBottom="30dp"
+                android:visibility="gone"
+                android:onClick="onClickDelete" />
+
+        </RelativeLayout>
+    </ScrollView>
 
 </RelativeLayout>
+

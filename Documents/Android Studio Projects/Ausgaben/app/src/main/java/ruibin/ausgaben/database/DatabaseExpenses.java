@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.widget.Toast;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -37,11 +38,12 @@ public class DatabaseExpenses {
             SQLiteHelper.COLUMN_FOREXRATE,
             SQLiteHelper.COLUMN_FOREXRATE_EURTOSGD,
             SQLiteHelper.COLUMN_CITY,
-            SQLiteHelper.COLUMN_COUNTRY
+            SQLiteHelper.COLUMN_COUNTRY,
+            SQLiteHelper.COLUMN_IMAGEPATH
     };
 
     public DatabaseExpenses(Context context) {
-        dbHelper = new SQLiteHelper(context);
+        dbHelper = SQLiteHelper.getInstance(context);
     }
 
     public void open() throws SQLException {
@@ -54,7 +56,7 @@ public class DatabaseExpenses {
     }
 
     private void upgradeDatabase() {
-        dbHelper.onUpgrade(database, 4, 5);
+        dbHelper.onUpgrade(database, 6, 7);
         System.out.println("Database upgraded");
     }
 
@@ -63,7 +65,8 @@ public class DatabaseExpenses {
      */
 
     // Creates a new expense and adds it to the DB
-    public Expense createExpense(long date, String name, String category, BigDecimal amount, String currency, SharedPreferences mPrefs, String city, String country) {
+    public Expense createExpense(long date, String name, String category, BigDecimal amount, String currency,
+                                 SharedPreferences mPrefs, String city, String country, String imagePath) {
         // Creating the set of values to be inserted into the DB
         ContentValues values = new ContentValues();
         values.put(SQLiteHelper.COLUMN_DATE, date);
@@ -75,6 +78,9 @@ public class DatabaseExpenses {
         values.put(SQLiteHelper.COLUMN_FOREXRATE_EURTOSGD, getForexRate(mPrefs, "SGD"));
         values.put(SQLiteHelper.COLUMN_CITY, city);
         values.put(SQLiteHelper.COLUMN_COUNTRY, country);
+        if (imagePath != null) {
+            values.put(SQLiteHelper.COLUMN_IMAGEPATH, imagePath);
+        }
 
         // Insert the data into the DB and obtain the ID
         long insertId = database.insert(SQLiteHelper.TABLE_EXPENSES, null, values);
@@ -92,7 +98,7 @@ public class DatabaseExpenses {
 
     // Edits an existing expense in the DB
     public boolean[] editExpense(long editId, long date, String name, String category, BigDecimal amount,
-                                 String currency, SharedPreferences mPrefs, String country) {
+                                 String currency, SharedPreferences mPrefs, String country, String imagePath) {
         // Obtain the current row of values in the DB
         Cursor cursor = database.query(SQLiteHelper.TABLE_EXPENSES, allColumns, SQLiteHelper.COLUMN_ID + " = " + editId,
                 null, null, null, null);
@@ -107,6 +113,9 @@ public class DatabaseExpenses {
         values.put(SQLiteHelper.COLUMN_AMOUNT, amount.toPlainString());
         values.put(SQLiteHelper.COLUMN_CURRENCY, currency);
         values.put(SQLiteHelper.COLUMN_COUNTRY, country);
+        if (imagePath != null) {
+            values.put(SQLiteHelper.COLUMN_IMAGEPATH, imagePath);
+        }
 
         // Obtain what has been edited
         boolean[] isEditsMade = compareDifferences(expense, values);
@@ -232,7 +241,7 @@ public class DatabaseExpenses {
     private Expense getExpenseDetails(Cursor cursor) {
         return new Expense(cursor.getLong(0), cursor.getLong(1), cursor.getString(2), cursor.getString(3),
                 new BigDecimal(cursor.getString(4)), cursor.getString(5), cursor.getLong(6), cursor.getLong(7),
-                cursor.getString(8), cursor.getString(9));
+                cursor.getString(8), cursor.getString(9), cursor.getString(10));
     }
 
     // Get the expenditure amount, converted into euros, rounded to 2 decimal places
@@ -248,7 +257,7 @@ public class DatabaseExpenses {
 
     // Returns a boolean array indicating which fields were edited (date, name, category, amount)
     private boolean[] compareDifferences(Expense expense, ContentValues values) {
-        boolean[] isEditsMade = new boolean[6];
+        boolean[] isEditsMade = new boolean[7];
         if (expense.getDate() != values.getAsLong(SQLiteHelper.COLUMN_DATE))
             isEditsMade[0] = true;
         if (!expense.getName().equals(values.getAsString(SQLiteHelper.COLUMN_NAME)))
@@ -261,6 +270,11 @@ public class DatabaseExpenses {
             isEditsMade[4] = true;
         if (!expense.getCountry().equals(values.getAsString(SQLiteHelper.COLUMN_COUNTRY)))
             isEditsMade[5] = true;
+        if (values.getAsString(SQLiteHelper.COLUMN_IMAGEPATH) != null) {
+            if (expense.getImagePath() == null ||
+                    !expense.getImagePath().equals(values.getAsString(SQLiteHelper.COLUMN_IMAGEPATH)))
+                isEditsMade[6] = true;
+        }
 
         return isEditsMade;
     }
@@ -318,15 +332,6 @@ public class DatabaseExpenses {
         Calendar cal = Calendar.getInstance();
         cal.setTime(new Date(date));
         return cal.get(Calendar.MONTH);
-    }
-
-
-
-    /*
-     * ====================== MANUAL INSERTION OF DATA ======================
-     */
-
-    public void insertData() {
     }
 
 }

@@ -35,7 +35,7 @@ class DetailsAdapter extends ArrayAdapter<Expense> {
     private boolean isCategoryEdited;
     private boolean isAmountEdited;
     private boolean isCurrencyEdited;
-
+    private boolean isImagePathEdited;
 
     DetailsAdapter(Context context, ArrayList<Expense> list) {
         super(context, R.layout.row_expenseslist, list);
@@ -53,7 +53,8 @@ class DetailsAdapter extends ArrayAdapter<Expense> {
     }
 
     DetailsAdapter(Context context, ArrayList<Expense> list, long editExpenseId,
-                   boolean isDateEdited, boolean isNameEdited, boolean isCategoryEdited, boolean isAmountEdited, boolean isCurrencyEdited) {
+                   boolean isDateEdited, boolean isNameEdited, boolean isCategoryEdited, boolean isAmountEdited,
+                   boolean isCurrencyEdited, boolean isImagePathEdited) {
         super(context, R.layout.row_expenseslist, list);
 
         this.context = context;
@@ -64,6 +65,7 @@ class DetailsAdapter extends ArrayAdapter<Expense> {
         this.isCategoryEdited = isCategoryEdited;
         this.isAmountEdited = isAmountEdited;
         this.isCurrencyEdited = isCurrencyEdited;
+        this.isImagePathEdited = isImagePathEdited;
     }
 
     @Override
@@ -111,6 +113,12 @@ class DetailsAdapter extends ArrayAdapter<Expense> {
                     nameView.setTextColor(colourDarkGreen);
                 if (isAmountEdited || isCurrencyEdited)
                     amountView.setTextColor(colourDarkGreen);
+                if (isImagePathEdited) {
+                    categoryIconView.setColorFilter(colourDarkGreen);
+                    dateView.setTextColor(colourDarkGreen);
+                    nameView.setTextColor(colourDarkGreen);
+                    amountView.setTextColor(colourDarkGreen);
+                }
             }
         }
 
