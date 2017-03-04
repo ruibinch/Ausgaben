@@ -164,7 +164,7 @@
                 android:layout_alignStart="@id/input_expenseAmt"
                 android:layout_marginTop="20dp"
                 android:adjustViewBounds="true"
-                android:onClick="onClickCameraForNewExpense"
+                android:onClick="onClickCamera"
                 tools:ignore="ContentDescription" />
 
             <TextView

@@ -78,9 +78,7 @@ public class DatabaseExpenses {
         values.put(SQLiteHelper.COLUMN_FOREXRATE_EURTOSGD, getForexRate(mPrefs, "SGD"));
         values.put(SQLiteHelper.COLUMN_CITY, city);
         values.put(SQLiteHelper.COLUMN_COUNTRY, country);
-        if (imagePath != null) {
-            values.put(SQLiteHelper.COLUMN_IMAGEPATH, imagePath);
-        }
+        values.put(SQLiteHelper.COLUMN_IMAGEPATH, imagePath);
 
         // Insert the data into the DB and obtain the ID
         long insertId = database.insert(SQLiteHelper.TABLE_EXPENSES, null, values);
@@ -113,9 +111,7 @@ public class DatabaseExpenses {
         values.put(SQLiteHelper.COLUMN_AMOUNT, amount.toPlainString());
         values.put(SQLiteHelper.COLUMN_CURRENCY, currency);
         values.put(SQLiteHelper.COLUMN_COUNTRY, country);
-        if (imagePath != null) {
-            values.put(SQLiteHelper.COLUMN_IMAGEPATH, imagePath);
-        }
+        values.put(SQLiteHelper.COLUMN_IMAGEPATH, imagePath);
 
         // Obtain what has been edited
         boolean[] isEditsMade = compareDifferences(expense, values);
@@ -270,9 +266,11 @@ public class DatabaseExpenses {
             isEditsMade[4] = true;
         if (!expense.getCountry().equals(values.getAsString(SQLiteHelper.COLUMN_COUNTRY)))
             isEditsMade[5] = true;
-        if (values.getAsString(SQLiteHelper.COLUMN_IMAGEPATH) != null) {
-            if (expense.getImagePath() == null ||
-                    !expense.getImagePath().equals(values.getAsString(SQLiteHelper.COLUMN_IMAGEPATH)))
+        if ((expense.getImagePath() != null && values.getAsString(SQLiteHelper.COLUMN_IMAGEPATH) == null) ||
+            (expense.getImagePath() == null && values.getAsString(SQLiteHelper.COLUMN_IMAGEPATH) != null)) {
+            isEditsMade[6] = true;
+        } else if (expense.getImagePath() != null && values.getAsString(SQLiteHelper.COLUMN_IMAGEPATH) != null) {
+            if ((!expense.getImagePath().equals(values.getAsString(SQLiteHelper.COLUMN_IMAGEPATH))))
                 isEditsMade[6] = true;
         }
 

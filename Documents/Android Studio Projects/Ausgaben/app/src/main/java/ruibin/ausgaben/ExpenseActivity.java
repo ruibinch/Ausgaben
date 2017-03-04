@@ -30,7 +30,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -65,9 +64,11 @@ public class ExpenseActivity extends AppCompatActivity {
 
     // For camera
     private final int REQUEST_IMAGE_CAPTURE = 1;
-    private String imagePath;
+    private String currentPhotoPath; // To temporarily store the to-be image path
+    private String imagePath; // To store the existing image path
     private Bitmap imageBitmap;
-    private String currentPhotoPath;
+    private boolean isImageDeleted; // For editing expense purposes
+    private boolean isNewImageTaken;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,6 +115,10 @@ public class ExpenseActivity extends AppCompatActivity {
         // Sets the input amount to 2 decimal places
         EditText editText = (EditText) findViewById(R.id.input_expenseAmt);
         editText.setFilters(new InputFilter[] {new DecimalDigitsInputFilter(6,2)});
+
+        // Initialise the default click handler for the Photo button
+        ImageView imagePhoto = (ImageView) findViewById(R.id.img_photo);
+        imagePhoto.setOnClickListener(onClickCamera);
     }
 
     // Populates the fields with data and sets elements visible, if applicable (i.e. editing an existing expense)
@@ -157,9 +162,9 @@ public class ExpenseActivity extends AppCompatActivity {
              // and then display the attached image
              imagePath = bundle.getString("imagepath");
              if (imagePath != null) {
-                 loadImageFromStorage(imagePath, imagePhoto);
+                 loadImageFromStorage(imagePhoto);
                  // if image is loaded, change the onclick listener
-                 imagePhoto.setOnClickListener(onClickCameraForExistingExpense);
+                 imagePhoto.setOnClickListener(onClickCameraWithExistingPhoto);
              }
 
              Button delButton = (Button) findViewById(R.id.btn_delete);
@@ -221,31 +226,15 @@ public class ExpenseActivity extends AppCompatActivity {
                 mCal.get(Calendar.DAY_OF_MONTH)).show();
     }
 
-    public void onClickCameraForNewExpense(View view) {
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-
-        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            File photoFile = null;
-            try {
-                photoFile = createImageFile();
-            } catch (IOException e) {
-                Toast.makeText(this, "IOException encountered", Toast.LENGTH_SHORT).show();
-                e.printStackTrace();
-            }
-
-            // Continue only if the file was successfully created
-            if (photoFile != null) {
-                Uri photoURI = FileProvider.getUriForFile(this, "com.ruibin.ausgaben.fileprovider", photoFile);
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-            }
-        }
-    }
-
-    private View.OnClickListener onClickCameraForExistingExpense = new View.OnClickListener() {
+    private View.OnClickListener onClickCamera = new View.OnClickListener() {
         public void onClick(View view) {
-            CharSequence options[] = new CharSequence[] { "View photo", "Take new photo" };
-            final View viewview = view;
+            openCamera();
+        }
+    };
+
+    private View.OnClickListener onClickCameraWithExistingPhoto = new View.OnClickListener() {
+        public void onClick(View view) {
+            CharSequence options[] = new CharSequence[] { "View photo", "Take new photo", "Remove photo" };
 
             AlertDialog.Builder builder = new AlertDialog.Builder(ExpenseActivity.this);
             builder.setItems(options, new DialogInterface.OnClickListener() {
@@ -256,7 +245,13 @@ public class ExpenseActivity extends AppCompatActivity {
                        intent.putExtra("imagepath", imagePath);
                        startActivity(intent);
                    } else if (option == 1) { // "Take new photo"
-                       onClickCameraForNewExpense(viewview);
+                       openCamera();
+                   } else if (option == 2) { // "Remove photo"
+                       ImageView cameraBtn = (ImageView) findViewById(R.id.img_photo);
+                       cameraBtn.setImageResource(R.drawable.ic_camera);
+                       cameraBtn.setOnClickListener(onClickCamera);
+
+                       isImageDeleted = true;
                    }
                }
             });
@@ -285,6 +280,7 @@ public class ExpenseActivity extends AppCompatActivity {
             // Saves the image to internal storage
             if (imageBitmap != null) {
                 saveImageToInternalStorage(imageBitmap);
+                isNewImageTaken = true;
             }
 
             if (!isEditExpense) { // Adding a new expense
@@ -298,10 +294,21 @@ public class ExpenseActivity extends AppCompatActivity {
                 intent.putExtra("displayCountry", "All Countries");
                 Toast.makeText(getApplicationContext(), "'" + quint.getSecond() + "' added in " + quint.getFifth(), Toast.LENGTH_SHORT).show();
             } else {
+                // If image had been removed, delete it from internal storage too
+                if (isImageDeleted) {
+                    deleteImageFromInternalStorage();
+                    imagePath = null;
+                }
+
                 String country = extractInputCountry();
+                if (isNewImageTaken) {
+                    // Only update the image path, if a new image had been taken
+                    // Caters for the corner case where 'Take new photo' is selected, but the camera request is cancelled
+                    imagePath = currentPhotoPath;
+                }
 
                 boolean[] isEditsMade = database.editExpense(editExpenseId, quint.getFirst(), quint.getSecond(),
-                        quint.getThird(), quint.getFourth(), quint.getFifth(), mPrefs, country, currentPhotoPath);
+                        quint.getThird(), quint.getFourth(), quint.getFifth(), mPrefs, country, imagePath);
                 intent.putExtra("editExpenseId", editExpenseId);
                 intent.putExtra("isDateEdited", isEditsMade[0]);
                 intent.putExtra("isNameEdited", isEditsMade[1]);
@@ -317,9 +324,8 @@ public class ExpenseActivity extends AppCompatActivity {
                     setDisplayMonth(new Date(quint.getFirst()));
                     intent.putExtra("displayMonth", displayMonth);
                 }
-                if (isEditsMade[5]) { // if country is edited, set display country to all countries
+                if (isEditsMade[5]) // if country is edited, set display country to all countries
                     intent.putExtra("displayCountry", "All Countries");
-                }
 
                 if (isEditsMade[0] || isEditsMade[1] || isEditsMade[2] || isEditsMade[3] || isEditsMade[4] || isEditsMade[5] || isEditsMade[6]) // if any edits were made
                     Toast.makeText(getApplicationContext(), "'" + quint.getSecond() + "' edited", Toast.LENGTH_SHORT).show();
@@ -339,15 +345,20 @@ public class ExpenseActivity extends AppCompatActivity {
 
         builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-            String deletedExpenseName = database.deleteExpense(editExpenseId);
-            Toast.makeText(getApplicationContext(), "'" + deletedExpenseName + "' deleted", Toast.LENGTH_SHORT).show();
-            dialog.cancel();
+                // Delete the expense from the DB, as well as the attached image (if present) from internal storage
+                String deletedExpenseName = database.deleteExpense(editExpenseId);
+                if (imagePath != null) {
+                    deleteImageFromInternalStorage();
+                }
 
-            Intent intent = new Intent(ExpenseActivity.this, DetailsActivity.class);
-            System.out.println("onClickDelete: month = " + displayMonth + ", country = " + displayCountry);
-            intent.putExtra("displayMonth", displayMonth);
-            intent.putExtra("displayCountry", displayCountry);
-            startActivity(intent);
+                Toast.makeText(getApplicationContext(), "'" + deletedExpenseName + "' deleted", Toast.LENGTH_SHORT).show();
+                dialog.cancel();
+
+                Intent intent = new Intent(ExpenseActivity.this, DetailsActivity.class);
+                System.out.println("onClickDelete: month = " + displayMonth + ", country = " + displayCountry);
+                intent.putExtra("displayMonth", displayMonth);
+                intent.putExtra("displayCountry", displayCountry);
+                startActivity(intent);
             }
         });
 
@@ -364,6 +375,27 @@ public class ExpenseActivity extends AppCompatActivity {
     /*
      *  ====================== CAMERA METHODS ======================
      */
+
+    private void openCamera() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException e) {
+                Toast.makeText(ExpenseActivity.this, "IOException encountered", Toast.LENGTH_SHORT).show();
+                e.printStackTrace();
+            }
+
+            // Continue only if the file was successfully created
+            if (photoFile != null) {
+                Uri photoURI = FileProvider.getUriForFile(ExpenseActivity.this, "com.ruibin.ausgaben.fileprovider", photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+            }
+        }
+    }
 
     // Creates a file to save the image in
     private File createImageFile() throws IOException {
@@ -385,6 +417,7 @@ public class ExpenseActivity extends AppCompatActivity {
         return image;
     }
 
+    // Data obtained from the camera
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
@@ -395,7 +428,10 @@ public class ExpenseActivity extends AppCompatActivity {
             // Display the image as a thumbnail
             ImageView cameraBtn = (ImageView) findViewById(R.id.img_photo);
             cameraBtn.setImageBitmap(imageBitmap);
-
+            cameraBtn.setOnClickListener(onClickCameraWithExistingPhoto); // change the onclick listener
+        } else if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_CANCELED) {
+            System.out.println("currentPhotoPath deleted");
+            currentPhotoPath = null;
         }
     }
 
@@ -674,14 +710,19 @@ public class ExpenseActivity extends AppCompatActivity {
         }
     }
 
-    private void loadImageFromStorage(String path, ImageView imageView) {
+    private void deleteImageFromInternalStorage() {
+        File file = new File(imagePath);
+        if (file.delete())
+            System.out.println("File at " + imagePath + " deleted");
+    }
+
+    private void loadImageFromStorage(ImageView imageView) {
         try {
-            File file = new File(path);
+            File file = new File(imagePath);
             Bitmap bitmap = BitmapFactory.decodeStream(new FileInputStream(file));
             imageView.setImageBitmap(bitmap);
-            System.out.println("Image loaded from " + path);
-        }
-        catch (FileNotFoundException e) {
+            System.out.println("Image loaded from " + imagePath);
+        } catch (FileNotFoundException e) {
             Toast.makeText(this, "FileNotFoundException encountered", Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         }

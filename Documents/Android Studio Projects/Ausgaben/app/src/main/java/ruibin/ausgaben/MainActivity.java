@@ -266,7 +266,7 @@ public class MainActivity extends AppCompatActivity implements
         moveTaskToBack(true);
     }
 
-    // TODO - camera function to take photo of receipt
+    // TODO - Bug - create expense with photo -> delete photo -> click on camera button -> press back and save -> 'Photo' row disappears
     // TODO - currency API
     // TODO - include option to set defaults in ExpenseActivity
     // TODO - auto-back up to Google Drive
