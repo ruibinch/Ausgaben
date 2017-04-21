@@ -22,6 +22,7 @@
     <string name="str_delete">Delete</string>
 
     <string-array name="spn_expenseCategory_entries">
+        <item>Accommodation</item>
         <item>Food</item>
         <item>Gifts</item>
         <item>Leisure</item>
@@ -128,25 +129,15 @@
 
     <!-- OverviewActivity -->
     <string-array name="spn_selectMonth_entries">
-        <item>All Months</item>
-        <item>Jan 2017</item>
-        <item>Feb 2017</item>
-        <item>Mar 2017</item>
-        <item>Apr 2017</item>
-        <item>May 2017</item>
-        <item>Jun 2017</item>
-        <item>Jul 2017</item>
-        <item>Aug 2017</item>
-    </string-array>
-
-    <string-array name="spn_selectCountry_entries">
-        <item>All Countries</item>
-        <item>Germany</item>
-        <item>Ireland</item>
-        <item>Netherlands</item>
-        <item>Poland</item>
-        <item>Singapore</item>
-        <item>United Kingdom</item>
+        <item>All</item>
+        <item>Jan</item>
+        <item>Feb</item>
+        <item>Mar</item>
+        <item>Apr</item>
+        <item>May</item>
+        <item>Jun</item>
+        <item>Jul</item>
+        <item>Aug</item>
     </string-array>
 
     <string-array name="toggle_selectDisplayCurrency_entries">
@@ -157,6 +148,7 @@
     <string name="str_totalExpenditure">Total Expenditure</string>
     <string name="str_viewExpensesList">View Expenses List</string>
 
+    <string name="str_accommodation">Accommodation</string>
     <string name="str_food">Food</string>
     <string name="str_gifts">Gifts</string>
     <string name="str_leisure">Leisure</string>

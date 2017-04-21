@@ -61,6 +61,8 @@ public class ExpenseActivity extends AppCompatActivity {
     private long editExpenseId;
     private int displayMonth;
     private String displayCountry;
+    private int displayStartDate;
+    private int displayEndDate;
 
     // For camera
     private final int REQUEST_IMAGE_CAPTURE = 1;
@@ -111,6 +113,10 @@ public class ExpenseActivity extends AppCompatActivity {
         // Sets the date to today's date by default
         mDateDisplay = (TextView) findViewById(R.id.input_expenseDate);
         updateDateDisplay();
+
+        // Sets the default category to 'Food'
+        Spinner categorySpinner = (Spinner) findViewById(R.id.spn_expenseCategory);
+        categorySpinner.setSelection(1);
 
         // Sets the input amount to 2 decimal places
         EditText editText = (EditText) findViewById(R.id.input_expenseAmt);
@@ -173,6 +179,8 @@ public class ExpenseActivity extends AppCompatActivity {
              // Set month and country display settings
              displayMonth = bundle.getInt("displayMonth");
              displayCountry = bundle.getString("displayCountry");
+             displayStartDate = bundle.getInt("displayStartDate");
+             displayEndDate = bundle.getInt("displayEndDate");
          }
     }
 
@@ -205,6 +213,8 @@ public class ExpenseActivity extends AppCompatActivity {
             Intent intent = new Intent(this, DetailsActivity.class);
             intent.putExtra("displayMonth", displayMonth);
             intent.putExtra("displayCountry", displayCountry);
+            intent.putExtra("displayStartDate", displayStartDate);
+            intent.putExtra("displayEndDate", displayEndDate);
             startActivity(intent);
         }
     }
@@ -291,7 +301,9 @@ public class ExpenseActivity extends AppCompatActivity {
                 intent.putExtra("newExpenseId", newExpense.getId());
                 intent.putExtra("source", "ExpenseActivity");
                 intent.putExtra("displayMonth", displayMonth);
-                intent.putExtra("displayCountry", "All Countries");
+                intent.putExtra("displayCountry", "All");
+                intent.putExtra("displayStartDate", 1);
+                intent.putExtra("displayEndDate", 31);
                 Toast.makeText(getApplicationContext(), "'" + quint.getSecond() + "' added in " + quint.getFifth(), Toast.LENGTH_SHORT).show();
             } else {
                 // If image had been removed, delete it from internal storage too
@@ -320,12 +332,14 @@ public class ExpenseActivity extends AppCompatActivity {
 
                 intent.putExtra("displayMonth", displayMonth);
                 intent.putExtra("displayCountry", displayCountry);
+                intent.putExtra("displayStartDate", 1);
+                intent.putExtra("displayEndDate", 31);
                 if (isEditsMade[0]) { // if date/month is edited, set display month to the new edited month
                     setDisplayMonth(new Date(quint.getFirst()));
                     intent.putExtra("displayMonth", displayMonth);
                 }
                 if (isEditsMade[5]) // if country is edited, set display country to all countries
-                    intent.putExtra("displayCountry", "All Countries");
+                    intent.putExtra("displayCountry", "All");
 
                 if (isEditsMade[0] || isEditsMade[1] || isEditsMade[2] || isEditsMade[3] || isEditsMade[4] || isEditsMade[5] || isEditsMade[6]) // if any edits were made
                     Toast.makeText(getApplicationContext(), "'" + quint.getSecond() + "' edited", Toast.LENGTH_SHORT).show();
@@ -355,7 +369,6 @@ public class ExpenseActivity extends AppCompatActivity {
                 dialog.cancel();
 
                 Intent intent = new Intent(ExpenseActivity.this, DetailsActivity.class);
-                System.out.println("onClickDelete: month = " + displayMonth + ", country = " + displayCountry);
                 intent.putExtra("displayMonth", displayMonth);
                 intent.putExtra("displayCountry", displayCountry);
                 startActivity(intent);
@@ -515,14 +528,6 @@ public class ExpenseActivity extends AppCompatActivity {
         return new Quintuple<>(date, name, category, amount, currency);
     }
 
-    /*
-    private static byte[] getBitmapAsByteArray(Bitmap bitmap) {
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 0, stream);
-        return stream.toByteArray();
-    }
-    */
-
     private String extractInputCountry() {
         Spinner spn_country = (Spinner) findViewById(R.id.spn_expenseCountry);
         return spn_country.getSelectedItem().toString().trim();
@@ -552,23 +557,26 @@ public class ExpenseActivity extends AppCompatActivity {
     // Sets the category spinner to the category of the edited expense
     private void setCategorySpinner(Spinner spinner, String category) {
         switch (category) {
-            case "Food" :
+            case "Accommodation" :
                 spinner.setSelection(0);
                 break;
-            case "Gifts" :
+            case "Food" :
                 spinner.setSelection(1);
                 break;
-            case "Leisure" :
+            case "Gifts" :
                 spinner.setSelection(2);
                 break;
-            case "Misc" :
+            case "Leisure" :
                 spinner.setSelection(3);
                 break;
-            case "Shopping" :
+            case "Misc" :
                 spinner.setSelection(4);
                 break;
-            case "Travel" :
+            case "Shopping" :
                 spinner.setSelection(5);
+                break;
+            case "Travel" :
+                spinner.setSelection(6);
                 break;
         }
     }

@@ -188,6 +188,7 @@
                 android:layout_below="@id/text_expensePhoto"
                 android:layout_marginTop="40dp"
                 android:layout_marginStart="40dp"
+                android:elevation="@dimen/toolbarButton_elevation"
                 android:onClick="onClickCancel" />
 
             <Button
@@ -198,6 +199,7 @@
                 android:layout_toEndOf="@id/btn_cancel"
                 android:layout_alignBottom="@+id/btn_cancel"
                 android:layout_marginStart="35dp"
+                android:elevation="@dimen/toolbarButton_elevation"
                 android:onClick="onClickSave" />
 
             <Button
@@ -211,6 +213,7 @@
                 android:layout_marginTop="30dp"
                 android:layout_marginBottom="30dp"
                 android:visibility="gone"
+                android:elevation="@dimen/toolbarButton_elevation"
                 android:onClick="onClickDelete" />
 
         </RelativeLayout>

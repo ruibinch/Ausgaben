@@ -141,7 +141,7 @@ public class DatabaseExpenses {
     }
 
     // Obtains a list of expenses (in Expense objects) for the specified MONTH and the specified COUNTRY from the DB
-    public ArrayList<Expense> getExpensesList(int month, String country) {
+    public ArrayList<Expense> getExpensesList(int month, String country, int startDate, int endDate) {
         ArrayList<Expense> expenseList = new ArrayList<Expense>();
 
         Cursor cursor = database.query(SQLiteHelper.TABLE_EXPENSES, allColumns,
@@ -149,7 +149,7 @@ public class DatabaseExpenses {
         cursor.moveToFirst();
 
         while (!cursor.isAfterLast()) {
-            if (month == 0 || expenseWithinMonth(cursor.getLong(1), month) &&
+            if (month == 0 || expenseWithinMonthAndDateRange(cursor.getLong(1), month, startDate, endDate) &&
                     expenseWithinCountry(cursor.getString(9), country)) {
                 Expense expense = getExpenseDetails(cursor);
                 expenseList.add(expense);
@@ -181,8 +181,9 @@ public class DatabaseExpenses {
         return countriesList;
     }
 
-    // Obtains the total expenditure for expenses of the specified CATEGORY in the specified MONTH in the correct display CURRENCY and made in the correct COUNTRY
-    public BigDecimal getCategoryExpenditure(String category, int month, String displayCurrency, String country){
+    // Obtains the total expenditure for expenses of the specified CATEGORY in the specified MONTH (within the specified start and end dates)
+    // in the correct display CURRENCY and made in the correct COUNTRY
+    public BigDecimal getCategoryExpenditure(String category, int month, int startDate, int endDate, String displayCurrency, String country){
         Cursor cursor = database.query(SQLiteHelper.TABLE_EXPENSES,
                 new String[] { SQLiteHelper.COLUMN_DATE, SQLiteHelper.COLUMN_CATEGORY, SQLiteHelper.COLUMN_AMOUNT,
                         SQLiteHelper.COLUMN_FOREXRATE, SQLiteHelper.COLUMN_FOREXRATE_EURTOSGD, SQLiteHelper.COLUMN_COUNTRY }, // columns to return
@@ -192,7 +193,7 @@ public class DatabaseExpenses {
         BigDecimal categoryExpenditure = new BigDecimal(0);
         while (!cursor.isAfterLast()) {
             if (expenseWithinCategory(cursor.getString(1), category) &&
-                    (month == 0 || expenseWithinMonth(cursor.getLong(0), month)) &&
+                    (month == 0 || expenseWithinMonthAndDateRange(cursor.getLong(0), month, startDate, endDate)) &&
                     expenseWithinCountry(cursor.getString(5), country)) {
                 BigDecimal expenditure = getExpenditureAmount(cursor.getString(2), cursor.getDouble(3)); // expenditure value here is in euros
 
@@ -218,9 +219,11 @@ public class DatabaseExpenses {
      */
 
     // Checks if the expense occurs within the specified month
-    private boolean expenseWithinMonth(long expenseDate, int month) {
+    private boolean expenseWithinMonthAndDateRange(long expenseDate, int month, int startDate, int endDate) {
         int expMonth = getMonth(expenseDate);
-        return expMonth+1 == month;
+        int expDate = getDate(expenseDate);
+
+        return expMonth+1 == month && expDate >= startDate && expDate <= endDate;
     }
 
     // Checks if the expense is of a specified category
@@ -230,7 +233,7 @@ public class DatabaseExpenses {
 
     // Checks if the expense is made in a specific country
     private boolean expenseWithinCountry(String expenseCountry, String country) {
-        return (country.equals("All Countries") || country.equalsIgnoreCase(expenseCountry));
+        return (country.equals("All") || country.equalsIgnoreCase(expenseCountry));
     }
 
     // Get all the details of an expense in an Expense object
@@ -279,7 +282,6 @@ public class DatabaseExpenses {
 
     // Returns the forex rate for the specified currency
     private double getForexRate(SharedPreferences mPrefs, String currency) {
-
         switch (currency) {
             case "ALL" :
                 return Double.valueOf(mPrefs.getString("ALL", ""));
@@ -325,11 +327,18 @@ public class DatabaseExpenses {
      * ====================== SECONDARY HELPER METHODS ======================
      */
 
-    // Retrieves the month from the given date in long type
+    // Retrieves the month from the given date
     private int getMonth(long date) {
         Calendar cal = Calendar.getInstance();
         cal.setTime(new Date(date));
         return cal.get(Calendar.MONTH);
+    }
+
+    // Retrieves the month date from the given date
+    private int getDate(long date) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date(date));
+        return cal.get(Calendar.DATE);
     }
 
 }

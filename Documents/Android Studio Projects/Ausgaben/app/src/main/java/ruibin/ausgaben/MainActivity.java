@@ -71,6 +71,7 @@ public class MainActivity extends AppCompatActivity implements
         toolbar.showOverflowMenu();
 
         initLocationClients();
+        setLocationText();
         setRatesSettingsIfFirstStartup(); // for first-time startup
     }
 
@@ -119,6 +120,7 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onConnected(Bundle connectionHint) {
+        /*
         try {
             Location location =  LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
             if (location == null) {
@@ -130,6 +132,7 @@ public class MainActivity extends AppCompatActivity implements
         } catch (SecurityException e) {
             Toast.makeText(this, "Security exception", Toast.LENGTH_SHORT).show();
         }
+        */
     }
 
     @Override
@@ -142,6 +145,7 @@ public class MainActivity extends AppCompatActivity implements
         if (connectionResult.hasResolution()) {
             try {
                 // Start an Activity that tries to resolve the error
+                Toast.makeText(this, "Resolving connection error", Toast.LENGTH_SHORT).show();
                 connectionResult.startResolutionForResult(this, 9000);
             } catch (IntentSender.SendIntentException e) {
                 e.printStackTrace();
@@ -150,6 +154,7 @@ public class MainActivity extends AppCompatActivity implements
             Toast.makeText(this, "Connection failed", Toast.LENGTH_SHORT).show();
         }
     }
+
 
     /*
      * ====================== LOCATIONLISTENER IMPLEMENTATION METHODS ======================
@@ -165,7 +170,7 @@ public class MainActivity extends AppCompatActivity implements
      * ====================== INITIALISATION METHODS ======================
      */
 
-    // Initiates the Google Play Services API client and LocationRequest
+    // Initiates the Google Play Services API client
     private void initLocationClients() {
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
@@ -261,12 +266,26 @@ public class MainActivity extends AppCompatActivity implements
         startActivity(intent);
     }
 
+    public void onClickUpdateLocation(View view) {
+        Toast.makeText(this, "Updating location", Toast.LENGTH_SHORT).show();
+		try {
+            Location location =  LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+            if (location == null) {
+                //LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+                setLocationText();
+            } else {
+                updateWithNewLocation(location);
+            }
+        } catch (SecurityException e) {
+            Toast.makeText(this, "Security exception", Toast.LENGTH_SHORT).show();
+        }
+    }
+
     @Override
     public void onBackPressed() {
         moveTaskToBack(true);
     }
 
-    // TODO - Bug - create expense with photo -> delete photo -> click on camera button -> press back and save -> 'Photo' row disappears
     // TODO - currency API
     // TODO - include option to set defaults in ExpenseActivity
     // TODO - auto-back up to Google Drive
@@ -331,7 +350,7 @@ public class MainActivity extends AppCompatActivity implements
     // Sets the TextView to the city name (if applicable) and country name
     private void setLocationText() {
         TextView locationText = (TextView) findViewById(R.id.text_location);
-        SharedPreferences mPrefs = getSharedPreferences("location", MODE_PRIVATE);
+        SharedPreferences mPrefs = getSharedPreferences("location", MODE_PRIVATE); // Obtains the last-saved location
         StringBuilder sb = new StringBuilder();
 
         String cityName = mPrefs.getString("city", "");
@@ -448,8 +467,10 @@ public class MainActivity extends AppCompatActivity implements
                             bw.write(sdf.format(cal.getTime()) + ", ");
                         } else if (j != colCount - 1) {
                             bw.write(cursor.getString(j) + ", ");
-                        } else
-                            bw.write(cursor.getString(j));
+                        } else {
+                            if (cursor.getString(j) != null) // for the case where the image path is null
+                                bw.write(cursor.getString(j));
+                        }
                     }
                     bw.newLine();
                 }

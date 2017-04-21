@@ -145,8 +145,8 @@ public class ForexRatesActivity extends AppCompatActivity {
     // Loads the toggle settings from the SharedPreferences
     private void loadToggleSettings() {
         for (int i = 0; i < currencyList.size(); i++) {
-            if (!currencyList.get(i).equals("EUR"))
-                oldToggleSettingsList.add(mPrefsToggleRates.getBoolean(currencyList.get(i), true));
+            //if (!currencyList.get(i).equals("EUR"))
+            oldToggleSettingsList.add(mPrefsToggleRates.getBoolean(currencyList.get(i), true));
         }
         
         toggleALL.setChecked(mPrefsToggleRates.getBoolean("ALL", true));
@@ -217,6 +217,8 @@ public class ForexRatesActivity extends AppCompatActivity {
 
     // Saves the updated toggle settings of the currencies
     private void updateToggleSettings() {
+        System.out.println("togglePLN = " + togglePLN.isChecked());
+
         newToggleSettingsList.add(toggleALL.isChecked());
         newToggleSettingsList.add(toggleBAM.isChecked());
         newToggleSettingsList.add(toggleBGN.isChecked());
@@ -314,8 +316,8 @@ public class ForexRatesActivity extends AppCompatActivity {
         boolean isChangesMade = false;
 
         for (int i = 0; i < currencyList.size()-1; i++) {
-            //System.out.println("i = " + i + ", old toggle settings = " + oldToggleSettingsList.get(i) + ", new toggle settings = " + newToggleSettingsList.get(i));
-            //System.out.println("i = " + i + ", old forex rates = " + oldForexRatesList.get(i) + ", new forex rates = " + newForexRatesList.get(i));
+            System.out.println("i = " + i + ", old toggle settings = " + oldToggleSettingsList.get(i) + ", new toggle settings = " + newToggleSettingsList.get(i));
+            System.out.println("i = " + i + ", old forex rates = " + oldForexRatesList.get(i) + ", new forex rates = " + newForexRatesList.get(i));
 
             if (oldToggleSettingsList.get(i) != newToggleSettingsList.get(i)) {
                 isChangesMade = true;

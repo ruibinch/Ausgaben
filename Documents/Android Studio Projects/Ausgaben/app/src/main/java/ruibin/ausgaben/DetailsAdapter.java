@@ -202,6 +202,8 @@ class DetailsAdapter extends ArrayAdapter<Expense> {
     // Sets the correct category icon to be displayed
     private void setCategoryIconView(ImageView iconView, String category) {
         switch (category) {
+            case "Accommodation" :
+                iconView.setImageResource(R.drawable.ic_accommodation); break;
             case "Food" :
                 iconView.setImageResource(R.drawable.ic_food); break;
             case "Gifts" :
