@@ -286,8 +286,10 @@ public class MainActivity extends AppCompatActivity implements
         moveTaskToBack(true);
     }
 
-    // TODO - currency API
     // TODO - include option to set defaults in ExpenseActivity
+    // TODO - set list position in DetailsActivity after editing
+    // TODO - long press on 1 filter to uncheck the rest
+    // TODO - currency API
     // TODO - auto-back up to Google Drive
 
     /*

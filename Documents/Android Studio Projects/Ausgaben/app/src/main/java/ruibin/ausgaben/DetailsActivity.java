@@ -28,6 +28,7 @@ public class DetailsActivity extends ListActivity {
     private DatabaseExpenses database;
     private ListView listView;
 
+    // Display parameters from OverviewActivity
     private int displayMonth;
     private String displayCountry;
     private int displayStartDate;
@@ -53,12 +54,11 @@ public class DetailsActivity extends ListActivity {
 
         // Initialisation methods
         openDatabase();
-        setMonthAndCountryDisplay();
+        setDisplayParameters();
         setTextViewsAttributes();
         initFadeAnimations();
 
         initListView();
-
     }
 
     /*
@@ -70,15 +70,14 @@ public class DetailsActivity extends ListActivity {
         database.open();
     }
 
-    // Sets the month for which to display the expenses list
-    private void setMonthAndCountryDisplay() {
+    private void setDisplayParameters() {
         displayMonth = getIntent().getIntExtra("displayMonth", -1);
         displayCountry = getIntent().getStringExtra("displayCountry");
         displayStartDate = getIntent().getIntExtra("displayStartDate", -1);
         displayEndDate = getIntent().getIntExtra("displayEndDate", -1);
     }
 
-    // Sets the attributes for the various TextViews
+    // Sets the attributes for the 'Show Filters' TextView
     private void setTextViewsAttributes() {
         TextView textToggleFilters = (TextView) findViewById(R.id.text_toggleFilters);
         textToggleFilters.setPaintFlags(textToggleFilters.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
@@ -129,8 +128,10 @@ public class DetailsActivity extends ListActivity {
             startActivity(intent);
         } else {
             Intent intent = new Intent(this, OverviewActivity.class);
-            intent.putExtra("month", displayMonth);
-            intent.putExtra("country", displayCountry);
+            intent.putExtra("displayMonth", displayMonth);
+            intent.putExtra("displayCountry", displayCountry);
+            intent.putExtra("displayStartDate", displayStartDate);
+            intent.putExtra("displayEndDate", displayEndDate);
             startActivity(intent);
         }
     }

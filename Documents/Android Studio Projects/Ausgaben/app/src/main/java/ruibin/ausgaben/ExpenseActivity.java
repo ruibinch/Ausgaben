@@ -305,7 +305,7 @@ public class ExpenseActivity extends AppCompatActivity {
                 intent.putExtra("displayStartDate", 1);
                 intent.putExtra("displayEndDate", 31);
                 Toast.makeText(getApplicationContext(), "'" + quint.getSecond() + "' added in " + quint.getFifth(), Toast.LENGTH_SHORT).show();
-            } else {
+            } else { // Editing an expense
                 // If image had been removed, delete it from internal storage too
                 if (isImageDeleted) {
                     deleteImageFromInternalStorage();
@@ -332,11 +332,13 @@ public class ExpenseActivity extends AppCompatActivity {
 
                 intent.putExtra("displayMonth", displayMonth);
                 intent.putExtra("displayCountry", displayCountry);
-                intent.putExtra("displayStartDate", 1);
-                intent.putExtra("displayEndDate", 31);
-                if (isEditsMade[0]) { // if date/month is edited, set display month to the new edited month
+                intent.putExtra("displayStartDate", displayStartDate);
+                intent.putExtra("displayEndDate", displayEndDate);
+                if (isEditsMade[0]) { // if date/month is edited, set display month to the new edited month and reset the start/end dates
                     setDisplayMonth(new Date(quint.getFirst()));
                     intent.putExtra("displayMonth", displayMonth);
+                    intent.putExtra("displayStartDate", 1);
+                    intent.putExtra("displayEndDate", 31);
                 }
                 if (isEditsMade[5]) // if country is edited, set display country to all countries
                     intent.putExtra("displayCountry", "All");
@@ -371,6 +373,8 @@ public class ExpenseActivity extends AppCompatActivity {
                 Intent intent = new Intent(ExpenseActivity.this, DetailsActivity.class);
                 intent.putExtra("displayMonth", displayMonth);
                 intent.putExtra("displayCountry", displayCountry);
+                intent.putExtra("displayStartDate", 1);
+                intent.putExtra("displayEndDate", 31);
                 startActivity(intent);
             }
         });

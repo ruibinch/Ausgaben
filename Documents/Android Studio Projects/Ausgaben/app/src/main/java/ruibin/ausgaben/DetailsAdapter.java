@@ -28,7 +28,6 @@ class DetailsAdapter extends ArrayAdapter<Expense> {
     private final ArrayList<Expense> list;
 
     private long newExpenseId = -1;
-
     private long editExpenseId = -1;
     private boolean isDateEdited;
     private boolean isNameEdited;
