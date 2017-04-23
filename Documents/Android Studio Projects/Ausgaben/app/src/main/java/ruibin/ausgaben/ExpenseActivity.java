@@ -320,7 +320,7 @@ public class ExpenseActivity extends AppCompatActivity {
                 intent.putExtra("newExpenseId", newExpense.getId());
                 intent.putExtra("source", "ExpenseActivity");
                 intent.putExtra("displayMonth", displayMonth);
-                intent.putExtra("displayCountry", "All");
+                intent.putExtra("displayCountry", getResources().getString(R.string.str_all));
                 intent.putExtra("displayStartDate", 1);
                 intent.putExtra("displayEndDate", 31);
                 Toast.makeText(getApplicationContext(), "'" + quint.getSecond() + "' added in " + quint.getFifth(), Toast.LENGTH_SHORT).show();
@@ -373,7 +373,7 @@ public class ExpenseActivity extends AppCompatActivity {
                     intent.putExtra("displayEndDate", 31);
                 }
                 if (isEditsMade[5]) // if country is edited, set display country to all countries
-                    intent.putExtra("displayCountry", "All");
+                    intent.putExtra("displayCountry", getResources().getString(R.string.str_all));
 
                 if (isEditsMade[0] || isEditsMade[1] || isEditsMade[2] || isEditsMade[3] || isEditsMade[4] || isEditsMade[5] || isEditsMade[6]) // if any edits were made
                     Toast.makeText(getApplicationContext(), "'" + quint.getSecond() + "' edited", Toast.LENGTH_SHORT).show();
@@ -389,7 +389,7 @@ public class ExpenseActivity extends AppCompatActivity {
 
     public void onClickDelete(View view) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage(getResources().getString(R.string.dialog_deleteConfirmation));
+        builder.setMessage(getResources().getString(R.string.dialog_expenseActivity_deleteConfirmation));
 
         builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {

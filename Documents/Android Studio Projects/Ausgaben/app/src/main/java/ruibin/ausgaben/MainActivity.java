@@ -1,6 +1,5 @@
 package ruibin.ausgaben;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
@@ -31,14 +30,12 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -96,7 +93,7 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.toolbar_actions, menu);
+        getMenuInflater().inflate(R.menu.toolbar_mainactivity, menu);
         return true;
     }
 
@@ -287,7 +284,6 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     // TODO - include option to set defaults in ExpenseActivity
-    // TODO - set list position in DetailsActivity after editing
     // TODO - long press on 1 filter to uncheck the rest
     // TODO - currency API
     // TODO - auto-back up to Google Drive

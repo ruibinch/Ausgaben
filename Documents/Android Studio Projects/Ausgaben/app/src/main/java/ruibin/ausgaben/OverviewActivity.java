@@ -1,11 +1,14 @@
 package ruibin.ausgaben;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -13,6 +16,7 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -42,6 +46,8 @@ public class OverviewActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_overview);
+
+        // Toolbar methods
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -56,16 +62,30 @@ public class OverviewActivity extends AppCompatActivity {
 
         // Populate data
         updateExpenseValuesDisplayed(); // default display currency is EUR
+    }
 
+    /*
+     * ====================== TOOLBAR METHODS ======================
+     */
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.toolbar_overviewactivity, menu);
+        return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            NavUtils.navigateUpFromSameTask(this);
+        switch(item.getItemId()) {
+            case android.R.id.home :
+                NavUtils.navigateUpFromSameTask(this);
+                return true;
+            case R.id.btn_setDefaults :
+                onClickSetDefaults();
+                return true;
+            default :
+                return super.onOptionsItemSelected(item);
         }
-
-        return super.onOptionsItemSelected(item);
     }
 
     /*
@@ -97,7 +117,7 @@ public class OverviewActivity extends AppCompatActivity {
     private void populateCountrySpinnerList() {
         ArrayList<String> countriesList = database.getCountriesList();
         Collections.sort(countriesList); // Sorts in alphabetical order
-        countriesList.add(0, "All");
+        countriesList.add(0, getResources().getString(R.string.str_all));
 
         ArrayAdapter<String> selectCountryDisplayArray = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, countriesList);
         selectCountryDisplayArray.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -112,7 +132,11 @@ public class OverviewActivity extends AppCompatActivity {
         displayEndDate = getIntent().getIntExtra("displayEndDate", -1); // only applicable when returning from DetailsActivity
 
         // Set the month Spinner to the correct selection
-        if (displayMonth == -1) { // set to current month by default
+        if (displayMonth == 0) { // if All Months are selected, hide the start/end date spinners
+            monthSpinner.setSelection(displayMonth);
+            startDateSpinner.setVisibility(View.INVISIBLE);
+            endDateSpinner.setVisibility(View.INVISIBLE);
+        } else if (displayMonth == -1) { // set to current month by default
             Calendar cal = Calendar.getInstance();
             monthSpinner.setSelection(cal.get(Calendar.MONTH) + 1);
             setDateRange(cal.get(Calendar.MONTH) + 1);
@@ -138,6 +162,30 @@ public class OverviewActivity extends AppCompatActivity {
     /*
      * ====================== CLICK HANDLERS ======================
      */
+
+    // Click handler for 'Set Defaults' toolbar icon
+    public void onClickSetDefaults() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(getResources().getString(R.string.dialog_overviewActivity_title));
+
+
+
+
+        // Action buttons
+        builder.setPositiveButton(R.string.str_save, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User clicked OK button
+            }
+        });
+        builder.setNegativeButton(R.string.str_cancel, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.cancel();
+            }
+        });
+
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
 
     @Override
     public void onBackPressed() {
@@ -232,7 +280,7 @@ public class OverviewActivity extends AppCompatActivity {
      * ====================== HELPER METHODS ======================
      */
 
-    // Sets the range of dates based on the display month
+    // Sets the range of dates in the startDate and endDate Spinners based on the display month
     private void setDateRange(int month) {
         String[] dates = new String[31];
 

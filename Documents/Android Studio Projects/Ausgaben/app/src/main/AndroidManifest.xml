@@ -42,7 +42,8 @@
         <activity
             android:name=".ForexRatesActivity"
             android:parentActivityName=".MainActivity" />
-        <activity android:name=".ImageActivity"
+        <activity
+            android:name=".ImageActivity"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
     </application>
 
