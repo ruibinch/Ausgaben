@@ -25,7 +25,6 @@
         android:layout_below="@+id/text_toggleFilters"
         android:layout_marginStart="10dp"
         android:layout_marginTop="10dp"
-        android:checked="true"
         android:visibility="gone"
         android:onClick="onClickToggleFilters" />
 
@@ -37,7 +36,6 @@
         android:layout_toEndOf="@id/checkbox_accommodation"
         android:layout_alignBaseline="@id/checkbox_accommodation"
         android:layout_marginStart="10dp"
-        android:checked="true"
         android:visibility="gone"
         android:onClick="onClickToggleFilters" />
 
@@ -49,7 +47,6 @@
         android:layout_toEndOf="@id/checkbox_accommodation"
         android:layout_alignBaseline="@id/checkbox_accommodation"
         android:layout_marginStart="100dp"
-        android:checked="true"
         android:visibility="gone"
         android:onClick="onClickToggleFilters" />
 
@@ -60,7 +57,6 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/checkbox_accommodation"
         android:layout_alignStart="@id/checkbox_accommodation"
-        android:checked="true"
         android:visibility="gone"
         android:onClick="onClickToggleFilters" />
 
@@ -72,7 +68,6 @@
         android:layout_toEndOf="@id/checkbox_leisure"
         android:layout_alignBaseline="@id/checkbox_leisure"
         android:layout_alignStart="@id/checkbox_food"
-        android:checked="true"
         android:visibility="gone"
         android:onClick="onClickToggleFilters" />
 
@@ -84,7 +79,6 @@
         android:layout_toEndOf="@id/checkbox_misc"
         android:layout_alignBaseline="@id/checkbox_misc"
         android:layout_alignStart="@id/checkbox_gifts"
-        android:checked="true"
         android:visibility="gone"
         android:onClick="onClickToggleFilters" />
 
@@ -95,7 +89,6 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/checkbox_leisure"
         android:layout_alignStart="@id/checkbox_leisure"
-        android:checked="true"
         android:visibility="gone"
         android:onClick="onClickToggleFilters" />
 

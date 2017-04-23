@@ -34,17 +34,31 @@ public class DetailsActivity extends ListActivity {
     private int displayStartDate;
     private int displayEndDate;
 
+    // Details from ExpenseActivity, if DetailsActivity is being displayed after an expense is added/edited
+    long newExpenseId;
+    long editExpenseId;
+    boolean isDateEdited;
+    boolean isNameEdited;
+    boolean isCategoryEdited;
+    boolean isAmountEdited;
+    boolean isCurrencyEdited;
+    boolean isImagePathEdited;
+
+    // Previous saved scroll position, if applicable
+    private int scrollIndex;
+    private int scrollOffset;
+
     private Animation animationFadeIn;
     private Animation animationFadeOut;
 
-    // Declaration of Checkboxes - defaulted to true
-    private boolean isAccommodationVisible = true;
-    private boolean isFoodVisible = true;
-    private boolean isGiftsVisible = true;
-    private boolean isLeisureVisible = true;
-    private boolean isMiscVisibile = true;
-    private boolean isShoppingVisible = true;
-    private boolean isTravelVisible = true;
+    // Declaration of Checkboxes
+    private boolean isAccommodationVisible;
+    private boolean isFoodVisible;
+    private boolean isGiftsVisible;
+    private boolean isLeisureVisible;
+    private boolean isMiscVisible;
+    private boolean isShoppingVisible;
+    private boolean isTravelVisible;
 
 
     @Override
@@ -54,9 +68,14 @@ public class DetailsActivity extends ListActivity {
 
         // Initialisation methods
         openDatabase();
+        initFadeAnimations();
         setDisplayParameters();
         setTextViewsAttributes();
-        initFadeAnimations();
+
+        // More initialisation methods, applicable only if the Intent originated from ExpenseActivity
+        getListScrollPosition();
+        getFilterSettings();
+        getEditSettings();
 
         initListView();
     }
@@ -68,6 +87,12 @@ public class DetailsActivity extends ListActivity {
     private void openDatabase() {
         database = new DatabaseExpenses(this);
         database.open();
+    }
+
+    // Initialises the fade-in and fade-out animations
+    private void initFadeAnimations() {
+        animationFadeIn = AnimationUtils.loadAnimation(this, R.anim.fadein);
+        animationFadeOut = AnimationUtils.loadAnimation(this, R.anim.fadeout);
     }
 
     private void setDisplayParameters() {
@@ -83,36 +108,76 @@ public class DetailsActivity extends ListActivity {
         textToggleFilters.setPaintFlags(textToggleFilters.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
     }
 
-    // Initialises the fade-in and fade-out animations
-    private void initFadeAnimations() {
-        animationFadeIn = AnimationUtils.loadAnimation(this, R.anim.fadein);
-        animationFadeOut = AnimationUtils.loadAnimation(this, R.anim.fadeout);
+    // Sets the saved scroll position of the ListView
+    private void getListScrollPosition() {
+        scrollIndex = getIntent().getIntExtra("scrollIndex", -1);
+        scrollOffset = getIntent().getIntExtra("scrollOffset", -1);
     }
 
-    // Populates the list with the items to be displayed and highlights the added/edited items
-    private void initListView() {
-        // For highlighting a newly added expense
-        long newExpenseId = getIntent().getLongExtra("newExpenseId", -1); // ID of the new expense added
-        // For highlighting the edited details of an existing expense
-        long editExpenseId = getIntent().getLongExtra("editExpenseId", -1);
-        boolean isDateEdited = getIntent().getBooleanExtra("isDateEdited", false);
-        boolean isNameEdited = getIntent().getBooleanExtra("isNameEdited", false);
-        boolean isCategoryEdited = getIntent().getBooleanExtra("isCategoryEdited", false);
-        boolean isAmountEdited = getIntent().getBooleanExtra("isAmountEdited", false);
-        boolean isCurrencyEdited = getIntent().getBooleanExtra("isCurrencyEdited", false);
-        boolean isImagePathEdited = getIntent().getBooleanExtra("isImagePathEdited", false);
+    // Sets the filter settings and the corresponding checkboxes
+    private void getFilterSettings() {
+        isAccommodationVisible = getIntent().getBooleanExtra("isAccommodationVisible", true);
+        isFoodVisible = getIntent().getBooleanExtra("isFoodVisible", true);
+        isGiftsVisible = getIntent().getBooleanExtra("isGiftsVisible", true);
+        isLeisureVisible = getIntent().getBooleanExtra("isLeisureVisible", true);
+        isMiscVisible = getIntent().getBooleanExtra("isMiscVisible", true);
+        isShoppingVisible = getIntent().getBooleanExtra("isShoppingVisible", true);
+        isTravelVisible = getIntent().getBooleanExtra("isTravelVisible", true);
 
-        DetailsAdapter adapter;
-        if (newExpenseId != -1) {
-            adapter = new DetailsAdapter(this, displayData(), newExpenseId);
-        } else if (editExpenseId != -1) {
-            adapter = new DetailsAdapter(this, displayData(), editExpenseId, isDateEdited,
-                    isNameEdited, isCategoryEdited, isAmountEdited, isCurrencyEdited, isImagePathEdited);
-        } else {
-            adapter = new DetailsAdapter(this, displayData());
+        CheckBox cbAccommodation = (CheckBox) findViewById(R.id.checkbox_accommodation);
+        CheckBox cbFood = (CheckBox) findViewById(R.id.checkbox_food);
+        CheckBox cbGifts = (CheckBox) findViewById(R.id.checkbox_gifts);
+        CheckBox cbLeisure = (CheckBox) findViewById(R.id.checkbox_leisure);
+        CheckBox cbMisc = (CheckBox) findViewById(R.id.checkbox_misc);
+        CheckBox cbShopping = (CheckBox) findViewById(R.id.checkbox_shopping);
+        CheckBox cbTravel = (CheckBox) findViewById(R.id.checkbox_travel);
+
+        if (isAccommodationVisible)
+            cbAccommodation.setChecked(true);
+        if (isFoodVisible)
+            cbFood.setChecked(true);
+        if (isGiftsVisible)
+            cbGifts.setChecked(true);
+        if (isLeisureVisible)
+            cbLeisure.setChecked(true);
+        if (isMiscVisible)
+            cbMisc.setChecked(true);
+        if (isShoppingVisible)
+            cbShopping.setChecked(true);
+        if (isTravelVisible)
+            cbTravel.setChecked(true);
+
+        // if any are false, then display the filter settings
+        if (!isAccommodationVisible || !isFoodVisible || !isGiftsVisible || !isLeisureVisible ||
+                !isMiscVisible || !isShoppingVisible || !isTravelVisible) {
+            TextView textToggleFilters = (TextView) findViewById(R.id.text_toggleFilters);
+            textToggleFilters.performClick();
         }
+    }
 
-        setListAdapter(adapter);
+    // Obtains the edit settings from the intent from ExpenseActivity, if applicable
+    private void getEditSettings() {
+        // For highlighting a newly added expense
+        newExpenseId = getIntent().getLongExtra("newExpenseId", -1); // ID of the new expense added
+        // For highlighting the edited details of an existing expense
+        editExpenseId = getIntent().getLongExtra("editExpenseId", -1); // ID of the edied expense
+        isDateEdited = getIntent().getBooleanExtra("isDateEdited", false);
+        isNameEdited = getIntent().getBooleanExtra("isNameEdited", false);
+        isCategoryEdited = getIntent().getBooleanExtra("isCategoryEdited", false);
+        isAmountEdited = getIntent().getBooleanExtra("isAmountEdited", false);
+        isCurrencyEdited = getIntent().getBooleanExtra("isCurrencyEdited", false);
+        isImagePathEdited = getIntent().getBooleanExtra("isImagePathEdited", false);
+    }
+
+    // Initiates the ListView and sets it to the appropriate scroll position
+    private void initListView() {
+        updateListView();
+
+        // Sets the list to the previously saved scroll position, if applicable
+        if (scrollIndex != -1 && scrollOffset != -1) {
+            listView = getListView();
+            listView.setSelectionFromTop(scrollIndex, scrollOffset);
+        }
 
         initListViewClickHandler();
     }
@@ -146,6 +211,11 @@ public class DetailsActivity extends ListActivity {
             Expense expense = (Expense) parent.getItemAtPosition(position);
             Bundle bundle = new Bundle();
 
+            // Save the current scroll position of the list
+            int scrollIndex = listView.getFirstVisiblePosition(); // index of the top-most visible item
+            View v = listView.getChildAt(0);
+            int scrollOffset = (v == null) ? 0 : (v.getTop() - listView.getPaddingTop());
+
             // Inserting the expense details into the bundle
             bundle.putLong("id", expense.getId());
             bundle.putLong("date", expense.getDate());
@@ -161,6 +231,19 @@ public class DetailsActivity extends ListActivity {
             bundle.putString("displayCountry", displayCountry);
             bundle.putInt("displayStartDate", displayStartDate);
             bundle.putInt("displayEndDate", displayEndDate);
+                
+            // Insert the filter settings into the bundle
+            bundle.putBoolean("isAccommodationVisible", isAccommodationVisible);
+            bundle.putBoolean("isFoodVisible", isFoodVisible);
+            bundle.putBoolean("isGiftsVisible", isGiftsVisible);
+            bundle.putBoolean("isLeisureVisible", isLeisureVisible);
+            bundle.putBoolean("isMiscVisible", isMiscVisible);
+            bundle.putBoolean("isShoppingVisible", isShoppingVisible);
+            bundle.putBoolean("isTravelVisible", isTravelVisible);
+
+            // Insert the scroll position details into the bundle
+            bundle.putInt("scrollIndex", scrollIndex);
+            bundle.putInt("scrollOffset", scrollOffset);
 
             intent.putExtras(bundle);
             startActivity(intent);
@@ -178,7 +261,7 @@ public class DetailsActivity extends ListActivity {
             textToggleFilters.setText(R.string.str_showFilters);
         }
 
-        // Toggles the display of the checkboxes and the list
+        // Toggles the display of the checkboxes
         CheckBox cbAccommodation = (CheckBox) findViewById(R.id.checkbox_accommodation);
         CheckBox cbFood = (CheckBox) findViewById(R.id.checkbox_food);
         CheckBox cbGifts = (CheckBox) findViewById(R.id.checkbox_gifts);
@@ -187,7 +270,7 @@ public class DetailsActivity extends ListActivity {
         CheckBox cbShopping = (CheckBox) findViewById(R.id.checkbox_shopping);
         CheckBox cbTravel = (CheckBox) findViewById(R.id.checkbox_travel);
 
-        if (cbFood.getVisibility() == View.VISIBLE) {
+        if (cbAccommodation.getVisibility() == View.VISIBLE) {
             cbAccommodation.startAnimation(animationFadeOut);
             cbFood.startAnimation(animationFadeOut);
             cbGifts.startAnimation(animationFadeOut);
@@ -202,7 +285,6 @@ public class DetailsActivity extends ListActivity {
             cbMisc.setVisibility(View.GONE);
             cbShopping.setVisibility(View.GONE);
             cbTravel.setVisibility(View.GONE);
-            // shiftListPosition(0);
         } else {
             cbAccommodation.startAnimation(animationFadeIn);
             cbFood.startAnimation(animationFadeIn);
@@ -218,7 +300,6 @@ public class DetailsActivity extends ListActivity {
             cbMisc.setVisibility(View.VISIBLE);
             cbShopping.setVisibility(View.VISIBLE);
             cbTravel.setVisibility(View.VISIBLE);
-            //shiftListPosition(250);
         }
     }
 
@@ -238,7 +319,7 @@ public class DetailsActivity extends ListActivity {
                 isLeisureVisible = !isLeisureVisible;
                 break;
             case R.id.checkbox_misc :
-                isMiscVisibile = !isMiscVisibile;
+                isMiscVisible = !isMiscVisible;
                 break;
             case R.id.checkbox_shopping :
                 isShoppingVisible = !isShoppingVisible;
@@ -255,21 +336,25 @@ public class DetailsActivity extends ListActivity {
      */
 
     // Updates the displayed list based on the category filters
+    // Any added/edited expense will remain highlighted in green even if the filters are modified
     private void updateListView() {
         boolean[] filters = {isAccommodationVisible, isFoodVisible, isGiftsVisible, isLeisureVisible,
-                isMiscVisibile, isShoppingVisible, isTravelVisible};
+                isMiscVisible, isShoppingVisible, isTravelVisible};
 
-        DetailsAdapter adapter = new DetailsAdapter(this, displayData(filters));
+        DetailsAdapter adapter;
+        if (newExpenseId != -1) {
+            adapter = new DetailsAdapter(this, displayData(filters), newExpenseId);
+        } else if (editExpenseId != -1) {
+            adapter = new DetailsAdapter(this, displayData(filters), editExpenseId, isDateEdited,
+                    isNameEdited, isCategoryEdited, isAmountEdited, isCurrencyEdited, isImagePathEdited);
+        } else {
+            adapter = new DetailsAdapter(this, displayData(filters));
+        }
+
         setListAdapter(adapter);
     }
 
-    private ArrayList<Expense> displayData() {
-        ArrayList<Expense> expenseList = database.getExpensesList(displayMonth, displayCountry, displayStartDate, displayEndDate);
-        expenseList = sortMostRecentFirst(expenseList);
-        return expenseList;
-    }
-
-    // Overloaded method to handle the category filters
+    // Obtains the list of expenses to be displayed based on the category filters
     private ArrayList<Expense> displayData(boolean[] filters) {
         ArrayList<Expense> expenseList = database.getExpensesList(displayMonth, displayCountry, displayStartDate, displayEndDate);
         expenseList = sortMostRecentFirst(expenseList);
@@ -337,5 +422,4 @@ public class DetailsActivity extends ListActivity {
                 cal1.get(Calendar.MONTH) == cal2.get(Calendar.MONTH) &&
                 cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR);
     }
-
 }

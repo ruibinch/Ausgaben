@@ -56,13 +56,16 @@ public class ExpenseActivity extends AppCompatActivity {
 
     private DatabaseExpenses database;
 
-    // For editing purposes
+    // For editing purposes from DetailsActivity
     private boolean isEditExpense;
     private long editExpenseId;
     private int displayMonth;
     private String displayCountry;
     private int displayStartDate;
     private int displayEndDate;
+    // Saved scroll position of the list in DetailsActivity
+    private int scrollIndex;
+    private int scrollOffset;
 
     // For camera
     private final int REQUEST_IMAGE_CAPTURE = 1;
@@ -181,6 +184,10 @@ public class ExpenseActivity extends AppCompatActivity {
              displayCountry = bundle.getString("displayCountry");
              displayStartDate = bundle.getInt("displayStartDate");
              displayEndDate = bundle.getInt("displayEndDate");
+
+             // Sets the saved scroll position from DetailsActivity
+             scrollIndex = bundle.getInt("scrollIndex");
+             scrollOffset = bundle.getInt("scrollOffset");
          }
     }
 
@@ -215,6 +222,18 @@ public class ExpenseActivity extends AppCompatActivity {
             intent.putExtra("displayCountry", displayCountry);
             intent.putExtra("displayStartDate", displayStartDate);
             intent.putExtra("displayEndDate", displayEndDate);
+            
+            intent.putExtra("scrollIndex", scrollIndex);
+            intent.putExtra("scrollOffset", scrollOffset);
+
+            intent.putExtra("isAccommodationVisible", getIntent().getBooleanExtra("isAccommodationVisible", true));
+            intent.putExtra("isFoodVisible", getIntent().getBooleanExtra("isFoodVisible", true));
+            intent.putExtra("isGiftsVisible", getIntent().getBooleanExtra("isGiftsVisible", true));
+            intent.putExtra("isLeisureVisible", getIntent().getBooleanExtra("isLeisureVisible", true));
+            intent.putExtra("isMiscVisible", getIntent().getBooleanExtra("isMiscVisible", true));
+            intent.putExtra("isShoppingVisible", getIntent().getBooleanExtra("isShoppingVisible", true));
+            intent.putExtra("isTravelVisible", getIntent().getBooleanExtra("isTravelVisible", true));
+            
             startActivity(intent);
         }
     }
@@ -318,6 +337,19 @@ public class ExpenseActivity extends AppCompatActivity {
                     // Caters for the corner case where 'Take new photo' is selected, but the camera request is cancelled
                     imagePath = currentPhotoPath;
                 }
+
+                // Saved scroll position, if applicable, for DetailsActivity
+                intent.putExtra("scrollIndex", scrollIndex);
+                intent.putExtra("scrollOffset", scrollOffset);
+
+                // Filter settings for DetailsActivity
+                intent.putExtra("isAccommodationVisible", getIntent().getBooleanExtra("isAccommodationVisible", true));
+                intent.putExtra("isFoodVisible", getIntent().getBooleanExtra("isFoodVisible", true));
+                intent.putExtra("isGiftsVisible", getIntent().getBooleanExtra("isGiftsVisible", true));
+                intent.putExtra("isLeisureVisible", getIntent().getBooleanExtra("isLeisureVisible", true));
+                intent.putExtra("isMiscVisible", getIntent().getBooleanExtra("isMiscVisible", true));
+                intent.putExtra("isShoppingVisible", getIntent().getBooleanExtra("isShoppingVisible", true));
+                intent.putExtra("isTravelVisible", getIntent().getBooleanExtra("isTravelVisible", true));
 
                 boolean[] isEditsMade = database.editExpense(editExpenseId, quint.getFirst(), quint.getSecond(),
                         quint.getThird(), quint.getFourth(), quint.getFifth(), mPrefs, country, imagePath);
