@@ -3,8 +3,10 @@ package ruibin.ausgaben;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Paint;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -122,6 +124,11 @@ public class OverviewActivity extends AppCompatActivity {
         ArrayAdapter<String> selectCountryDisplayArray = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, countriesList);
         selectCountryDisplayArray.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         countrySpinner.setAdapter(selectCountryDisplayArray);
+
+        // Sets the Spinner value to the default Preferences value
+        SharedPreferences defaultPref = PreferenceManager.getDefaultSharedPreferences(this);
+        String defaultCountryDisplay = defaultPref.getString(OverviewSettingsFragment.KEY_PREF_COUNTRY, "All");
+        countrySpinner.setSelection(countriesList.indexOf(defaultCountryDisplay));
     }
 
     // Sets the correct display parameters - month, start date, end date, country
@@ -163,33 +170,15 @@ public class OverviewActivity extends AppCompatActivity {
      * ====================== CLICK HANDLERS ======================
      */
 
-    // Click handler for 'Set Defaults' toolbar icon
-    public void onClickSetDefaults() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(getResources().getString(R.string.dialog_overviewActivity_title));
-
-
-
-
-        // Action buttons
-        builder.setPositiveButton(R.string.str_save, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                // User clicked OK button
-            }
-        });
-        builder.setNegativeButton(R.string.str_cancel, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                dialog.cancel();
-            }
-        });
-
-        AlertDialog alertDialog = builder.create();
-        alertDialog.show();
-    }
-
     @Override
     public void onBackPressed() {
         Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+    }
+
+    // Click handler for 'Set Defaults' toolbar icon
+    public void onClickSetDefaults() {
+        Intent intent = new Intent(this, OverviewSettingsActivity.class);
         startActivity(intent);
     }
 
@@ -218,8 +207,13 @@ public class OverviewActivity extends AppCompatActivity {
     OnItemSelectedListener selectStartDateListener = new OnItemSelectedListener() {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-            displayStartDate = position + 1;
-            updateExpenseValuesDisplayed();
+            if (position + 1 > displayEndDate) {
+                Toast.makeText(OverviewActivity.this, "Start date cannot be after end date", Toast.LENGTH_SHORT).show();
+                startDateSpinner.setSelection(displayStartDate - 1);
+            } else {
+                displayStartDate = position + 1;
+                updateExpenseValuesDisplayed();
+            }
         }
 
         @Override
@@ -231,8 +225,13 @@ public class OverviewActivity extends AppCompatActivity {
     OnItemSelectedListener selectEndDateListener = new OnItemSelectedListener() {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-            displayEndDate = position + 1;
-            updateExpenseValuesDisplayed();
+            if (position + 1 < displayStartDate) {
+                Toast.makeText(OverviewActivity.this, "End date cannot be before start date", Toast.LENGTH_SHORT).show();
+                endDateSpinner.setSelection(displayEndDate - 1);
+            } else {
+                displayEndDate = position + 1;
+                updateExpenseValuesDisplayed();
+            }
         }
 
         @Override
