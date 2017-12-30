@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_details"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.ausgaben.DetailsActivity">
+
+    <TextView
+        android:id="@+id/text_toggleFilters"
+        android:text="@string/str_showFilters"
+        android:textSize="17sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="240dp"
+        android:onClick="onClickToggleDisplayOfFilters" />
+
+    <CheckBox
+        android:id="@+id/checkbox_accommodation"
+        android:text="@string/str_accommodation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/text_toggleFilters"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:visibility="gone"
+        android:onClick="onClickToggleFilters" />
+
+    <CheckBox
+        android:id="@+id/checkbox_food"
+        android:text="@string/str_food"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/checkbox_accommodation"
+        android:layout_alignBaseline="@id/checkbox_accommodation"
+        android:layout_marginStart="10dp"
+        android:visibility="gone"
+        android:onClick="onClickToggleFilters" />
+
+    <CheckBox
+        android:id="@+id/checkbox_gifts"
+        android:text="@string/str_gifts"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/checkbox_accommodation"
+        android:layout_alignBaseline="@id/checkbox_accommodation"
+        android:layout_marginStart="100dp"
+        android:visibility="gone"
+        android:onClick="onClickToggleFilters" />
+
+    <CheckBox
+        android:id="@+id/checkbox_leisure"
+        android:text="@string/str_leisure"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/checkbox_accommodation"
+        android:layout_alignStart="@id/checkbox_accommodation"
+        android:visibility="gone"
+        android:onClick="onClickToggleFilters" />
+
+    <CheckBox
+        android:id="@+id/checkbox_misc"
+        android:text="@string/str_misc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/checkbox_leisure"
+        android:layout_alignBaseline="@id/checkbox_leisure"
+        android:layout_alignStart="@id/checkbox_food"
+        android:visibility="gone"
+        android:onClick="onClickToggleFilters" />
+
+    <CheckBox
+        android:id="@+id/checkbox_shopping"
+        android:text="@string/str_shopping"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/checkbox_misc"
+        android:layout_alignBaseline="@id/checkbox_misc"
+        android:layout_alignStart="@id/checkbox_gifts"
+        android:visibility="gone"
+        android:onClick="onClickToggleFilters" />
+
+    <CheckBox
+        android:id="@+id/checkbox_travel"
+        android:text="@string/str_travel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/checkbox_leisure"
+        android:layout_alignStart="@id/checkbox_leisure"
+        android:visibility="gone"
+        android:onClick="onClickToggleFilters" />
+
+
+    <ListView
+        android:id="@android:id/list"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/checkbox_travel"
+        android:layout_marginTop="20dp" />
+
+</RelativeLayout>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="colorPrimary">#4D55BA</color>
+    <color name="colorPrimaryDark">#11114D</color>
+
+    <!-- Background colours -->
+    <color name="lightGray">#D0D3D4</color>
+    <color name="lightGreen">#D5F5E3</color>
+    <color name="lightBlue">#E5F1F9</color>
+
+    <color name="colorDarkGreen">#008000</color>
+    <color name="darkSlateBlue">#483D8B</color>
+    <color name="midnightBlue">#191970</color>
+    <color name="darkSlateGray">#2F4F4F</color>
+
+    <color name="black_overlay">#66000000</color>
+
+</resources>

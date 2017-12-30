@@ -1,0 +1,215 @@
+<resources>
+    <string name="app_name">Ausgaben</string>
+
+    <!-- COMMON -->
+    <string name="str_all">All</string>
+
+    <string name="str_dollarSign">$</string>
+    <string name="str_euroSign">€</string>
+
+
+    <!-- MainActivity -->
+    <string name="str_overview">Overview</string>
+    <string name="str_addExpense">Add Expense</string>
+
+    <string name="str_importCSV">Import CSV</string>
+    <string name="str_exportCSV">Export as CSV</string>
+
+
+    <!-- ExpenseActivity -->
+    <string name="str_expenseName">Name</string>
+    <string name="str_expenseCategory">Category</string>
+    <string name="str_expenseDate">Date</string>
+    <string name="str_expenseDateDisplay">Select Date</string>
+    <string name="str_expenseAmt">Amount</string>
+    <string name="str_expensePhoto">Photo</string>
+    <string name="str_expenseCountry">Country</string>
+    <string name="str_save">Save</string>
+    <string name="str_cancel">Cancel</string>
+    <string name="str_delete">Delete</string>
+
+    <string-array name="spn_expenseCategory_entries">
+        <item>Accommodation</item>
+        <item>Food</item>
+        <item>Gifts</item>
+        <item>Leisure</item>
+        <item>Misc</item>
+        <item>Shopping</item>
+        <item>Travel</item>
+    </string-array>
+
+    <string-array name="spn_currency_entries">
+        <item>ALL</item>
+        <item>BAM</item>
+        <item>BGN</item>
+        <item>BYN</item>
+        <item>CHF</item>
+        <item>CZK</item>
+        <item>DKK</item>
+        <item>EUR</item>
+        <item>GBP</item>
+        <item>HRK</item>
+        <item>HUF</item>
+        <item>MKD</item>
+        <item>NOK</item>
+        <item>PLN</item>
+        <item>RON</item>
+        <item>RSD</item>
+        <item>SEK</item>
+        <item>SGD</item>
+        <item>TRY</item>
+    </string-array>
+
+    <string-array name="spn_countries_entries">
+        <item>Albania</item>
+        <item>Austria</item>
+        <item>Belarus</item>
+        <item>Belgium</item>
+        <item>Bosnia and Herzegovina</item>
+        <item>Bulgaria</item>
+        <item>Croatia</item>
+        <item>Czech Republic</item>
+        <item>Denmark</item>
+        <item>Estonia</item>
+        <item>Faroe Islands</item>
+        <item>Finland</item>
+        <item>France</item>
+        <item>Germany</item>
+        <item>Hungary</item>
+        <item>Italy</item>
+        <item>Latvia</item>
+        <item>Liechtenstein</item>
+        <item>Lithuania</item>
+        <item>Luxembourg</item>
+        <item>Macedonia (FYROM)</item>
+        <item>Montenegro</item>
+        <item>Netherlands</item>
+        <item>Norway</item>
+        <item>Poland</item>
+        <item>Romania</item>
+        <item>Serbia</item>
+        <item>Singapore</item>
+        <item>Slovenia</item>
+        <item>Spain</item>
+        <item>Sweden</item>
+        <item>Switzerland</item>
+        <item>Turkey</item>
+        <item>United Kingdom</item>
+    </string-array>
+
+    <string name="message_save">Input saved</string>
+    <string name="message_missingAmt">Please input a valid amount</string>
+    <string name="message_missingName">Please input an item name</string>
+    <string name="message_dbCleared">Database cleared</string>
+
+    <string name="dialog_expenseActivity_deleteConfirmation">Delete this expense?</string>
+
+    <!-- ForexRatesActivity -->
+    <string name="tableHeader_showHide">Show/Hide</string>
+    <string name="tableHeader_toCurrency">EUR to</string>
+    <string name="tableHeader_rate">Rate</string>
+    <string name="message_changesSaved">Changes saved</string>
+
+    <string name="currencyALL">ALL (Albanian lek)</string>
+    <string name="currencyBAM">BAM (BiH convertible mark)</string>
+    <string name="currencyBGN">BGN (Bulgarian lev)</string>
+    <string name="currencyBYN">BYN (Belarusian ruble)</string>
+    <string name="currencyCHF">CHF (Swiss franc)</string>
+    <string name="currencyCZK">CZK (Czech koruna)</string>
+    <string name="currencyDKK">DKK (Danish krone)</string>
+    <string name="currencyEUR">EUR (Euro)</string>
+    <string name="currencyGBP">GBP (Pound sterling)</string>
+    <string name="currencyHUF">HUF (Hungarian forint)</string>
+    <string name="currencyHRK">HRK (Croatian kuna)</string>
+    <string name="currencyMKD">MKD (Macedonian dinar)</string>
+    <string name="currencyNOK">NOK (Norwegian krone)</string>
+    <string name="currencyPLN">PLN (Polish złoty)</string>
+    <string name="currencyRON">RON (Romanian leu)</string>
+    <string name="currencyRSD">RSD (Serbian dinar)</string>
+    <string name="currencySEK">SEK (Swedish krona)</string>
+    <string name="currencySGD">SGD (Singapore dollar)</string>
+    <string name="currencyTRY">TRY (Turkish lira)</string>
+
+    <!-- OverviewActivity -->
+    <string name="dialog_overviewActivity_title">Set Defaults</string>
+
+    <string-array name="spn_selectMonth_entries">
+        <item>All</item>
+        <item>Jan</item>
+        <item>Feb</item>
+        <item>Mar</item>
+        <item>Apr</item>
+        <item>May</item>
+        <item>Jun</item>
+        <item>Jul</item>
+        <item>Aug</item>
+        <item>Sep</item>
+        <item>Oct</item>
+        <item>Nov</item>
+        <item>Dec</item>
+    </string-array>
+
+    <string-array name="toggle_selectDisplayCurrency_entries">
+        <item>EUR</item>
+        <item>SGD</item>
+    </string-array>
+
+    <string name="str_totalExpenditure">Total Expenditure</string>
+    <string name="str_viewExpensesList">View Expenses List</string>
+
+    <string name="str_accommodation">Accommodation</string>
+    <string name="str_food">Food</string>
+    <string name="str_gifts">Gifts</string>
+    <string name="str_leisure">Leisure</string>
+    <string name="str_misc">Misc</string>
+    <string name="str_shopping">Shopping</string>
+    <string name="str_travel">Travel</string>
+
+    <!-- DetailsActivity -->
+    <string name="str_showFilters">Show Filters</string>
+    <string name="str_hideFilters">Hide Filters</string>
+
+    <string name="title_activity_image">ImageActivity</string>
+    <string name="title_activity_overview_settings">Default Display Settings</string>
+
+    <!-- Settings -->
+    <string name="pref_month">Month</string>
+    <string name="pref_startDate">Start Date</string>
+    <string name="pref_endDate">End Date</string>
+    <string name="pref_country">Country</string>
+
+    <string-array name="pref_dateEntries">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+        <item>11</item>
+        <item>12</item>
+        <item>13</item>
+        <item>14</item>
+        <item>15</item>
+        <item>16</item>
+        <item>17</item>
+        <item>18</item>
+        <item>19</item>
+        <item>20</item>
+        <item>21</item>
+        <item>22</item>
+        <item>23</item>
+        <item>24</item>
+        <item>25</item>
+        <item>26</item>
+        <item>27</item>
+        <item>28</item>
+        <item>29</item>
+        <item>30</item>
+        <item>31</item>
+    </string-array>
+
+</resources>
