@@ -23,7 +23,7 @@ public class ImageActivity extends Activity {
 
     private void setImage() {
         ImageView imageView = (ImageView) findViewById(R.id.image);
-        String imagePath = getIntent().getStringExtra("imagepath");
+        String imagePath = getIntent().getStringExtra(getString(R.string.data_imagepath));
         System.out.println("imagepath = " + imagePath);
 
         if (imagePath != null) {
@@ -33,7 +33,7 @@ public class ImageActivity extends Activity {
                 imageView.setImageBitmap(bitmap);
             }
             catch (FileNotFoundException e) {
-                Toast.makeText(this, "FileNotFoundException encountered", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.msg_exception_fileNotFound), Toast.LENGTH_SHORT).show();
                 e.printStackTrace();
             }
         }

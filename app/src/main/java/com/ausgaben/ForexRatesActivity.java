@@ -96,10 +96,10 @@ public class ForexRatesActivity extends AppCompatActivity {
 
     // Initialises the Preferences API and the CheckBox and TextView widgets
     private void initWidgets() {
-        mPrefsToggleRates = getSharedPreferences("toggleRates", MODE_PRIVATE);
-        mPrefsForexRates = getSharedPreferences("forexRates", MODE_PRIVATE);
+        mPrefsToggleRates = getSharedPreferences(getString(R.string.pref_toggleRates), MODE_PRIVATE);
+        mPrefsForexRates = getSharedPreferences(getString(R.string.pref_forexRates), MODE_PRIVATE);
 
-        currencyList = new ArrayList<String>(Arrays.asList(getResources().getStringArray(R.array.spn_currency_entries)));
+        currencyList = new ArrayList<String>(Arrays.asList(getResources().getStringArray(R.array.arr_currency_entries)));
 
         toggleALL = (CheckBox) findViewById(R.id.toggle_currencyALL);
         toggleBAM = (CheckBox) findViewById(R.id.toggle_currencyBAM);
@@ -148,52 +148,52 @@ public class ForexRatesActivity extends AppCompatActivity {
             oldToggleSettingsList.add(mPrefsToggleRates.getBoolean(currencyList.get(i), true));
         }
         
-        toggleALL.setChecked(mPrefsToggleRates.getBoolean("ALL", true));
-        toggleBAM.setChecked(mPrefsToggleRates.getBoolean("BAM", true));
-        toggleBGN.setChecked(mPrefsToggleRates.getBoolean("BGN", true));
-        toggleBYN.setChecked(mPrefsToggleRates.getBoolean("BYN", true));
-        toggleCHF.setChecked(mPrefsToggleRates.getBoolean("CHF", true));
-        toggleCZK.setChecked(mPrefsToggleRates.getBoolean("CZK", true));
-        toggleDKK.setChecked(mPrefsToggleRates.getBoolean("DKK", true));
-        toggleEUR.setChecked(mPrefsToggleRates.getBoolean("EUR", true));
-        toggleGBP.setChecked(mPrefsToggleRates.getBoolean("GBP", true));
-        toggleHRK.setChecked(mPrefsToggleRates.getBoolean("HRK", true));
-        toggleHUF.setChecked(mPrefsToggleRates.getBoolean("HUF", true));
-        toggleMKD.setChecked(mPrefsToggleRates.getBoolean("MKD", true));
-        toggleNOK.setChecked(mPrefsToggleRates.getBoolean("NOK", true));
-        togglePLN.setChecked(mPrefsToggleRates.getBoolean("PLN", true));
-        toggleRON.setChecked(mPrefsToggleRates.getBoolean("RON", true));
-        toggleRSD.setChecked(mPrefsToggleRates.getBoolean("RSD", true));
-        toggleSEK.setChecked(mPrefsToggleRates.getBoolean("SEK", true));
-        toggleSGD.setChecked(mPrefsToggleRates.getBoolean("SGD", true));
-        toggleTRY.setChecked(mPrefsToggleRates.getBoolean("TRY", true));
+        toggleALL.setChecked(mPrefsToggleRates.getBoolean(getString(R.string.currency_ALL), true));
+        toggleBAM.setChecked(mPrefsToggleRates.getBoolean(getString(R.string.currency_BAM), true));
+        toggleBGN.setChecked(mPrefsToggleRates.getBoolean(getString(R.string.currency_BGN), true));
+        toggleBYN.setChecked(mPrefsToggleRates.getBoolean(getString(R.string.currency_BYN), true));
+        toggleCHF.setChecked(mPrefsToggleRates.getBoolean(getString(R.string.currency_CHF), true));
+        toggleCZK.setChecked(mPrefsToggleRates.getBoolean(getString(R.string.currency_CZK), true));
+        toggleDKK.setChecked(mPrefsToggleRates.getBoolean(getString(R.string.currency_DKK), true));
+        toggleEUR.setChecked(mPrefsToggleRates.getBoolean(getString(R.string.currency_EUR), true));
+        toggleGBP.setChecked(mPrefsToggleRates.getBoolean(getString(R.string.currency_GBP), true));
+        toggleHRK.setChecked(mPrefsToggleRates.getBoolean(getString(R.string.currency_HRK), true));
+        toggleHUF.setChecked(mPrefsToggleRates.getBoolean(getString(R.string.currency_HUF), true));
+        toggleMKD.setChecked(mPrefsToggleRates.getBoolean(getString(R.string.currency_MKD), true));
+        toggleNOK.setChecked(mPrefsToggleRates.getBoolean(getString(R.string.currency_NOK), true));
+        togglePLN.setChecked(mPrefsToggleRates.getBoolean(getString(R.string.currency_PLN), true));
+        toggleRON.setChecked(mPrefsToggleRates.getBoolean(getString(R.string.currency_RON), true));
+        toggleRSD.setChecked(mPrefsToggleRates.getBoolean(getString(R.string.currency_RSD), true));
+        toggleSEK.setChecked(mPrefsToggleRates.getBoolean(getString(R.string.currency_SEK), true));
+        toggleSGD.setChecked(mPrefsToggleRates.getBoolean(getString(R.string.currency_SGD), true));
+        toggleTRY.setChecked(mPrefsToggleRates.getBoolean(getString(R.string.currency_TRY), true));
     }
     
     // Loads the saved rates from the SharedPreferences
     private void loadForexRates() {
         for (int i = 0; i < currencyList.size(); i++) {
-            if (!currencyList.get(i).equals("EUR"))
+            if (!currencyList.get(i).equals(getString(R.string.currency_EUR)))
                 oldForexRatesList.add(mPrefsForexRates.getString(currencyList.get(i), ""));
         }
         
-        rateALL.setText(mPrefsForexRates.getString("ALL", ""));
-        rateBAM.setText(mPrefsForexRates.getString("BAM", ""));
-        rateBGN.setText(mPrefsForexRates.getString("BGN", ""));
-        rateBYN.setText(mPrefsForexRates.getString("BYN", ""));
-        rateCHF.setText(mPrefsForexRates.getString("CHF", ""));
-        rateCZK.setText(mPrefsForexRates.getString("CZK", ""));
-        rateDKK.setText(mPrefsForexRates.getString("DKK", ""));
-        rateGBP.setText(mPrefsForexRates.getString("GBP", ""));
-        rateHRK.setText(mPrefsForexRates.getString("HRK", ""));
-        rateHUF.setText(mPrefsForexRates.getString("HUF", ""));
-        rateMKD.setText(mPrefsForexRates.getString("MKD", ""));
-        rateNOK.setText(mPrefsForexRates.getString("NOK", ""));
-        ratePLN.setText(mPrefsForexRates.getString("PLN", ""));
-        rateRON.setText(mPrefsForexRates.getString("RON", ""));
-        rateRSD.setText(mPrefsForexRates.getString("RSD", ""));
-        rateSEK.setText(mPrefsForexRates.getString("SEK", ""));
-        rateSGD.setText(mPrefsForexRates.getString("SGD", ""));
-        rateTRY.setText(mPrefsForexRates.getString("TRY", ""));
+        rateALL.setText(mPrefsForexRates.getString(getString(R.string.currency_ALL), ""));
+        rateBAM.setText(mPrefsForexRates.getString(getString(R.string.currency_BAM), ""));
+        rateBGN.setText(mPrefsForexRates.getString(getString(R.string.currency_BGN), ""));
+        rateBYN.setText(mPrefsForexRates.getString(getString(R.string.currency_BYN), ""));
+        rateCHF.setText(mPrefsForexRates.getString(getString(R.string.currency_CHF), ""));
+        rateCZK.setText(mPrefsForexRates.getString(getString(R.string.currency_CZK), ""));
+        rateDKK.setText(mPrefsForexRates.getString(getString(R.string.currency_DKK), ""));
+        rateGBP.setText(mPrefsForexRates.getString(getString(R.string.currency_GBP), ""));
+        rateHRK.setText(mPrefsForexRates.getString(getString(R.string.currency_HRK), ""));
+        rateHUF.setText(mPrefsForexRates.getString(getString(R.string.currency_HUF), ""));
+        rateMKD.setText(mPrefsForexRates.getString(getString(R.string.currency_MKD), ""));
+        rateNOK.setText(mPrefsForexRates.getString(getString(R.string.currency_NOK), ""));
+        ratePLN.setText(mPrefsForexRates.getString(getString(R.string.currency_PLN), ""));
+        rateRON.setText(mPrefsForexRates.getString(getString(R.string.currency_RON), ""));
+        rateRSD.setText(mPrefsForexRates.getString(getString(R.string.currency_RSD), ""));
+        rateSEK.setText(mPrefsForexRates.getString(getString(R.string.currency_SEK), ""));
+        rateSGD.setText(mPrefsForexRates.getString(getString(R.string.currency_SGD), ""));
+        rateTRY.setText(mPrefsForexRates.getString(getString(R.string.currency_TRY), ""));
     }
 
     /*
@@ -241,25 +241,25 @@ public class ForexRatesActivity extends AppCompatActivity {
         SharedPreferences.Editor mEditor = mPrefsToggleRates.edit();
         mEditor.clear();
 
-        mEditor.putBoolean("ALL", toggleALL.isChecked());
-        mEditor.putBoolean("BAM", toggleBAM.isChecked());
-        mEditor.putBoolean("BGN", toggleBGN.isChecked());
-        mEditor.putBoolean("BYN", toggleBYN.isChecked());
-        mEditor.putBoolean("CHF", toggleCHF.isChecked());
-        mEditor.putBoolean("CZK", toggleCZK.isChecked());
-        mEditor.putBoolean("DKK", toggleDKK.isChecked());
-        mEditor.putBoolean("EUR", toggleEUR.isChecked());
-        mEditor.putBoolean("GBP", toggleGBP.isChecked());
-        mEditor.putBoolean("HRK", toggleHRK.isChecked());
-        mEditor.putBoolean("HUF", toggleHUF.isChecked());
-        mEditor.putBoolean("MKD", toggleMKD.isChecked());
-        mEditor.putBoolean("NOK", toggleNOK.isChecked());
-        mEditor.putBoolean("PLN", togglePLN.isChecked());
-        mEditor.putBoolean("RON", toggleRON.isChecked());
-        mEditor.putBoolean("RSD", toggleRSD.isChecked());
-        mEditor.putBoolean("SEK", toggleSEK.isChecked());
-        mEditor.putBoolean("SGD", toggleSGD.isChecked());
-        mEditor.putBoolean("TRY", toggleTRY.isChecked());
+        mEditor.putBoolean(getString(R.string.currency_ALL), toggleALL.isChecked());
+        mEditor.putBoolean(getString(R.string.currency_BAM), toggleBAM.isChecked());
+        mEditor.putBoolean(getString(R.string.currency_BGN), toggleBGN.isChecked());
+        mEditor.putBoolean(getString(R.string.currency_BYN), toggleBYN.isChecked());
+        mEditor.putBoolean(getString(R.string.currency_CHF), toggleCHF.isChecked());
+        mEditor.putBoolean(getString(R.string.currency_CZK), toggleCZK.isChecked());
+        mEditor.putBoolean(getString(R.string.currency_DKK), toggleDKK.isChecked());
+        mEditor.putBoolean(getString(R.string.currency_EUR), toggleEUR.isChecked());
+        mEditor.putBoolean(getString(R.string.currency_GBP), toggleGBP.isChecked());
+        mEditor.putBoolean(getString(R.string.currency_HRK), toggleHRK.isChecked());
+        mEditor.putBoolean(getString(R.string.currency_HUF), toggleHUF.isChecked());
+        mEditor.putBoolean(getString(R.string.currency_MKD), toggleMKD.isChecked());
+        mEditor.putBoolean(getString(R.string.currency_NOK), toggleNOK.isChecked());
+        mEditor.putBoolean(getString(R.string.currency_PLN), togglePLN.isChecked());
+        mEditor.putBoolean(getString(R.string.currency_RON), toggleRON.isChecked());
+        mEditor.putBoolean(getString(R.string.currency_RSD), toggleRSD.isChecked());
+        mEditor.putBoolean(getString(R.string.currency_SEK), toggleSEK.isChecked());
+        mEditor.putBoolean(getString(R.string.currency_SGD), toggleSGD.isChecked());
+        mEditor.putBoolean(getString(R.string.currency_TRY), toggleTRY.isChecked());
 
         mEditor.commit();
     }
@@ -288,24 +288,24 @@ public class ForexRatesActivity extends AppCompatActivity {
         SharedPreferences.Editor mEditor = mPrefsForexRates.edit();
         mEditor.clear();
         
-        mEditor.putString("ALL", rateALL.getText().toString().trim());
-        mEditor.putString("BAM", rateBAM.getText().toString().trim());
-        mEditor.putString("BGN", rateBGN.getText().toString().trim());
-        mEditor.putString("BYN", rateBYN.getText().toString().trim());
-        mEditor.putString("CHF", rateCHF.getText().toString().trim());
-        mEditor.putString("CZK", rateCZK.getText().toString().trim());
-        mEditor.putString("DKK", rateDKK.getText().toString().trim());
-        mEditor.putString("GBP", rateGBP.getText().toString().trim());
-        mEditor.putString("HRK", rateHRK.getText().toString().trim());
-        mEditor.putString("HUF", rateHUF.getText().toString().trim());
-        mEditor.putString("MKD", rateMKD.getText().toString().trim());
-        mEditor.putString("NOK", rateNOK.getText().toString().trim());
-        mEditor.putString("PLN", ratePLN.getText().toString().trim());
-        mEditor.putString("RON", rateRON.getText().toString().trim());
-        mEditor.putString("RSD", rateRSD.getText().toString().trim());
-        mEditor.putString("SEK", rateSEK.getText().toString().trim());
-        mEditor.putString("SGD", rateSGD.getText().toString().trim());
-        mEditor.putString("TRY", rateTRY.getText().toString().trim());
+        mEditor.putString(getString(R.string.currency_ALL), rateALL.getText().toString().trim());
+        mEditor.putString(getString(R.string.currency_BAM), rateBAM.getText().toString().trim());
+        mEditor.putString(getString(R.string.currency_BGN), rateBGN.getText().toString().trim());
+        mEditor.putString(getString(R.string.currency_BYN), rateBYN.getText().toString().trim());
+        mEditor.putString(getString(R.string.currency_CHF), rateCHF.getText().toString().trim());
+        mEditor.putString(getString(R.string.currency_CZK), rateCZK.getText().toString().trim());
+        mEditor.putString(getString(R.string.currency_DKK), rateDKK.getText().toString().trim());
+        mEditor.putString(getString(R.string.currency_GBP), rateGBP.getText().toString().trim());
+        mEditor.putString(getString(R.string.currency_HRK), rateHRK.getText().toString().trim());
+        mEditor.putString(getString(R.string.currency_HUF), rateHUF.getText().toString().trim());
+        mEditor.putString(getString(R.string.currency_MKD), rateMKD.getText().toString().trim());
+        mEditor.putString(getString(R.string.currency_NOK), rateNOK.getText().toString().trim());
+        mEditor.putString(getString(R.string.currency_PLN), ratePLN.getText().toString().trim());
+        mEditor.putString(getString(R.string.currency_RON), rateRON.getText().toString().trim());
+        mEditor.putString(getString(R.string.currency_RSD), rateRSD.getText().toString().trim());
+        mEditor.putString(getString(R.string.currency_SEK), rateSEK.getText().toString().trim());
+        mEditor.putString(getString(R.string.currency_SGD), rateSGD.getText().toString().trim());
+        mEditor.putString(getString(R.string.currency_TRY), rateTRY.getText().toString().trim());
 
         mEditor.commit();
     }
@@ -329,7 +329,7 @@ public class ForexRatesActivity extends AppCompatActivity {
         }
 
         if (isChangesMade) {
-            Toast.makeText(this, R.string.message_changesSaved, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.msg_changesSaved, Toast.LENGTH_SHORT).show();
         }
     }
 }

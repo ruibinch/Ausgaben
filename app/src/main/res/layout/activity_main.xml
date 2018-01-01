@@ -52,7 +52,7 @@
         android:layout_marginBottom="22dp"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:text="Location not found"
+        android:text="@string/str_locationNotFound"
         android:textColor="@android:color/black"
         android:textSize="14sp"
         android:onClick="onClickUpdateLocation" />

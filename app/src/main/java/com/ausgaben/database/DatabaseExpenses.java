@@ -144,7 +144,7 @@ public class DatabaseExpenses {
         cursor.moveToFirst();
 
         while (!cursor.isAfterLast()) {
-            if (month == 0 || expenseWithinMonthAndDateRange(cursor.getLong(1), month, startDate, endDate) &&
+            if ((month == 0 || expenseWithinMonthAndDateRange(cursor.getLong(1), month, startDate, endDate)) &&
                     expenseWithinCountry(cursor.getString(9), country)) {
                 Expense expense = getExpenseDetails(cursor);
                 expenseList.add(expense);

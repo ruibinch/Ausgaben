@@ -17,13 +17,6 @@
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Ausgaben"
-            android:textColor="#FFFFFF"
-            android:textSize="20sp"/>
-
     </android.support.v7.widget.Toolbar>
 
     <!-- First row - date -->
@@ -32,13 +25,14 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent">
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
             <TextView
                 android:id="@+id/text_expenseDate"
-                android:text="@string/str_expenseDate"
+                android:text="@string/str_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="100dp"
@@ -60,7 +54,7 @@
 
             <TextView
                 android:id="@+id/text_expenseName"
-                android:text="@string/str_expenseName"
+                android:text="@string/str_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/text_expenseDate"
@@ -81,7 +75,7 @@
 
             <TextView
                 android:id="@+id/text_expenseCategory"
-                android:text="@string/str_expenseCategory"
+                android:text="@string/str_category"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/text_expenseName"
@@ -96,13 +90,13 @@
                 android:layout_marginStart="20dp"
                 android:layout_alignBaseline="@id/text_expenseCategory"
                 android:dropDownWidth="@dimen/spinner_categorySelection"
-                android:entries="@array/spn_expenseCategory_entries" />
+                android:entries="@array/arr_expenseCategory_entries" />
 
             <!-- Fourth row - amount -->
 
             <TextView
                 android:id="@+id/text_expenseAmt"
-                android:text="@string/str_expenseAmt"
+                android:text="@string/str_amount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/text_expenseCategory"
@@ -127,13 +121,13 @@
                 android:layout_alignBaseline="@id/input_expenseAmt"
                 android:layout_marginStart="5dp"
                 android:dropDownWidth="@dimen/spinner_currencySelection"
-                android:entries="@array/spn_currency_entries" />
+                android:entries="@array/arr_currency_entries" />
 
             <!-- Fifth row - country -->
 
             <TextView
                 android:id="@+id/text_expenseCountry"
-                android:text="@string/str_expenseCountry"
+                android:text="@string/str_country"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/text_expenseAmt"
@@ -149,11 +143,32 @@
                 android:layout_alignBaseline="@id/text_expenseCountry"
                 android:layout_alignStart="@id/spn_expenseCategory"
                 android:dropDownWidth="@dimen/spinner_editCountrySelection"
-                android:entries="@array/spn_countries_entries"
+                android:entries="@array/arr_country_entries"
                 android:visibility="gone"  />
 
+            <!-- Sixth row - city -->
 
-            <!-- Sixth row - camera -->
+            <TextView
+                android:id="@+id/text_expenseCity"
+                android:text="@string/str_city"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/text_expenseCountry"
+                android:layout_alignStart="@id/text_expenseCountry"
+                android:layout_marginTop="25dp"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/text_expenseCity_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/text_expenseCity"
+                android:layout_alignBaseline="@id/text_expenseCity"
+                android:layout_alignStart="@id/input_expenseDate"
+                android:textColor="@android:color/black"
+                android:visibility="gone" />
+
+            <!-- Seventh row - camera -->
 
             <ImageView
                 android:id="@+id/img_photo"
@@ -164,12 +179,11 @@
                 android:layout_alignStart="@id/input_expenseAmt"
                 android:layout_marginTop="20dp"
                 android:adjustViewBounds="true"
-                android:onClick="onClickCamera"
                 tools:ignore="ContentDescription" />
 
             <TextView
                 android:id="@+id/text_expensePhoto"
-                android:text="@string/str_expensePhoto"
+                android:text="@string/str_photo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/text_expenseAmt"

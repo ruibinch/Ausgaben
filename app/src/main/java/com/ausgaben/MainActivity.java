@@ -12,6 +12,7 @@ import android.location.Location;
 import android.Manifest;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -74,7 +75,8 @@ public class MainActivity extends AppCompatActivity implements
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         toolbar.showOverflowMenu();
 
-        verifyLocationPermissions(); // for API 23+
+        verifyLocationPermissions();
+        verifyStoragePermissions();
         initLocationClients();
         setLocationText();
         setRatesSettingsIfFirstStartup(); // for first-time startup
@@ -143,21 +145,21 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onConnectionSuspended(int value) {
-        Toast.makeText(this, "Connection suspended", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, getString(R.string.msg_connSuspended), Toast.LENGTH_SHORT).show();
     }
 
     @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         if (connectionResult.hasResolution()) {
             try {
                 // Start an Activity that tries to resolve the error
-                Toast.makeText(this, "Resolving connection error", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.msg_resolveConnError), Toast.LENGTH_SHORT).show();
                 connectionResult.startResolutionForResult(this, 9000);
             } catch (IntentSender.SendIntentException e) {
                 e.printStackTrace();
             }
         } else {
-            Toast.makeText(this, "Connection failed", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.msg_connFailed), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -168,7 +170,7 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onLocationChanged(Location location) {
-        Toast.makeText(MainActivity.this, "Location changed: " + location.toString(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(MainActivity.this, getString(R.string.msg_locationChanged) + location.toString(), Toast.LENGTH_SHORT).show();
         updateWithNewLocation(location);
     }
 
@@ -194,59 +196,59 @@ public class MainActivity extends AppCompatActivity implements
 
     // Sets the forex rates manually on first startup when the Preferences are empty
     private void setRatesSettingsIfFirstStartup() {
-        SharedPreferences prefsToggleRates = getSharedPreferences("toggleRates", MODE_PRIVATE);
-        SharedPreferences prefsForexRates = getSharedPreferences("forexRates", MODE_PRIVATE);
+        SharedPreferences prefsToggleRates = getSharedPreferences(getString(R.string.pref_toggleRates), MODE_PRIVATE);
+        SharedPreferences prefsForexRates = getSharedPreferences(getString(R.string.pref_forexRates), MODE_PRIVATE);
 
-        if (!prefsToggleRates.contains("SGD")) {
+        if (!prefsToggleRates.contains(getString(R.string.currency_SGD))) {
             SharedPreferences.Editor mEditor = prefsToggleRates.edit();
             mEditor.clear();
 
-            mEditor.putBoolean("ALL", true);
-            mEditor.putBoolean("BAM", true);
-            mEditor.putBoolean("BGN", true);
-            mEditor.putBoolean("BYN", true);
-            mEditor.putBoolean("CHF", true);
-            mEditor.putBoolean("CZK", true);
-            mEditor.putBoolean("DKK", true);
-            mEditor.putBoolean("GBP", true);
-            mEditor.putBoolean("HUF", true);
-            mEditor.putBoolean("HRK", true);
-            mEditor.putBoolean("MKD", true);
-            mEditor.putBoolean("NOK", true);
-            mEditor.putBoolean("PLN", true);
-            mEditor.putBoolean("RON", true);
-            mEditor.putBoolean("RSD", true);
-            mEditor.putBoolean("SEK", true);
-            mEditor.putBoolean("SGD", true);
-            mEditor.putBoolean("TRY", true);
+            mEditor.putBoolean(getString(R.string.currency_ALL), true);
+            mEditor.putBoolean(getString(R.string.currency_BAM), true);
+            mEditor.putBoolean(getString(R.string.currency_BGN), true);
+            mEditor.putBoolean(getString(R.string.currency_BYN), true);
+            mEditor.putBoolean(getString(R.string.currency_CHF), true);
+            mEditor.putBoolean(getString(R.string.currency_CZK), true);
+            mEditor.putBoolean(getString(R.string.currency_DKK), true);
+            mEditor.putBoolean(getString(R.string.currency_GBP), true);
+            mEditor.putBoolean(getString(R.string.currency_HUF), true);
+            mEditor.putBoolean(getString(R.string.currency_HRK), true);
+            mEditor.putBoolean(getString(R.string.currency_MKD), true);
+            mEditor.putBoolean(getString(R.string.currency_NOK), true);
+            mEditor.putBoolean(getString(R.string.currency_PLN), true);
+            mEditor.putBoolean(getString(R.string.currency_RON), true);
+            mEditor.putBoolean(getString(R.string.currency_RSD), true);
+            mEditor.putBoolean(getString(R.string.currency_SEK), true);
+            mEditor.putBoolean(getString(R.string.currency_SGD), true);
+            mEditor.putBoolean(getString(R.string.currency_TRY), true);
 
             mEditor.apply();
         }
 
-        if (!prefsForexRates.contains("SGD")) {
-            Toast.makeText(this, "First time startup - setting initial forex rates", Toast.LENGTH_SHORT).show();
+        if (!prefsForexRates.contains(getString(R.string.currency_SGD))) {
+            Toast.makeText(this, getString(R.string.msg_firstStartup), Toast.LENGTH_SHORT).show();
 
             SharedPreferences.Editor mEditor = prefsForexRates.edit();
             mEditor.clear();
 
-            mEditor.putString("ALL", "135.95");
-            mEditor.putString("BAM", "1.95");
-            mEditor.putString("BGN", "1.95");
-            mEditor.putString("BYN", "2.08");
-            mEditor.putString("CHF", "1.07");
-            mEditor.putString("CZK", "27.02");
-            mEditor.putString("DKK", "7.44");
-            mEditor.putString("GBP", "0.85");
-            mEditor.putString("HUF", "308.00");
-            mEditor.putString("HRK", "7.51");
-            mEditor.putString("MKD", "61.6");
-            mEditor.putString("NOK", "9.08");
-            mEditor.putString("PLN", "4.42");
-            mEditor.putString("RON", "4.52");
-            mEditor.putString("RSD", "123.00");
-            mEditor.putString("SEK", "9.58");
-            mEditor.putString("SGD", "1.51");
-            mEditor.putString("TRY", "3.99");
+            mEditor.putString(getString(R.string.currency_ALL), getString(R.string.currency_ALL_rate));
+            mEditor.putString(getString(R.string.currency_BAM), getString(R.string.currency_BAM_rate));
+            mEditor.putString(getString(R.string.currency_BGN), getString(R.string.currency_BGN_rate));
+            mEditor.putString(getString(R.string.currency_BYN), getString(R.string.currency_BYN_rate));
+            mEditor.putString(getString(R.string.currency_CHF), getString(R.string.currency_CHF_rate));
+            mEditor.putString(getString(R.string.currency_CZK), getString(R.string.currency_CZK_rate));
+            mEditor.putString(getString(R.string.currency_DKK), getString(R.string.currency_DKK_rate));
+            mEditor.putString(getString(R.string.currency_GBP), getString(R.string.currency_GBP_rate));
+            mEditor.putString(getString(R.string.currency_HUF), getString(R.string.currency_HUF_rate));
+            mEditor.putString(getString(R.string.currency_HRK), getString(R.string.currency_HRK_rate));
+            mEditor.putString(getString(R.string.currency_MKD), getString(R.string.currency_MKD_rate));
+            mEditor.putString(getString(R.string.currency_NOK), getString(R.string.currency_NOK_rate));
+            mEditor.putString(getString(R.string.currency_PLN), getString(R.string.currency_PLN_rate));
+            mEditor.putString(getString(R.string.currency_RON), getString(R.string.currency_RON_rate));
+            mEditor.putString(getString(R.string.currency_RSD), getString(R.string.currency_RSD_rate));
+            mEditor.putString(getString(R.string.currency_SEK), getString(R.string.currency_SEK_rate));
+            mEditor.putString(getString(R.string.currency_SGD), getString(R.string.currency_SGD_rate));
+            mEditor.putString(getString(R.string.currency_TRY), getString(R.string.currency_TRY_rate));
 
             mEditor.apply();
         }
@@ -273,7 +275,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     public void onClickUpdateLocation(View view) {
-        Toast.makeText(this, "Updating location", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, getString(R.string.msg_updatingLocation), Toast.LENGTH_SHORT).show();
 		try {
             Location location =  LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
             if (location == null) {
@@ -283,7 +285,7 @@ public class MainActivity extends AppCompatActivity implements
                 updateWithNewLocation(location);
             }
         } catch (SecurityException e) {
-            Toast.makeText(this, "Security exception", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.msg_exception_security), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -292,7 +294,11 @@ public class MainActivity extends AppCompatActivity implements
         moveTaskToBack(true);
     }
 
-    // TODO - include city in ExpenseActivity
+    // CHANGELOG - fixed bug when country is selected in Overview with 'All Months'
+    // CHANGELOG - city included in ExpenseActivity
+    // CHANGELOG - removed many magic strings
+
+    // TODO - change 'Save' and 'Delete' buttons to toolbar icons
     // TODO - start and end month and date
     // TODO - include option to set defaults in ExpenseActivity
     // TODO - long press on 1 filter to uncheck the rest
@@ -309,7 +315,7 @@ public class MainActivity extends AppCompatActivity implements
         String countryName = "";
 
         // Preferences API
-        SharedPreferences mPrefsLocation = getSharedPreferences("location", MODE_PRIVATE);
+        SharedPreferences mPrefsLocation = getSharedPreferences(getString(R.string.pref_location), MODE_PRIVATE);
         SharedPreferences.Editor mEditor = mPrefsLocation.edit();
         mEditor.clear();
 
@@ -348,8 +354,8 @@ public class MainActivity extends AppCompatActivity implements
         }
 
         // Save the updated location in the Preferences API
-        mEditor.putString("city", cityName);
-        mEditor.putString("country", countryName);
+        mEditor.putString(getString(R.string.pref_city), cityName);
+        mEditor.putString(getString(R.string.pref_country), countryName);
 
         mEditor.apply();
 
@@ -359,11 +365,11 @@ public class MainActivity extends AppCompatActivity implements
     // Sets the TextView to the city name (if applicable) and country name
     private void setLocationText() {
         TextView locationText = (TextView) findViewById(R.id.text_location);
-        SharedPreferences mPrefs = getSharedPreferences("location", MODE_PRIVATE); // Obtains the last-saved location
+        SharedPreferences mPrefs = getSharedPreferences(getString(R.string.pref_location), MODE_PRIVATE); // Obtains the last-saved location
         StringBuilder sb = new StringBuilder();
 
-        String cityName = mPrefs.getString("city", "");
-        String countryName = mPrefs.getString("country", "");
+        String cityName = mPrefs.getString(getString(R.string.pref_city), "");
+        String countryName = mPrefs.getString(getString(R.string.pref_country), "");
 
         if (!cityName.equals("")) {
             sb.append(cityName).append(", ");
@@ -387,7 +393,7 @@ public class MainActivity extends AppCompatActivity implements
     private void importDatabase() {
         try {
 
-            InputStream inputStream = this.getAssets().open("expenses.csv");
+            InputStream inputStream = this.getAssets().open(getString(R.string.filename_import));
             BufferedReader br = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
             String line;
             String tableName = "expenses";
@@ -422,15 +428,15 @@ public class MainActivity extends AppCompatActivity implements
                 sqldb.execSQL(sb.toString());
             }
 
-            Toast.makeText(this, "Import successful", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.msg_importSuccessful), Toast.LENGTH_SHORT).show();
             sqldb.setTransactionSuccessful();
             sqldb.endTransaction();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-            Toast.makeText(this, "File not found", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.msg_exception_fileNotFound), Toast.LENGTH_SHORT).show();
         } catch (IOException e) {
             e.printStackTrace();
-            Toast.makeText(this, "IOException encountered", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.msg_exception_io), Toast.LENGTH_SHORT).show();
         }
 
     }
@@ -495,7 +501,7 @@ public class MainActivity extends AppCompatActivity implements
                 sqldb.close();
             }
             e.printStackTrace();
-            Toast.makeText(this, "IOException encountered", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.msg_exception_io), Toast.LENGTH_SHORT).show();
         }
     }
 

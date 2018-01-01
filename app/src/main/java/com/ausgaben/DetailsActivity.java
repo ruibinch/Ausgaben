@@ -22,6 +22,7 @@ import java.util.Iterator;
 
 import com.ausgaben.database.DatabaseExpenses;
 import com.ausgaben.database.Expense;
+import com.ausgaben.misc.IntentHelper;
 
 public class DetailsActivity extends ListActivity {
 
@@ -96,10 +97,10 @@ public class DetailsActivity extends ListActivity {
     }
 
     private void setDisplayParameters() {
-        displayMonth = getIntent().getIntExtra("displayMonth", -1);
-        displayCountry = getIntent().getStringExtra("displayCountry");
-        displayStartDate = getIntent().getIntExtra("displayStartDate", -1);
-        displayEndDate = getIntent().getIntExtra("displayEndDate", -1);
+        displayMonth = getIntent().getIntExtra(getString(R.string.data_displayMonth), -1);
+        displayCountry = getIntent().getStringExtra(getString(R.string.data_displayCountry));
+        displayStartDate = getIntent().getIntExtra(getString(R.string.data_displayStartDate), -1);
+        displayEndDate = getIntent().getIntExtra(getString(R.string.data_displayEndDate), -1);
     }
 
     // Sets the attributes for the 'Show Filters' TextView
@@ -110,19 +111,19 @@ public class DetailsActivity extends ListActivity {
 
     // Sets the saved scroll position of the ListView
     private void getListScrollPosition() {
-        scrollIndex = getIntent().getIntExtra("scrollIndex", -1);
-        scrollOffset = getIntent().getIntExtra("scrollOffset", -1);
+        scrollIndex = getIntent().getIntExtra(getString(R.string.data_scrollIndex), -1);
+        scrollOffset = getIntent().getIntExtra(getString(R.string.data_scrollOffset), -1);
     }
 
     // Sets the filter settings and the corresponding checkboxes
     private void getFilterSettings() {
-        isAccommodationVisible = getIntent().getBooleanExtra("isAccommodationVisible", true);
-        isFoodVisible = getIntent().getBooleanExtra("isFoodVisible", true);
-        isGiftsVisible = getIntent().getBooleanExtra("isGiftsVisible", true);
-        isLeisureVisible = getIntent().getBooleanExtra("isLeisureVisible", true);
-        isMiscVisible = getIntent().getBooleanExtra("isMiscVisible", true);
-        isShoppingVisible = getIntent().getBooleanExtra("isShoppingVisible", true);
-        isTravelVisible = getIntent().getBooleanExtra("isTravelVisible", true);
+        isAccommodationVisible = getIntent().getBooleanExtra(getString(R.string.data_isAccommodationVisible), true);
+        isFoodVisible = getIntent().getBooleanExtra(getString(R.string.data_isFoodVisible), true);
+        isGiftsVisible = getIntent().getBooleanExtra(getString(R.string.data_isGiftsVisible), true);
+        isLeisureVisible = getIntent().getBooleanExtra(getString(R.string.data_isLeisureVisible), true);
+        isMiscVisible = getIntent().getBooleanExtra(getString(R.string.data_isMiscVisible), true);
+        isShoppingVisible = getIntent().getBooleanExtra(getString(R.string.data_isShoppingVisible), true);
+        isTravelVisible = getIntent().getBooleanExtra(getString(R.string.data_isTravelVisible), true);
 
         CheckBox cbAccommodation = (CheckBox) findViewById(R.id.checkbox_accommodation);
         CheckBox cbFood = (CheckBox) findViewById(R.id.checkbox_food);
@@ -158,15 +159,15 @@ public class DetailsActivity extends ListActivity {
     // Obtains the edit settings from the intent from ExpenseActivity, if applicable
     private void getEditSettings() {
         // For highlighting a newly added expense
-        newExpenseId = getIntent().getLongExtra("newExpenseId", -1); // ID of the new expense added
+        newExpenseId = getIntent().getLongExtra(getString(R.string.data_newExpenseId), -1); // ID of the new expense added
         // For highlighting the edited details of an existing expense
-        editExpenseId = getIntent().getLongExtra("editExpenseId", -1); // ID of the edied expense
-        isDateEdited = getIntent().getBooleanExtra("isDateEdited", false);
-        isNameEdited = getIntent().getBooleanExtra("isNameEdited", false);
-        isCategoryEdited = getIntent().getBooleanExtra("isCategoryEdited", false);
-        isAmountEdited = getIntent().getBooleanExtra("isAmountEdited", false);
-        isCurrencyEdited = getIntent().getBooleanExtra("isCurrencyEdited", false);
-        isImagePathEdited = getIntent().getBooleanExtra("isImagePathEdited", false);
+        editExpenseId = getIntent().getLongExtra(getString(R.string.data_editExpenseId), -1); // ID of the edied expense
+        isDateEdited = getIntent().getBooleanExtra(getString(R.string.data_isDateEdited), false);
+        isNameEdited = getIntent().getBooleanExtra(getString(R.string.data_isNameEdited), false);
+        isCategoryEdited = getIntent().getBooleanExtra(getString(R.string.data_isCategoryEdited), false);
+        isAmountEdited = getIntent().getBooleanExtra(getString(R.string.data_isAmountEdited), false);
+        isCurrencyEdited = getIntent().getBooleanExtra(getString(R.string.data_isCurrencyEdited), false);
+        isImagePathEdited = getIntent().getBooleanExtra(getString(R.string.data_isImagePathEdited), false);
     }
 
     // Initiates the ListView and sets it to the appropriate scroll position
@@ -188,15 +189,13 @@ public class DetailsActivity extends ListActivity {
 
     @Override
     public void onBackPressed() {
-        if (getIntent().getStringExtra("source") != null) {
+        if (getIntent().getStringExtra(getString(R.string.data_source)) != null) {
             Intent intent = new Intent(this, ExpenseActivity.class);
             startActivity(intent);
         } else {
             Intent intent = new Intent(this, OverviewActivity.class);
-            intent.putExtra("displayMonth", displayMonth);
-            intent.putExtra("displayCountry", displayCountry);
-            intent.putExtra("displayStartDate", displayStartDate);
-            intent.putExtra("displayEndDate", displayEndDate);
+            IntentHelper intentHelper = new IntentHelper(intent);
+            intentHelper.addDisplaySettings(displayMonth, displayCountry, displayStartDate, displayEndDate);
             startActivity(intent);
         }
     }
@@ -207,46 +206,29 @@ public class DetailsActivity extends ListActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            Intent intent = new Intent(DetailsActivity.this, ExpenseActivity.class);
-            Expense expense = (Expense) parent.getItemAtPosition(position);
-            Bundle bundle = new Bundle();
+                Intent intent = new Intent(DetailsActivity.this, ExpenseActivity.class);
+                IntentHelper intentHelper = new IntentHelper(intent);
+                Expense expense = (Expense) parent.getItemAtPosition(position);
 
-            // Save the current scroll position of the list
-            int scrollIndex = listView.getFirstVisiblePosition(); // index of the top-most visible item
-            View v = listView.getChildAt(0);
-            int scrollOffset = (v == null) ? 0 : (v.getTop() - listView.getPaddingTop());
+                // Save the current scroll position of the list
+                int scrollIndex = listView.getFirstVisiblePosition(); // index of the top-most visible item
+                View v = listView.getChildAt(0);
+                int scrollOffset = (v == null) ? 0 : (v.getTop() - listView.getPaddingTop());
 
-            // Inserting the expense details into the bundle
-            bundle.putLong("id", expense.getId());
-            bundle.putLong("date", expense.getDate());
-            bundle.putString("name", expense.getName());
-            bundle.putString("category", expense.getCategory());
-            bundle.putString("amount", expense.getAmount().setScale(2, BigDecimal.ROUND_HALF_UP).toString());
-            bundle.putString("currency", expense.getCurrency());
-            bundle.putString("country", expense.getCountry());
-            bundle.putString("imagepath", expense.getImagePath());
+                intentHelper.addExpenseDetails(expense.getId(), expense.getDate(), expense.getName(), expense.getCategory(), expense.getAmount().setScale(2, BigDecimal.ROUND_HALF_UP).toString(),
+                        expense.getCurrency(), expense.getCountry(), expense.getCity(), expense.getImagePath());
+                intentHelper.addDisplaySettings(displayMonth, displayCountry, displayStartDate, displayEndDate);
+                intentHelper.addFilterSettings(
+                    getIntent().getBooleanExtra(getString(R.string.data_isAccommodationVisible), true),
+                    getIntent().getBooleanExtra(getString(R.string.data_isFoodVisible), true),
+                    getIntent().getBooleanExtra(getString(R.string.data_isGiftsVisible), true),
+                    getIntent().getBooleanExtra(getString(R.string.data_isLeisureVisible), true),
+                    getIntent().getBooleanExtra(getString(R.string.data_isMiscVisible), true),
+                    getIntent().getBooleanExtra(getString(R.string.data_isShoppingVisible), true),
+                    getIntent().getBooleanExtra(getString(R.string.data_isTravelVisible), true));
+                intentHelper.addScrollSettings(scrollIndex, scrollOffset);
 
-            // Insert the display month/country/date settings into the bundle
-            bundle.putInt("displayMonth", displayMonth);
-            bundle.putString("displayCountry", displayCountry);
-            bundle.putInt("displayStartDate", displayStartDate);
-            bundle.putInt("displayEndDate", displayEndDate);
-                
-            // Insert the filter settings into the bundle
-            bundle.putBoolean("isAccommodationVisible", isAccommodationVisible);
-            bundle.putBoolean("isFoodVisible", isFoodVisible);
-            bundle.putBoolean("isGiftsVisible", isGiftsVisible);
-            bundle.putBoolean("isLeisureVisible", isLeisureVisible);
-            bundle.putBoolean("isMiscVisible", isMiscVisible);
-            bundle.putBoolean("isShoppingVisible", isShoppingVisible);
-            bundle.putBoolean("isTravelVisible", isTravelVisible);
-
-            // Insert the scroll position details into the bundle
-            bundle.putInt("scrollIndex", scrollIndex);
-            bundle.putInt("scrollOffset", scrollOffset);
-
-            intent.putExtras(bundle);
-            startActivity(intent);
+                startActivity(intent);
             }
         });
     }
@@ -358,21 +340,22 @@ public class DetailsActivity extends ListActivity {
     private ArrayList<Expense> displayData(boolean[] filters) {
         ArrayList<Expense> expenseList = database.getExpensesList(displayMonth, displayCountry, displayStartDate, displayEndDate);
         expenseList = sortMostRecentFirst(expenseList);
+        String[] categoryList = getResources().getStringArray(R.array.arr_expenseCategory_entries);
 
         if (!filters[0])
-            expenseList = filterList(expenseList, "accommodation");
+            expenseList = filterList(expenseList, categoryList[0]);
         if (!filters[1])
-            expenseList = filterList(expenseList, "food");
+            expenseList = filterList(expenseList, categoryList[1]);
         if (!filters[2])
-            expenseList = filterList(expenseList, "gifts");
+            expenseList = filterList(expenseList, categoryList[2]);
         if (!filters[3])
-            expenseList = filterList(expenseList, "leisure");
+            expenseList = filterList(expenseList, categoryList[3]);
         if (!filters[4])
-            expenseList = filterList(expenseList, "misc");
+            expenseList = filterList(expenseList, categoryList[4]);
         if (!filters[5])
-            expenseList = filterList(expenseList, "shopping");
+            expenseList = filterList(expenseList, categoryList[5]);
         if (!filters[6])
-            expenseList = filterList(expenseList, "travel");
+            expenseList = filterList(expenseList, categoryList[6]);
 
         return expenseList;
     }

@@ -24,6 +24,7 @@ import java.util.Calendar;
 import java.util.Collections;
 
 import com.ausgaben.database.DatabaseExpenses;
+import com.ausgaben.misc.IntentHelper;
 
 public class OverviewActivity extends AppCompatActivity {
 
@@ -33,7 +34,7 @@ public class OverviewActivity extends AppCompatActivity {
     private int displayCountryPos;
     private int displayStartDate;
     private int displayEndDate;
-    private String displayCurrency = "EUR"; // default display is EUR
+    private String displayCurrency = getString(R.string.currency_EUR); // default display is EUR
 
     // XML resources
     private TextView expenditureDisplay;
@@ -125,16 +126,16 @@ public class OverviewActivity extends AppCompatActivity {
 
         // Sets the Spinner value to the default Preferences value
         SharedPreferences defaultPref = PreferenceManager.getDefaultSharedPreferences(this);
-        String defaultCountryDisplay = defaultPref.getString(OverviewSettingsFragment.KEY_PREF_COUNTRY, "All");
+        String defaultCountryDisplay = defaultPref.getString(OverviewSettingsFragment.KEY_PREF_COUNTRY, getString(R.string.str_all));
         countrySpinner.setSelection(countriesList.indexOf(defaultCountryDisplay));
     }
 
     // Sets the correct display parameters - month, start date, end date, country
     private void setDisplayParameters() {
-        int displayMonth = getIntent().getIntExtra("displayMonth", -1);
-        String displayCountry = getIntent().getStringExtra("displayCountry"); // only applicable when returning from DetailsActivity
-        displayStartDate = getIntent().getIntExtra("displayStartDate", -1); // only applicable when returning from DetailsActivity
-        displayEndDate = getIntent().getIntExtra("displayEndDate", -1); // only applicable when returning from DetailsActivity
+        int displayMonth = getIntent().getIntExtra(getString(R.string.data_displayMonth), -1);
+        String displayCountry = getIntent().getStringExtra(getString(R.string.data_displayCountry)); // only applicable when returning from DetailsActivity
+        displayStartDate = getIntent().getIntExtra(getString(R.string.data_displayStartDate), -1); // only applicable when returning from DetailsActivity
+        displayEndDate = getIntent().getIntExtra(getString(R.string.data_displayEndDate), -1); // only applicable when returning from DetailsActivity
 
         // Set the month Spinner to the correct selection
         if (displayMonth == 0) { // if All Months are selected, hide the start/end date spinners
@@ -206,7 +207,7 @@ public class OverviewActivity extends AppCompatActivity {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             if (position + 1 > displayEndDate) {
-                Toast.makeText(OverviewActivity.this, "Start date cannot be after end date", Toast.LENGTH_SHORT).show();
+                Toast.makeText(OverviewActivity.this, getString(R.string.msg_startDateAfterEndDate), Toast.LENGTH_SHORT).show();
                 startDateSpinner.setSelection(displayStartDate - 1);
             } else {
                 displayStartDate = position + 1;
@@ -224,7 +225,7 @@ public class OverviewActivity extends AppCompatActivity {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             if (position + 1 < displayStartDate) {
-                Toast.makeText(OverviewActivity.this, "End date cannot be before start date", Toast.LENGTH_SHORT).show();
+                Toast.makeText(OverviewActivity.this, getString(R.string.msg_endDateBeforeStartDate), Toast.LENGTH_SHORT).show();
                 endDateSpinner.setSelection(displayEndDate - 1);
             } else {
                 displayEndDate = position + 1;
@@ -266,10 +267,8 @@ public class OverviewActivity extends AppCompatActivity {
         String displayCountry = (String) countrySpinner.getItemAtPosition(displayCountryPos);
 
         Intent intent = new Intent(this, DetailsActivity.class);
-        intent.putExtra("displayMonth", displayMonth);
-        intent.putExtra("displayCountry", displayCountry);
-        intent.putExtra("displayStartDate", displayStartDate);
-        intent.putExtra("displayEndDate", displayEndDate);
+        IntentHelper intentHelper = new IntentHelper(intent);
+        intentHelper.addDisplaySettings(displayMonth, displayCountry, displayStartDate, displayEndDate);
         startActivity(intent);
     }
 
@@ -413,13 +412,13 @@ public class OverviewActivity extends AppCompatActivity {
         
         String country = (String) countrySpinner.getItemAtPosition(displayCountryPos);
 
-        accommodationExpense = database.getCategoryExpenditure("accommodation", displayMonth, displayStartDate, displayEndDate, displayCurrency, country);
-        foodExpense = database.getCategoryExpenditure("food", displayMonth, displayStartDate, displayEndDate, displayCurrency, country);
-        giftsExpense = database.getCategoryExpenditure("gifts", displayMonth, displayStartDate, displayEndDate, displayCurrency, country);
-        leisureExpense = database.getCategoryExpenditure("leisure", displayMonth, displayStartDate, displayEndDate, displayCurrency, country);
-        miscExpense = database.getCategoryExpenditure("misc", displayMonth, displayStartDate, displayEndDate, displayCurrency, country);
-        shoppingExpense = database.getCategoryExpenditure("shopping", displayMonth, displayStartDate, displayEndDate, displayCurrency, country);
-        travelExpense = database.getCategoryExpenditure("travel", displayMonth, displayStartDate, displayEndDate, displayCurrency, country);
+        accommodationExpense = database.getCategoryExpenditure(getString(R.string.str_accommodation), displayMonth, displayStartDate, displayEndDate, displayCurrency, country);
+        foodExpense = database.getCategoryExpenditure(getString(R.string.str_food), displayMonth, displayStartDate, displayEndDate, displayCurrency, country);
+        giftsExpense = database.getCategoryExpenditure(getString(R.string.str_gifts), displayMonth, displayStartDate, displayEndDate, displayCurrency, country);
+        leisureExpense = database.getCategoryExpenditure(getString(R.string.str_leisure), displayMonth, displayStartDate, displayEndDate, displayCurrency, country);
+        miscExpense = database.getCategoryExpenditure(getString(R.string.str_misc), displayMonth, displayStartDate, displayEndDate, displayCurrency, country);
+        shoppingExpense = database.getCategoryExpenditure(getString(R.string.str_shopping), displayMonth, displayStartDate, displayEndDate, displayCurrency, country);
+        travelExpense = database.getCategoryExpenditure(getString(R.string.str_travel), displayMonth, displayStartDate, displayEndDate, displayCurrency, country);
 
         accommodationExpenseDisplay.append(accommodationExpense.toString());
         foodExpenseDisplay.append(foodExpense.toString());

@@ -131,69 +131,71 @@ class DetailsAdapter extends ArrayAdapter<Expense> {
     // Sets the correct country flag to be displayed
     private void setCountryIconView(ImageView iconView, String country) {
         switch (country) {
-            case "Albania" :
+            case "Albania":
                 iconView.setImageResource(R.drawable.flag_albania); break;
-            case "Austria" :
+            case "Austria":
                 iconView.setImageResource(R.drawable.flag_austria); break;
-            case "Belarus" :
+            case "Belarus":
                 iconView.setImageResource(R.drawable.flag_belarus); break;
-            case "Belgium" :
+            case "Belgium":
                 iconView.setImageResource(R.drawable.flag_belgium); break;
-            case "Bosnia and Herzegovina" :
+            case "Bosnia and Herzegovina":
                 iconView.setImageResource(R.drawable.flag_bosnia); break;
-            case "Bulgaria" :
+            case "Bulgaria":
                 iconView.setImageResource(R.drawable.flag_bulgaria); break;
-            case "Croatia" :
+            case "Croatia":
                 iconView.setImageResource(R.drawable.flag_croatia); break;
-            case "Czech Republic" : case "Czechia" :
+            case "Czech Republic": case "Czechia":
                 iconView.setImageResource(R.drawable.flag_czech); break;
-            case "Denmark" :
+            case "Denmark":
                 iconView.setImageResource(R.drawable.flag_denmark); break;
-            case "Estonia" :
+            case "Estonia":
                 iconView.setImageResource(R.drawable.flag_estonia); break;
-            case "Faroe Islands" :
+            case "Faroe Islands":
                 iconView.setImageResource(R.drawable.flag_faroe); break;
-            case "Finland" :
+            case "Finland":
                 iconView.setImageResource(R.drawable.flag_finland); break;
-            case "France" :
+            case "France":
                 iconView.setImageResource(R.drawable.flag_france); break;
-            case "Germany" :
+            case "Germany":
                 iconView.setImageResource(R.drawable.flag_germany); break;
-            case "Hungary" :
+            case "Hungary":
                 iconView.setImageResource(R.drawable.flag_hungary); break;
-            case "Italy" :
+            case "Italy":
                 iconView.setImageResource(R.drawable.flag_italy); break;
-            case "Latvia" :
+            case "Latvia":
                 iconView.setImageResource(R.drawable.flag_latvia); break;
-            case "Liechtenstein" :
+            case "Liechtenstein":
                 iconView.setImageResource(R.drawable.flag_liechtenstein); break;
-            case "Lithuania" :
+            case "Lithuania":
                 iconView.setImageResource(R.drawable.flag_lithuania); break;
-            case "Luxembourg" :
+            case "Luxembourg":
                 iconView.setImageResource(R.drawable.flag_luxembourg); break;
-            case "Macedonia (FYROM)" :
+            case "Macedonia (FYROM)":
                 iconView.setImageResource(R.drawable.flag_macedonia); break;
-            case "Netherlands" :
+            case "Netherlands":
                 iconView.setImageResource(R.drawable.flag_netherlands); break;
-            case "Norway" :
+            case "Norway":
                 iconView.setImageResource(R.drawable.flag_norway); break;
-            case "Poland" :
+            case "Poland":
                 iconView.setImageResource(R.drawable.flag_poland); break;
-            case "Romania" :
+            case "Romania":
                 iconView.setImageResource(R.drawable.flag_romania); break;
-            case "Serbia" :
+            case "Serbia":
                 iconView.setImageResource(R.drawable.flag_serbia); break;
-            case "Singapore" :
+            case "Singapore":
                 iconView.setImageResource(R.drawable.flag_singapore); break;
-            case "Spain" :
+            case "Slovenia":
+                iconView.setImageResource(R.drawable.flag_slovenia); break;
+            case "Spain":
                 iconView.setImageResource(R.drawable.flag_spain); break;
-            case "Sweden" :
+            case "Sweden":
                 iconView.setImageResource(R.drawable.flag_sweden); break;
-            case "Switzerland" :
+            case "Switzerland":
                 iconView.setImageResource(R.drawable.flag_switzerland); break;
-            case "Turkey" :
+            case "Turkey":
                 iconView.setImageResource(R.drawable.flag_turkey); break;
-            case "United Kingdom" :
+            case "United Kingdom":
                 iconView.setImageResource(R.drawable.flag_uk); break;
         }
     }

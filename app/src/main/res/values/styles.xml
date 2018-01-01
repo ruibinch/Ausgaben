@@ -11,12 +11,17 @@
 
         <item name="android:buttonStyle">@style/ButtonStyle</item>
         <item name="android:homeAsUpIndicator">@drawable/ic_arrow_back</item>
+        <item name="android:alertDialogTheme">@style/AlertDialogTheme</item>
     </style>
 
 
     <style name="spinnerDropDownItemStyle" parent="android:TextAppearance.Widget.TextView.SpinnerItem">
         <item name="android:paddingLeft">8sp</item>
         <item name="android:paddingTop">10sp</item>
+    </style>
+
+    <style name="AlertDialogTheme" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:textColor">@color/colorPrimary</item>
     </style>
 
     <style name="ButtonStyle" parent="@android:style/Widget.Button">

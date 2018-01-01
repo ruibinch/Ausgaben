@@ -44,21 +44,21 @@
                 android:layout_width="@dimen/forexTable_showHide"
                 android:layout_height="wrap_content"
                 android:textColor="@android:color/black"
-                android:text="@string/tableHeader_showHide" />
+                android:text="@string/str_showHide" />
 
             <TextView
                 android:id="@+id/tableHeader_toCurrency"
                 android:layout_width="@dimen/forexTable_toCurrency"
                 android:layout_height="wrap_content"
                 android:textColor="@android:color/black"
-                android:text="@string/tableHeader_toCurrency" />
+                android:text="@string/str_eurTo" />
 
             <TextView
                 android:id="@+id/tableHeader_exchangeRate"
                 android:layout_width="@dimen/forexTable_exchangeRate"
                 android:layout_height="wrap_content"
                 android:textColor="@android:color/black"
-                android:text="@string/tableHeader_rate" />
+                android:text="@string/str_rate" />
         </TableRow>
 
     </TableLayout>
@@ -88,7 +88,7 @@
                     android:layout_width="@dimen/forexTable_toCurrency"
                     android:layout_height="wrap_content"
                     android:labelFor="@+id/rate_currencyALL"
-                    android:text="@string/currencyALL" />
+                    android:text="@string/currency_ALL_full" />
 
                 <EditText
                     android:id="@+id/rate_currencyALL"
@@ -114,7 +114,7 @@
                     android:layout_width="@dimen/forexTable_toCurrency"
                     android:layout_height="wrap_content"
                     android:labelFor="@+id/rate_currencyBAM"
-                    android:text="@string/currencyBAM" />
+                    android:text="@string/currency_BAM_full" />
 
                 <EditText
                     android:id="@+id/rate_currencyBAM"
@@ -140,7 +140,7 @@
                     android:layout_width="@dimen/forexTable_toCurrency"
                     android:layout_height="wrap_content"
                     android:labelFor="@+id/rate_currencyBGN"
-                    android:text="@string/currencyBGN" />
+                    android:text="@string/currency_BGN_full" />
 
                 <EditText
                     android:id="@+id/rate_currencyBGN"
@@ -166,7 +166,7 @@
                     android:layout_width="@dimen/forexTable_toCurrency"
                     android:layout_height="wrap_content"
                     android:labelFor="@+id/rate_currencyBYN"
-                    android:text="@string/currencyBYN" />
+                    android:text="@string/currency_BYN_full" />
 
                 <EditText
                     android:id="@+id/rate_currencyBYN"
@@ -192,7 +192,7 @@
                     android:layout_width="@dimen/forexTable_toCurrency"
                     android:layout_height="wrap_content"
                     android:labelFor="@+id/rate_currencyCHF"
-                    android:text="@string/currencyCHF" />
+                    android:text="@string/currency_CHF_full" />
 
                 <EditText
                     android:id="@+id/rate_currencyCHF"
@@ -218,7 +218,7 @@
                     android:layout_width="@dimen/forexTable_toCurrency"
                     android:layout_height="wrap_content"
                     android:labelFor="@+id/rate_currencyCZK"
-                    android:text="@string/currencyCZK" />
+                    android:text="@string/currency_CZK_full" />
 
                 <EditText
                     android:id="@+id/rate_currencyCZK"
@@ -244,7 +244,7 @@
                     android:layout_width="@dimen/forexTable_toCurrency"
                     android:layout_height="wrap_content"
                     android:labelFor="@+id/rate_currencyDKK"
-                    android:text="@string/currencyDKK" />
+                    android:text="@string/currency_DKK_full" />
 
                 <EditText
                     android:id="@+id/rate_currencyDKK"
@@ -270,7 +270,7 @@
                     android:layout_width="@dimen/forexTable_toCurrency"
                     android:layout_height="wrap_content"
                     android:labelFor="@+id/rate_currencyEUR"
-                    android:text="@string/currencyEUR" />
+                    android:text="@string/currency_EUR_full" />
             </TableRow>
 
             <!-- GBP -->
@@ -288,7 +288,7 @@
                     android:layout_width="@dimen/forexTable_toCurrency"
                     android:layout_height="wrap_content"
                     android:labelFor="@+id/rate_currencyGBP"
-                    android:text="@string/currencyGBP" />
+                    android:text="@string/currency_GBP_full" />
 
                 <EditText
                     android:id="@+id/rate_currencyGBP"
@@ -314,7 +314,7 @@
                     android:layout_width="@dimen/forexTable_toCurrency"
                     android:layout_height="wrap_content"
                     android:labelFor="@+id/rate_currencyHRK"
-                    android:text="@string/currencyHRK" />
+                    android:text="@string/currency_HRK_full" />
 
                 <EditText
                     android:id="@+id/rate_currencyHRK"
@@ -340,7 +340,7 @@
                     android:layout_width="@dimen/forexTable_toCurrency"
                     android:layout_height="wrap_content"
                     android:labelFor="@+id/rate_currencyHUF"
-                    android:text="@string/currencyHUF" />
+                    android:text="@string/currency_HUF_full" />
 
                 <EditText
                     android:id="@+id/rate_currencyHUF"
@@ -366,7 +366,7 @@
                     android:layout_width="@dimen/forexTable_toCurrency"
                     android:layout_height="wrap_content"
                     android:labelFor="@+id/rate_currencyMKD"
-                    android:text="@string/currencyMKD" />
+                    android:text="@string/currency_MKD_full" />
 
                 <EditText
                     android:id="@+id/rate_currencyMKD"
@@ -392,7 +392,7 @@
                     android:layout_width="@dimen/forexTable_toCurrency"
                     android:layout_height="wrap_content"
                     android:labelFor="@+id/rate_currencyNOK"
-                    android:text="@string/currencyNOK" />
+                    android:text="@string/currency_NOK_full" />
 
                 <EditText
                     android:id="@+id/rate_currencyNOK"
@@ -418,7 +418,7 @@
                     android:layout_width="@dimen/forexTable_toCurrency"
                     android:layout_height="wrap_content"
                     android:labelFor="@+id/rate_currencyPLN"
-                    android:text="@string/currencyPLN" />
+                    android:text="@string/currency_PLN_full" />
 
                 <EditText
                     android:id="@+id/rate_currencyPLN"
@@ -444,7 +444,7 @@
                     android:layout_width="@dimen/forexTable_toCurrency"
                     android:layout_height="wrap_content"
                     android:labelFor="@+id/rate_currencyRON"
-                    android:text="@string/currencyRON" />
+                    android:text="@string/currency_RON_full" />
 
                 <EditText
                     android:id="@+id/rate_currencyRON"
@@ -470,7 +470,7 @@
                     android:layout_width="@dimen/forexTable_toCurrency"
                     android:layout_height="wrap_content"
                     android:labelFor="@+id/rate_currencyRSD"
-                    android:text="@string/currencyRSD" />
+                    android:text="@string/currency_RSD_full" />
 
                 <EditText
                     android:id="@+id/rate_currencyRSD"
@@ -496,7 +496,7 @@
                     android:layout_width="@dimen/forexTable_toCurrency"
                     android:layout_height="wrap_content"
                     android:labelFor="@+id/rate_currencySEK"
-                    android:text="@string/currencySEK" />
+                    android:text="@string/currency_SEK_full" />
 
                 <EditText
                     android:id="@+id/rate_currencySEK"
@@ -522,7 +522,7 @@
                     android:layout_width="@dimen/forexTable_toCurrency"
                     android:layout_height="wrap_content"
                     android:labelFor="@+id/rate_currencySGD"
-                    android:text="@string/currencySGD" />
+                    android:text="@string/currency_SGD_full" />
 
                 <EditText
                     android:id="@+id/rate_currencySGD"
@@ -548,7 +548,7 @@
                     android:layout_width="@dimen/forexTable_toCurrency"
                     android:layout_height="wrap_content"
                     android:labelFor="@+id/rate_currencyTRY"
-                    android:text="@string/currencyTRY" />
+                    android:text="@string/currency_TRY_full" />
 
                 <EditText
                     android:id="@+id/rate_currencyTRY"

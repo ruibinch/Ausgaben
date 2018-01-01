@@ -43,6 +43,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 import com.ausgaben.misc.DecimalDigitsInputFilter;
+import com.ausgaben.misc.IntentHelper;
 import com.ausgaben.misc.Quintuple;
 import com.ausgaben.database.DatabaseExpenses;
 import com.ausgaben.database.Expense;
@@ -86,10 +87,10 @@ public class ExpenseActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        // Initalisation methods
+        // Initialisation methods
         openDatabase();
         setDisplays();
-        populateDataFromBundle();
+        populateExpenseData();
         setCurrencyVisibility();
     }
 
@@ -131,45 +132,52 @@ public class ExpenseActivity extends AppCompatActivity {
     }
 
     // Populates the fields with data and sets elements visible, if applicable (i.e. editing an existing expense)
-    private void populateDataFromBundle() {
-         Bundle bundle = getIntent().getExtras();
-         if (bundle != null) {
+    private void populateExpenseData() {
+         Intent intent = getIntent();
+         if (intent.getLongExtra(getString(R.string.data_editExpenseId), -1) != -1) {
              isEditExpense = true;
-             editExpenseId = bundle.getLong("id");
+             editExpenseId = intent.getLongExtra(getString(R.string.data_editExpenseId), -1);
 
-             Date expenseDate = new Date(bundle.getLong("date"));
+             Date expenseDate = new Date(intent.getStringExtra(getString(R.string.data_date)));
              mCal.setTime(expenseDate);
              updateDateDisplay();
 
              EditText editName = (EditText) findViewById(R.id.input_expenseName);
-             editName.setText(bundle.getString("name"));
+             editName.setText(intent.getStringExtra(getString(R.string.data_name)));
 
              Spinner spinnerCategory = (Spinner) findViewById(R.id.spn_expenseCategory);
-             setCategorySpinner(spinnerCategory, bundle.getString("category"));
+             setCategorySpinner(spinnerCategory, intent.getStringExtra(getString(R.string.data_category)));
 
              EditText editAmount = (EditText) findViewById(R.id.input_expenseAmt);
-             editAmount.setText(bundle.getString("amount"));
+             editAmount.setText(intent.getStringExtra(getString(R.string.data_amount)));
 
              Spinner spinnerCurrency = (Spinner) findViewById(R.id.spn_currency);
-             setCurrencySpinner(spinnerCurrency, bundle.getString("currency"));
+             setCurrencySpinner(spinnerCurrency, intent.getStringExtra(getString(R.string.data_currency)));
 
              // Set 'Country' row to be visible
              TextView textCountry = (TextView) findViewById(R.id.text_expenseCountry);
              Spinner spinnerCountry = (Spinner) findViewById(R.id.spn_expenseCountry);
              textCountry.setVisibility(View.VISIBLE);
              spinnerCountry.setVisibility(View.VISIBLE);
-             setCountrySpinner(spinnerCountry, bundle.getString("country"));
+             setCountrySpinner(spinnerCountry, intent.getStringExtra(getString(R.string.data_country)));
 
-             // and then move 'Photo' row below 'Country'
+             // Set 'City' row to be visible
+             TextView textCity = (TextView) findViewById(R.id.text_expenseCity);
+             TextView textCityInfo = (TextView) findViewById(R.id.text_expenseCity_info);
+             textCity.setVisibility(View.VISIBLE);
+             textCityInfo.setVisibility(View.VISIBLE);
+             textCityInfo.setText(intent.getStringExtra(getString(R.string.data_city)));
+
+             // and then move 'Photo' row below 'City'
              TextView textPhoto = (TextView) findViewById(R.id.text_expensePhoto);
              ImageView imagePhoto = (ImageView) findViewById(R.id.img_photo);
              RelativeLayout.LayoutParams textPhotoParams = (RelativeLayout.LayoutParams) textPhoto.getLayoutParams();
              RelativeLayout.LayoutParams imagePhotoParams = (RelativeLayout.LayoutParams) imagePhoto.getLayoutParams();
-             textPhotoParams.addRule(RelativeLayout.BELOW, R.id.text_expenseCountry);
-             imagePhotoParams.addRule(RelativeLayout.BELOW, R.id.text_expenseCountry);
+             textPhotoParams.addRule(RelativeLayout.BELOW, R.id.text_expenseCity);
+             imagePhotoParams.addRule(RelativeLayout.BELOW, R.id.text_expenseCity);
 
              // and then display the attached image
-             imagePath = bundle.getString("imagepath").trim();
+             imagePath = intent.getStringExtra(getString(R.string.data_imagepath)).trim();
              System.out.println("imagePath = " + imagePath);
              if (imagePath != null) {
                  if (!imagePath.equals("")) {
@@ -183,22 +191,22 @@ public class ExpenseActivity extends AppCompatActivity {
              delButton.setVisibility(View.VISIBLE);
 
              // Set month and country display settings
-             displayMonth = bundle.getInt("displayMonth");
-             displayCountry = bundle.getString("displayCountry");
-             displayStartDate = bundle.getInt("displayStartDate");
-             displayEndDate = bundle.getInt("displayEndDate");
+             displayMonth = intent.getIntExtra(getString(R.string.data_displayMonth), -1);
+             displayCountry = intent.getStringExtra(getString(R.string.data_displayCountry));
+             displayStartDate = intent.getIntExtra(getString(R.string.data_displayStartDate), -1);
+             displayEndDate = intent.getIntExtra(getString(R.string.data_displayEndDate), -1);
 
              // Sets the saved scroll position from DetailsActivity
-             scrollIndex = bundle.getInt("scrollIndex");
-             scrollOffset = bundle.getInt("scrollOffset");
+             scrollIndex = intent.getIntExtra(getString(R.string.data_scrollIndex), -1);
+             scrollOffset = intent.getIntExtra(getString(R.string.data_scrollOffset), -1);
          }
     }
 
     // Sets the visibility of the currencies in the Spinner - only applicable when adding a new expense
     private void setCurrencyVisibility() {
         if (!isEditExpense) {
-            ArrayList<String> currencyList = new ArrayList<String>(Arrays.asList(getResources().getStringArray(R.array.spn_currency_entries)));
-            SharedPreferences mPrefs = getSharedPreferences("toggleRates", MODE_PRIVATE);
+            ArrayList<String> currencyList = new ArrayList<String>(Arrays.asList(getResources().getStringArray(R.array.arr_currency_entries)));
+            SharedPreferences mPrefs = getSharedPreferences(getString(R.string.pref_toggleRates), MODE_PRIVATE);
             currencyList = filterHiddenCurrencies(currencyList, mPrefs);
 
             Spinner currencySpinner = (Spinner) findViewById(R.id.spn_currency);
@@ -206,7 +214,7 @@ public class ExpenseActivity extends AppCompatActivity {
             adapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item);
 
             currencySpinner.setAdapter(adapter);
-            currencySpinner.setSelection(currencyList.indexOf("EUR")); // Sets the default currency to EUR
+            currencySpinner.setSelection(currencyList.indexOf(getString(R.string.currency_EUR))); // Sets the default currency to EUR
         }
     }
 
@@ -221,22 +229,18 @@ public class ExpenseActivity extends AppCompatActivity {
             startActivity(intent);
         } else {
             Intent intent = new Intent(this, DetailsActivity.class);
-            intent.putExtra("displayMonth", displayMonth);
-            intent.putExtra("displayCountry", displayCountry);
-            intent.putExtra("displayStartDate", displayStartDate);
-            intent.putExtra("displayEndDate", displayEndDate);
-            
-            intent.putExtra("scrollIndex", scrollIndex);
-            intent.putExtra("scrollOffset", scrollOffset);
+            IntentHelper intentHelper = new IntentHelper(intent);
+            intentHelper.addDisplaySettings(displayMonth, displayCountry, displayStartDate, displayEndDate);
+            intentHelper.addScrollSettings(scrollIndex, scrollOffset);
+            intentHelper.addFilterSettings(
+                getIntent().getBooleanExtra(getString(R.string.data_isAccommodationVisible), true),
+                getIntent().getBooleanExtra(getString(R.string.data_isFoodVisible), true),
+                getIntent().getBooleanExtra(getString(R.string.data_isGiftsVisible), true),
+                getIntent().getBooleanExtra(getString(R.string.data_isLeisureVisible), true),
+                getIntent().getBooleanExtra(getString(R.string.data_isMiscVisible), true),
+                getIntent().getBooleanExtra(getString(R.string.data_isShoppingVisible), true),
+                getIntent().getBooleanExtra(getString(R.string.data_isTravelVisible), true));
 
-            intent.putExtra("isAccommodationVisible", getIntent().getBooleanExtra("isAccommodationVisible", true));
-            intent.putExtra("isFoodVisible", getIntent().getBooleanExtra("isFoodVisible", true));
-            intent.putExtra("isGiftsVisible", getIntent().getBooleanExtra("isGiftsVisible", true));
-            intent.putExtra("isLeisureVisible", getIntent().getBooleanExtra("isLeisureVisible", true));
-            intent.putExtra("isMiscVisible", getIntent().getBooleanExtra("isMiscVisible", true));
-            intent.putExtra("isShoppingVisible", getIntent().getBooleanExtra("isShoppingVisible", true));
-            intent.putExtra("isTravelVisible", getIntent().getBooleanExtra("isTravelVisible", true));
-            
             startActivity(intent);
         }
     }
@@ -266,15 +270,15 @@ public class ExpenseActivity extends AppCompatActivity {
 
     private View.OnClickListener onClickCameraWithExistingPhoto = new View.OnClickListener() {
         public void onClick(View view) {
-            CharSequence options[] = new CharSequence[] { "View photo", "Take new photo", "Remove photo" };
+            CharSequence options[] = getResources().getStringArray(R.array.arr_photoClick_entries);
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(ExpenseActivity.this);
+            AlertDialog.Builder builder = new AlertDialog.Builder(ExpenseActivity.this, R.style.AlertDialogTheme);
             builder.setItems(options, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int option) {
                    if (option == 0) { // "View photo"
                        Intent intent = new Intent(ExpenseActivity.this, ImageActivity.class);
-                       intent.putExtra("imagepath", imagePath);
+                       intent.putExtra(getString(R.string.data_imagepath), imagePath);
                        startActivity(intent);
                    } else if (option == 1) { // "Take new photo"
                        openCamera();
@@ -301,13 +305,13 @@ public class ExpenseActivity extends AppCompatActivity {
             Quintuple<Long, String, String, BigDecimal, String> quint = extractInputData(); // date, name, category, amount, currency
 
             // Forex rates Preferences
-            SharedPreferences mPrefs = getSharedPreferences("forexRates", MODE_PRIVATE);
+            SharedPreferences mPrefs = getSharedPreferences(getString(R.string.pref_forexRates), MODE_PRIVATE);
             Intent intent = new Intent(this, DetailsActivity.class);
 
             // Location Preferences
-            SharedPreferences mPrefsLocation = getSharedPreferences("location", MODE_PRIVATE);
-            String cityName = mPrefsLocation.getString("city", "");
-            String countryName = mPrefsLocation.getString("country", "");
+            SharedPreferences mPrefsLocation = getSharedPreferences(getString(R.string.pref_location), MODE_PRIVATE);
+            String cityName = mPrefsLocation.getString(getString(R.string.pref_city), "");
+            String countryName = mPrefsLocation.getString(getString(R.string.pref_country), "");
 
             // Saves the image to internal storage
             if (imageBitmap != null) {
@@ -320,12 +324,10 @@ public class ExpenseActivity extends AppCompatActivity {
                         quint.getFourth(), quint.getFifth(), mPrefs, cityName, countryName, currentPhotoPath);
                 setDisplayMonth(new Date(quint.getFirst())); // Sets the display month for DetailsActivity
 
-                intent.putExtra("newExpenseId", newExpense.getId());
-                intent.putExtra("source", "ExpenseActivity");
-                intent.putExtra("displayMonth", displayMonth);
-                intent.putExtra("displayCountry", getResources().getString(R.string.str_all));
-                intent.putExtra("displayStartDate", 1);
-                intent.putExtra("displayEndDate", 31);
+                IntentHelper intentHelper = new IntentHelper(intent);
+                intentHelper.addNewExpenseId(newExpense.getId());
+                intentHelper.addSourceActivity(getString(R.string.str_expenseActivity));
+                intentHelper.addDisplaySettings(displayMonth, getResources().getString(R.string.str_all), 1, 31);
                 Toast.makeText(getApplicationContext(), "'" + quint.getSecond() + "' added in " + quint.getFifth(), Toast.LENGTH_SHORT).show();
             } else { // Editing an expense
                 // If image had been removed, delete it from internal storage too
@@ -341,42 +343,29 @@ public class ExpenseActivity extends AppCompatActivity {
                     imagePath = currentPhotoPath;
                 }
 
-                // Saved scroll position, if applicable, for DetailsActivity
-                intent.putExtra("scrollIndex", scrollIndex);
-                intent.putExtra("scrollOffset", scrollOffset);
-
-                // Filter settings for DetailsActivity
-                intent.putExtra("isAccommodationVisible", getIntent().getBooleanExtra("isAccommodationVisible", true));
-                intent.putExtra("isFoodVisible", getIntent().getBooleanExtra("isFoodVisible", true));
-                intent.putExtra("isGiftsVisible", getIntent().getBooleanExtra("isGiftsVisible", true));
-                intent.putExtra("isLeisureVisible", getIntent().getBooleanExtra("isLeisureVisible", true));
-                intent.putExtra("isMiscVisible", getIntent().getBooleanExtra("isMiscVisible", true));
-                intent.putExtra("isShoppingVisible", getIntent().getBooleanExtra("isShoppingVisible", true));
-                intent.putExtra("isTravelVisible", getIntent().getBooleanExtra("isTravelVisible", true));
+                IntentHelper intentHelper = new IntentHelper(intent);
+                intentHelper.addScrollSettings(scrollIndex, scrollOffset);
+                intentHelper.addFilterSettings(
+                        getIntent().getBooleanExtra(getString(R.string.data_isAccommodationVisible), true),
+                        getIntent().getBooleanExtra(getString(R.string.data_isFoodVisible), true),
+                        getIntent().getBooleanExtra(getString(R.string.data_isGiftsVisible), true),
+                        getIntent().getBooleanExtra(getString(R.string.data_isLeisureVisible), true),
+                        getIntent().getBooleanExtra(getString(R.string.data_isMiscVisible), true),
+                        getIntent().getBooleanExtra(getString(R.string.data_isShoppingVisible), true),
+                        getIntent().getBooleanExtra(getString(R.string.data_isTravelVisible), true));
 
                 boolean[] isEditsMade = database.editExpense(editExpenseId, quint.getFirst(), quint.getSecond(),
                         quint.getThird(), quint.getFourth(), quint.getFifth(), mPrefs, country, imagePath);
-                intent.putExtra("editExpenseId", editExpenseId);
-                intent.putExtra("isDateEdited", isEditsMade[0]);
-                intent.putExtra("isNameEdited", isEditsMade[1]);
-                intent.putExtra("isCategoryEdited", isEditsMade[2]);
-                intent.putExtra("isAmountEdited", isEditsMade[3]);
-                intent.putExtra("isCurrencyEdited", isEditsMade[4]);
-                intent.putExtra("isCountryEdited", isEditsMade[5]);
-                intent.putExtra("isImagePathEdited", isEditsMade[6]);
+                intentHelper.addEditExpenseId(editExpenseId);
+                intentHelper.addEditedInfo(isEditsMade[0], isEditsMade[1], isEditsMade[2], isEditsMade[3], isEditsMade[4], isEditsMade[5], isEditsMade[6]);
+                intentHelper.addDisplaySettings(displayMonth, displayCountry, displayStartDate, displayEndDate);
 
-                intent.putExtra("displayMonth", displayMonth);
-                intent.putExtra("displayCountry", displayCountry);
-                intent.putExtra("displayStartDate", displayStartDate);
-                intent.putExtra("displayEndDate", displayEndDate);
                 if (isEditsMade[0]) { // if date/month is edited, set display month to the new edited month and reset the start/end dates
                     setDisplayMonth(new Date(quint.getFirst()));
-                    intent.putExtra("displayMonth", displayMonth);
-                    intent.putExtra("displayStartDate", 1);
-                    intent.putExtra("displayEndDate", 31);
+                    intentHelper.addDisplayMonthAndDatesSettings(displayMonth, 1, 31);
                 }
                 if (isEditsMade[5]) // if country is edited, set display country to all countries
-                    intent.putExtra("displayCountry", getResources().getString(R.string.str_all));
+                    intentHelper.addDisplayCountry("All");
 
                 if (isEditsMade[0] || isEditsMade[1] || isEditsMade[2] || isEditsMade[3] || isEditsMade[4] || isEditsMade[5] || isEditsMade[6]) // if any edits were made
                     Toast.makeText(getApplicationContext(), "'" + quint.getSecond() + "' edited", Toast.LENGTH_SHORT).show();
@@ -384,7 +373,7 @@ public class ExpenseActivity extends AppCompatActivity {
 
             startActivity(intent);
         } catch (NumberFormatException e) {
-            Toast.makeText(getApplicationContext(), getString(R.string.message_missingAmt), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), getString(R.string.msg_missingAmt), Toast.LENGTH_SHORT).show();
         } catch (MissingNameException e) {
             Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
         }
@@ -392,7 +381,7 @@ public class ExpenseActivity extends AppCompatActivity {
 
     public void onClickDelete(View view) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage(getResources().getString(R.string.dialog_expenseActivity_deleteConfirmation));
+        builder.setMessage(getResources().getString(R.string.msg_deleteExpenseConfirmation));
 
         builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
@@ -406,10 +395,8 @@ public class ExpenseActivity extends AppCompatActivity {
                 dialog.cancel();
 
                 Intent intent = new Intent(ExpenseActivity.this, DetailsActivity.class);
-                intent.putExtra("displayMonth", displayMonth);
-                intent.putExtra("displayCountry", displayCountry);
-                intent.putExtra("displayStartDate", 1);
-                intent.putExtra("displayEndDate", 31);
+                IntentHelper intentHelper = new IntentHelper(intent);
+                intentHelper.addDisplaySettings(displayMonth, displayCountry, displayStartDate, displayEndDate);
                 startActivity(intent);
             }
         });
@@ -436,7 +423,7 @@ public class ExpenseActivity extends AppCompatActivity {
             try {
                 photoFile = createImageFile();
             } catch (IOException e) {
-                Toast.makeText(ExpenseActivity.this, "IOException encountered", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ExpenseActivity.this, getString(R.string.msg_exception_io), Toast.LENGTH_SHORT).show();
                 e.printStackTrace();
             }
 
@@ -520,7 +507,7 @@ public class ExpenseActivity extends AppCompatActivity {
 
             return Bitmap.createBitmap(imageBitmap, 0, 0, imageBitmap.getWidth(), imageBitmap.getHeight(), matrix, true);
         } catch (IOException e) {
-            Toast.makeText(this, "IOException encountered", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.msg_exception_io), Toast.LENGTH_SHORT).show();
             e.printStackTrace();
             return null;
         }
@@ -561,7 +548,7 @@ public class ExpenseActivity extends AppCompatActivity {
         String currency = spn_currency.getSelectedItem().toString().trim();
 
         if (name.equals("")) {
-            throw new MissingNameException(getString(R.string.message_missingName));
+            throw new MissingNameException(getString(R.string.msg_missingName));
         }
 
         return new Quintuple<>(date, name, category, amount, currency);
@@ -574,7 +561,7 @@ public class ExpenseActivity extends AppCompatActivity {
 
     // Filters the list of currencies to be displayed in the Spinner
     private ArrayList<String> filterHiddenCurrencies(ArrayList<String> list, SharedPreferences mPrefs) {
-        ArrayList<String> currencyList = new ArrayList<String>(Arrays.asList(getResources().getStringArray(R.array.spn_currency_entries)));
+        ArrayList<String> currencyList = new ArrayList<String>(Arrays.asList(getResources().getStringArray(R.array.arr_currency_entries)));
 
         for (int i = 0; i < currencyList.size(); i++) {
             if (!mPrefs.getBoolean(currencyList.get(i), true)) { // if boolean is false, remove the currency
@@ -595,25 +582,25 @@ public class ExpenseActivity extends AppCompatActivity {
     // Sets the category spinner to the category of the edited expense
     private void setCategorySpinner(Spinner spinner, String category) {
         switch (category) {
-            case "Accommodation" :
+            case "Accommodation":
                 spinner.setSelection(0);
                 break;
-            case "Food" :
+            case "Food":
                 spinner.setSelection(1);
                 break;
-            case "Gifts" :
+            case "Gifts":
                 spinner.setSelection(2);
                 break;
-            case "Leisure" :
+            case "Leisure":
                 spinner.setSelection(3);
                 break;
-            case "Misc" :
+            case "Misc":
                 spinner.setSelection(4);
                 break;
-            case "Shopping" :
+            case "Shopping":
                 spinner.setSelection(5);
                 break;
-            case "Travel" :
+            case "Travel":
                 spinner.setSelection(6);
                 break;
         }
@@ -622,43 +609,43 @@ public class ExpenseActivity extends AppCompatActivity {
     // Sets the currency spinner to the currency of the edited expense
     private void setCurrencySpinner(Spinner spinner, String currency) {
         switch (currency) {
-            case "ALL" :
+            case "ALL":
                 spinner.setSelection(0); break;
-            case "BAM" :
+            case "BAM":
                 spinner.setSelection(1); break;
-            case "BGN" :
+            case "BGN":
                 spinner.setSelection(2); break;
-            case "BYN" :
+            case "BYN":
                 spinner.setSelection(3); break;
-            case "CHF" :
+            case "CHF":
                 spinner.setSelection(4); break;
-            case "CZK" :
+            case "CZK":
                 spinner.setSelection(5); break;
-            case "DKK" :
+            case "DKK":
                 spinner.setSelection(6); break;
-            case "EUR" :
+            case "EUR":
                 spinner.setSelection(7); break;
-            case "GBP" :
+            case "GBP":
                 spinner.setSelection(8); break;
-            case "HRK" :
+            case "HRK":
                 spinner.setSelection(9); break;
-            case "HUF" :
+            case "HUF":
                 spinner.setSelection(10); break;
-            case "MKD" :
+            case "MKD":
                 spinner.setSelection(11); break;
-            case "NOK" :
+            case "NOK":
                 spinner.setSelection(12); break;
-            case "PLN" :
+            case "PLN":
                 spinner.setSelection(13); break;
-            case "RON" :
+            case "RON":
                 spinner.setSelection(14); break;
-            case "RSD" :
+            case "RSD":
                 spinner.setSelection(15); break;
-            case "SEK" :
+            case "SEK":
                 spinner.setSelection(16); break;
-            case "SGD" :
+            case "SGD":
                 spinner.setSelection(17); break;
-            case "TRY" :
+            case "TRY":
                 spinner.setSelection(18); break;
         }
     }
@@ -666,73 +653,73 @@ public class ExpenseActivity extends AppCompatActivity {
     // Sets the country spinner to the country of the edited expense
     private void setCountrySpinner(Spinner spinner, String country) {
         switch (country) {
-            case "Albania" :
+            case "Albania":
                 spinner.setSelection(0); break;
-            case "Austria" :
+            case "Austria":
                 spinner.setSelection(1); break;
-            case "Belarus" :
+            case "Belarus":
                 spinner.setSelection(2); break;
-            case "Belgium" :
+            case "Belgium":
                 spinner.setSelection(3); break;
-            case "Bosnia and Herzegovina" :
+            case "Bosnia and Herzegovina":
                 spinner.setSelection(4); break;
-            case "Bulgaria" :
+            case "Bulgaria":
                 spinner.setSelection(5); break;
-            case "Croatia" :
+            case "Croatia":
                 spinner.setSelection(6); break;
-            case "Czech Republic" :
+            case "Czech Republic":  case "Czechia":
                 spinner.setSelection(7); break;
-            case "Denmark" :
+            case "Denmark":
                 spinner.setSelection(8); break;
-            case "Estonia" :
+            case "Estonia":
                 spinner.setSelection(9); break;
-            case "Faroe Islands" :
+            case "Faroe Islands":
                 spinner.setSelection(10); break;
-            case "Finland" :
+            case "Finland":
                 spinner.setSelection(11); break;
-            case "France" :
+            case "France":
                 spinner.setSelection(12); break;
-            case "Germany" :
+            case "Germany":
                 spinner.setSelection(13); break;
-            case "Hungary" :
+            case "Hungary":
                 spinner.setSelection(14); break;
-            case "Italy" :
+            case "Italy":
                 spinner.setSelection(15); break;
-            case "Latvia" :
+            case "Latvia":
                 spinner.setSelection(16); break;
-            case "Liechtenstein" :
+            case "Liechtenstein":
                 spinner.setSelection(17); break;
-            case "Lithuania" :
+            case "Lithuania":
                 spinner.setSelection(18); break;
-            case "Luxembourg" :
+            case "Luxembourg":
                 spinner.setSelection(19); break;
-            case "Macedonia (FYROM)" :
+            case "Macedonia (FYROM)":
                 spinner.setSelection(20); break;
-            case "Montenegro" :
+            case "Montenegro":
                 spinner.setSelection(21); break;
-            case "Netherlands" :
+            case "Netherlands":
                 spinner.setSelection(22); break;
-            case "Norway" :
+            case "Norway":
                 spinner.setSelection(23); break;
-            case "Poland" :
+            case "Poland":
                 spinner.setSelection(24); break;
-            case "Romania" :
+            case "Romania":
                 spinner.setSelection(25); break;
-            case "Serbia" :
+            case "Serbia":
                 spinner.setSelection(26); break;
-            case "Singapore" :
+            case "Singapore":
                 spinner.setSelection(27); break;
-            case "Slovenia" :
+            case "Slovenia":
                 spinner.setSelection(28); break;
-            case "Spain" :
+            case "Spain":
                 spinner.setSelection(29); break;
-            case "Sweden" :
+            case "Sweden":
                 spinner.setSelection(30); break;
-            case "Switzerland" :
+            case "Switzerland":
                 spinner.setSelection(31); break;
-            case "Turkey" :
+            case "Turkey":
                 spinner.setSelection(32); break;
-            case "United Kingdom" :
+            case "United Kingdom":
                 spinner.setSelection(33); break;
         }
     }
@@ -748,13 +735,13 @@ public class ExpenseActivity extends AppCompatActivity {
             imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos); // Write image to OutputStream at 100% quality
             System.out.println("File saved to internal storage");
         } catch (FileNotFoundException e) {
-            Toast.makeText(this, "FileNotFoundException encountered", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.msg_exception_fileNotFound), Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         } finally {
             try {
                 fos.close();
             } catch (IOException e) {
-                Toast.makeText(this, "IOException encountered", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.msg_exception_io), Toast.LENGTH_SHORT).show();
                 e.printStackTrace();
             }
         }
@@ -773,7 +760,7 @@ public class ExpenseActivity extends AppCompatActivity {
             imageView.setImageBitmap(bitmap);
             System.out.println("Image loaded from " + imagePath);
         } catch (FileNotFoundException e) {
-            Toast.makeText(this, "FileNotFoundException encountered", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.msg_exception_fileNotFound), Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         }
     }

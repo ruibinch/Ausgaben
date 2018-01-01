@@ -27,6 +27,6 @@
 
     <ListPreference
         android:key="pref_country"
-        android:title="@string/pref_country" />
+        android:title="@string/str_country" />
 
 </PreferenceScreen>
