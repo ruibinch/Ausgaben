@@ -50,11 +50,11 @@ The expense ID, which auto-increments by 1 for each expense added, is used as th
 
 `getExpensesList(int month, String country, int startDate, endDate)`	
 
-- Returns an ArrayList of expenses within the specified month and dates and occurring in the specified country
+- Returns an `ArrayList` of expenses within the specified month and dates and occurring in the specified country
 
 `getCountriesList()`
 
-- Returns an ArrayList of countries that are currently present in the database
+- Returns an `ArrayList` of countries that are currently present in the database
 
 `getCategoryExpenditure(String category, int month, int startDate, int endDate, String displayCurrency, String country)`
 
@@ -104,6 +104,8 @@ The expense ID, which auto-increments by 1 for each expense added, is used as th
 A common action upon activity creation for most of the activities is the setup of the toolbar; this is hereby omitted in the write-up of the individual sections.
 
 There are 4 common data entries stored in the `Bundle` between activities – `displayMonth`, `displayCountry`, `displayStartDate`, `displayEndDate`. This preserves the consistency in the date/country filters in `OverviewActivity` and `DetailsActivity` when toggling between `OverviewActivity`, `DetailsActivity` and `ExpenseActivity`.  
+
+<hr/>
 
 ### MainActivity
 
@@ -171,6 +173,8 @@ Manages the import/export of CSV data from the database.
 
 - Forex rates are stored in `SharedPreferences` under key `forexRates`
 - Current location is stored in `SharedPreferences` under key `location`
+
+<hr/>
 
 ### ExpenseActivity
 
@@ -270,7 +274,7 @@ An `isEditsMade` array keeps track of the items that have been edited (`isDateEd
 
 `setImageRotation(Bitmap)`
 
-- No idea what the hell this method is doing, but the end result is that the image will be displayed correctly in portrait/landscape 
+- Ensures that the image will be displayed correctly in portrait/landscape 
 
 #### Helper methods
 
@@ -322,6 +326,8 @@ An `isEditsMade` array keeps track of the items that have been edited (`isDateEd
 
 - Sets the `ImageView` to the `Bitmap` file obtained from the attached image
 
+<hr/>
+
 ### OverviewActivity
 
 `OverviewActivity` provides an overview of expenses made within a specified time range, and/or in a specific country.
@@ -367,6 +373,8 @@ Any modification of the month, start/end dates and country will update the displ
 
 - Returns the Spinner index at which the specified country is stored
 
+<hr/>
+
 ### DetailsActivity
 
 `DetailsActivity` displays the expenses within the specified search parameters in a list format. Clicking on an expense will allow the user to edit the particular expense.
@@ -406,32 +414,36 @@ The following actions are only applicable when returning from `ExpenseActivity`:
 
 `updateListView()`
 
--	Updates the displayed list based on the category filters
--	Calls `setListAdapter()` in `DetailsAdapter`
+- Updates the displayed list based on the category filters
+- Calls `setListAdapter()` in `DetailsAdapter`
 
 `displayData(boolean[] filters)`
 
--	Obtains an `ArrayList` of expenses to be displayed based on the category filters
+- Obtains an `ArrayList` of expenses to be displayed based on the category filters
 
 `sortMostRecentFirst(ArrayList<Expense> list)`
 
--	Sorts the list in descending order of date
--	If 2 entries are of the same date, the entry that was entered later is placed above
+- Sorts the list in descending order of date
+- If 2 entries are of the same date, the entry that was entered later is placed above
 
 `filterList(ArrayList<Expense> list, String category)`
 
--	Iterates through the entire `ArrayList` and removes the entries where the category corresponds to the specified category
+- Iterates through the entire `ArrayList` and removes the entries where the category corresponds to the specified category
 
 `areDatesSimilar(Date date1, Date date2)`
 
--	Secondary helper method to check if 2 dates are similar
--	Used by `sortMostRecentFirst()` method
+- Secondary helper method to check if 2 dates are similar
+- Used by `sortMostRecentFirst()` method
+
+<hr/>
 
 ### ImageActivity
 
 `ImageActivity` simply displays an image in the screen.
 
 The image path is extracted from the `Intent` object and the image that it points to is converted to a `Bitmap` object, which is set in the `ImageView`.
+
+<hr/>
 
 ### ForexRatesActivity
 
