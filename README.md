@@ -35,7 +35,9 @@ The technical documentation can be found in the [documentation Markdown file](do
 
 ### Main page
 
-<img src="static/main-page.jpg" style="border: 1px solid #EAEBEC" width="216" height="444"/>
+<p align="center">
+    <img src="static/main-page.jpg" width="216" height="444"/>
+</p>
 
 - **Overview** and **Add Expenses** buttons - self-explanatory
 - Location - shows the current location based on GPS data
@@ -47,51 +49,69 @@ The technical documentation can be found in the [documentation Markdown file](do
 
 ### Adding an expense
 
-<img src="static/add-expense.jpg" style="border: 1px solid #EAEBEC" width="216" height="444"/>
+<p align="center">
+    <img src="static/add-expense.jpg" width="216" height="444"/>
+</p>
 
 - Easy addition of an expense with the desired fields
 - A photo can be attached to the expense by clicking on the camera icon at the top-right
 - Location is implicitly captured based on the location data on the main page
 
-<img src="static/add-expense-currency.jpg" style="border: 1px solid #EAEBEC" width="216" height="444"/>
+<p align="center">
+    <img src="static/add-expense-currency.jpg" width="216" height="444"/>
+</p>
 
 - Tapping on the **Currency** dropdown displays a list of available currencies
 - This currency list had been filtered to the currencies used by countries that I thought there was a chance to visit
 
 ### Amending the forex rates
 
-<img src="static/currency-forex-rates.jpg" style="border: 1px solid #EAEBEC" width="216" height="444"/>
+<p align="center">
+    <img src="static/currency-forex-rates.jpg" width="216" height="444"/>
+</p>
 
 - Allows for editing of the forex rate to EUR
 - Allows unimportant currencies to be hidden so that it does not appear in the "Add Expenses" page
 
 ### Overview page
 
-<img src="static/overview-page.jpg" style="border: 1px solid #EAEBEC" width="216" height="444"/>
+<p align="center">
+    <img src="static/overview-page.jpg" width="216" height="444"/>
+</p>
 
 - View the total expenditure for a specified date range
 - **View Expenses List** redirects to the [details page](#details-page) that lists the individual expenses in detail
 
-<img src="static/overview-page-sgd.jpg" style="border: 1px solid #EAEBEC" width="216" height="444"/>
+<p align="center">
+    <img src="static/overview-page-sgd.jpg" width="216" height="444"/>
+</p>
 
 - Tapping on the **Total Expenditure** value toggles the display between EUR and SGD
 
-<img src="static/overview-page-filter-country.jpg" style="border: 1px solid #EAEBEC" width="216" height="444"/>
+<p align="center">
+    <img src="static/overview-page-filter-country.jpg" width="216" height="444"/>
+</p>
 
 - Tapping the dropdown field on the top-right shows the country filter
 
 ### Details page
 
-<img src="static/details-page.jpg" style="border: 1px solid #EAEBEC" width="216" height="444"/>
+<p align="center">
+    <img src="static/details-page.jpg" width="216" height="444"/>
+</p>
 
 - Lists the details of each individual expense
 - Country flag provides a visual depiction of the country that the expense had been recorded in
 
-<img src="static/details-page-filter.jpg" style="border: 1px solid #EAEBEC" width="216" height="444"/>
+<p align="center">
+    <img src="static/details-page-filter.jpg" width="216" height="444"/>
+</p>
 
 - List of expenses can be filtered by category when tapping on the **Show Filters** button at the top
 
-<img src="static/edit-expense.jpg" style="border: 1px solid #EAEBEC" width="216" height="444"/>
+<p align="center">
+    <img src="static/edit-expense.jpg" width="216" height="444"/>
+</p>
 
 - Tapping on a row will display the "Edit Expense" page
 - **Location** field appears when editing an expense so that it can be amended in case the location had been erroneously captured (e.g. travelled from point A to B and recorded an expense at point B without the location updating to that of point B)
